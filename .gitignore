@@ -1,0 +1,16 @@
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/www/
+frontend/android/
+frontend/ios/
+
+.idea/
+.vscode/
+*/.idea/
+*/.vscode/
+
+
+.env
+
+*.log
