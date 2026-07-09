@@ -68,7 +68,7 @@ jobs:
       - name: Generate release tag
         if: github.event_name == 'push'
         id: reltag
-        run: echo "tag=v1.0.${{ github.run_number }}-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        run: echo "tag=v1.0.${{ github.run_number }}.${{ github.run_attempt }}-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release with APK
         if: github.event_name == 'push'
