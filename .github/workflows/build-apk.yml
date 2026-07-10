@@ -3,8 +3,7 @@ name: Build Android APK
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
 permissions:
@@ -14,7 +13,10 @@ jobs:
   build:
     name: Build debug APK
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.head_ref == 'frontend'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.head_ref == 'dev/front' &&
+       (github.event.action != 'closed' || github.event.pull_request.merged == true))
     defaults:
       run:
         working-directory: frontend
@@ -22,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.action == 'closed' && 'main' || '' }}
 
       - name: Setup Node 24
         uses: actions/setup-node@v4
@@ -66,12 +70,12 @@ jobs:
           retention-days: 14
 
       - name: Generate release tag
-        if: github.event_name == 'push'
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
         id: reltag
         run: echo "tag=v1.0.${{ github.run_number }}.${{ github.run_attempt }}-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release with APK
-        if: github.event_name == 'push'
+        if: github.event.action == 'closed' && github.event.pull_request.merged == true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
