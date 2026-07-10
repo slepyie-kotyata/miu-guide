@@ -1,0 +1,27 @@
+basePath: /
+info:
+  contact:
+    name: Команда "Слепые Котята"
+    url: https://github.com/slepyie-kotyata/miu-guide
+  description: <Это документация к API MIU-Guide!>
+  license:
+    name: MIT License
+  title: MIU-Guide API
+  version: "1.0"
+paths:
+  /test:
+    get:
+      description: Возвращает успешное сообщение для проверки работоспособности API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное выполнение
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Тестовый эндпоинт
+      tags:
+      - test
+swagger: "2.0"
