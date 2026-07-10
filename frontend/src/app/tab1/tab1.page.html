@@ -1,17 +1,30 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Главный контейнер карты (в будущем сюда добавим логику зума) -->
+  <div class="map-viewport">
+    
+    <!-- Оборачиваем картинку в pinch-zoom -->
+    <pinch-zoom>
+      <img [src]="getMapImage()" class="map-image" alt="Карта этажа" />
+    </pinch-zoom>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+    <!-- Плавающая панель выбора этажей справа -->
+    <div class="floor-selector">
+      <!-- Перебираем массив этажей и создаем кнопки -->
+      <button 
+        *ngFor="let floor of floors" 
+        class="floor-btn" 
+        [class.active]="currentFloor === floor"
+        (click)="selectFloor(floor)"
+        type="button">
+        {{ floor }}
+      </button>
+    </div>
+
+    <!-- Кнопка в правом нижнем углу -->
+    <button class="action-btn" type="button">
+      <!-- Сюда можно добавить иконку геолокации или сброса зума -->
+    </button>
+
+  </div>
+
 </ion-content>
