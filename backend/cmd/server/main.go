@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	_ "miu-guide/docs"
+	"miu-guide/internal/client"
+	"miu-guide/internal/handlers"
 	"miu-guide/internal/routes"
 
 	"github.com/joho/godotenv"
@@ -21,11 +23,14 @@ func main() {
 	if err := godotenv.Load(); err != nil {
         log.Println("Файл .env не найден, используем системные переменные")
     }
+
+	apiClient := client.NewScheduleAPIClient()
+    scheduleHandler := handlers.NewScheduleHandler(apiClient)
 	
 	e := echo.New()
 
 	routes.InitAuthRoutes(e)
-	routes.InitScheduleRoutes(e)
+	routes.InitScheduleRoutes(e, scheduleHandler)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	
