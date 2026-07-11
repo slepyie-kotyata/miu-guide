@@ -53,6 +53,6 @@ getMapImage(): string {
   const subFolder = this.currentMode === 'ГК' ? 'maps_1' : 'maps_2';
   
   // Возвращаем путь: /assets/maps/maps_X/map_Y.jpg
-  return `/assets/maps/${subFolder}/map_${this.currentFloor}.jpg`;
+  return `/assets/maps/${subFolder}/map_${this.currentFloor}.svg`;
 }
 }
