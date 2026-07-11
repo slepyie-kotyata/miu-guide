@@ -198,6 +198,9 @@ const docTemplate = `{
                 "kindOfWork": {
                     "type": "string"
                 },
+                "lessonNumberStart": {
+                    "type": "integer"
+                },
                 "listOfLecturers": {
                     "type": "array",
                     "items": {

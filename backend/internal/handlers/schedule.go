@@ -17,15 +17,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-//TODO: 1) принимаем id группы и день (da)
-//TODO: 2) распаковка json (da)
-//TODO: 3) фильтр по disciplineOid, lessonNumberStart (da)
-//TODO: 4) структура ответа (da)
-//TODO: 5) обработка "неправильных" ответов (da)
-//TODO: 6) работа с redis (если нет -> запрос к апи и кэшируем, если есть -> вытаскиваем) (da)
-//TODO: 7) проверка на формат даты (da)
-//TODO: 8) определение дня по time zone (da)
-
 var layout = "2006.01.02"
 
 func validateDate(date string) bool {
@@ -91,7 +82,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 	
 	defer apiResp.Body.Close()
 
-	body, err := io.ReadAll(apiResp.Body)
+	body, _ := io.ReadAll(apiResp.Body)
 	if err := json.Unmarshal(body, &schedule); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]any{
 			"code": 1,
@@ -101,7 +92,12 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 	result := filter.FilterSchedule(schedule)
 
 	if resultBytes, err := json.Marshal(result); err == nil {
-        s.redisClient.Set(ctx, key, resultBytes, 24 * time.Hour)
+        cacheCtx, cacheCancel := context.WithTimeout(context.Background(), 500 * time.Millisecond)
+        err := s.redisClient.Set(cacheCtx, key, resultBytes, 24 * time.Hour).Err()
+        if err != nil {
+            fmt.Printf("error saving cashe: %s\n", err.Error())
+        }
+        cacheCancel()
     }
 
     return c.JSON(http.StatusOK, result)

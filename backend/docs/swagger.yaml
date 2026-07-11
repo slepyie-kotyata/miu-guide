@@ -30,6 +30,8 @@ definitions:
         type: string
       kindOfWork:
         type: string
+      lessonNumberStart:
+        type: integer
       listOfLecturers:
         items:
           $ref: '#/definitions/models.LecturerInfo'

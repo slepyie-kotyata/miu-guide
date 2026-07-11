@@ -24,7 +24,8 @@ type Schedule struct {
 	Discipline        	string        	`json:"discipline"`
 	EndLesson         	string        	`json:"endLesson"`
 	KindOfWork        	string       	`json:"kindOfWork"`
-	ListOfLecturers []LecturerInfo `json:"listOfLecturers"`
+	ListOfLecturers 	[]LecturerInfo 	`json:"listOfLecturers"`
+	LessonNumberStart 	int           	`json:"lessonNumberStart"`
 }
 
 type LecturerInfo struct {

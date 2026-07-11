@@ -2,6 +2,7 @@ package filter
 
 import (
 	"miu-guide/internal/models"
+	"sort"
 	"strings"
 )
 
@@ -39,6 +40,7 @@ func FilterSchedule(rawLessons []models.RawSchedule) []models.Schedule {
 			Discipline: first.Discipline,
 			EndLesson: first.EndLesson,
 			KindOfWork: first.KindOfWork,
+			LessonNumberStart: first.LessonNumberStart,
 		}
 
 		auditoriumMap := make(map[string][]string)
@@ -57,5 +59,10 @@ func FilterSchedule(rawLessons []models.RawSchedule) []models.Schedule {
 		}
 		result = append(result, schedule)
 	}
+	
+	sort.Slice(result, func(i, j int) bool {
+    	return result[i].LessonNumberStart < result[j].LessonNumberStart
+	})
+
 	return result
 }
