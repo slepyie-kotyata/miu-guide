@@ -1,5 +1,12 @@
 package routes
 
-import "github.com/labstack/echo/v5"
+import (
+	"miu-guide/internal/handlers"
 
-func InitScheduleRoutes(e *echo.Echo) {}
+	"github.com/labstack/echo/v5"
+)
+
+func InitScheduleRoutes(e *echo.Echo, sh *handlers.ScheduleHandler) {
+	e.GET("/schedule/:group", sh.GetSpecificSchedule)
+	e.GET("/schedule/:group/today", sh.GetTodaySchedule)
+}

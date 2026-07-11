@@ -1,4 +1,42 @@
 basePath: /
+definitions:
+  handlers.ErrorResponse:
+    properties:
+      code:
+        enum:
+        - 1
+        - 2
+        example: 1
+        type: integer
+    type: object
+  models.LecturerInfo:
+    properties:
+      auditorium:
+        type: string
+      lecturer:
+        type: string
+    type: object
+  models.Schedule:
+    properties:
+      beginLesson:
+        type: string
+      date:
+        type: string
+      dayOfWeekString:
+        type: string
+      discipline:
+        type: string
+      endLesson:
+        type: string
+      kindOfWork:
+        type: string
+      lessonNumberStart:
+        type: integer
+      listOfLecturers:
+        items:
+          $ref: '#/definitions/models.LecturerInfo'
+        type: array
+    type: object
 info:
   contact:
     name: Команда "Слепые Котята"
@@ -9,6 +47,81 @@ info:
   title: MIU-Guide API
   version: "1.0"
 paths:
+  /schedule/{group}:
+    get:
+      description: Возвращает расписание для указанной группы на выбранный день.
+      parameters:
+      - description: ID Группы (число)
+        in: path
+        name: group
+        required: true
+        type: integer
+      - description: 'Дата расписания (формат: YYYY.MM.DD)'
+        in: query
+        name: day
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ (данные из кэша или API)
+          schema:
+            items:
+              $ref: '#/definitions/models.Schedule'
+            type: array
+        "400":
+          description: 'Невалидный ID группы (code: 1)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: 'Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа
+            API, code: 2 - ошибка Redis)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "503":
+          description: 'Сервис недоступен (code: 1 - недоступность API расписания,
+            code: 2 - недоступность\таймаут Redis)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Расписание на конкретный день
+      tags:
+      - schedule
+  /schedule/{group}/today:
+    get:
+      description: Возвращает расписание для указанной группы на текущий день.
+      parameters:
+      - description: ID Группы (число)
+        in: path
+        name: group
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ (данные из кэша или API)
+          schema:
+            items:
+              $ref: '#/definitions/models.Schedule'
+            type: array
+        "400":
+          description: 'Невалидный ID группы (code: 1)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: 'Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа
+            API, code: 2 - ошибка Redis)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "503":
+          description: 'Сервис недоступен (code: 1 - недоступность API расписания,
+            code: 2 - недоступность\таймаут Redis)'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Расписание на сегодня
+      tags:
+      - schedule
   /test:
     get:
       description: Возвращает успешное сообщение для проверки работоспособности API
