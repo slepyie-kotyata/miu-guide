@@ -71,7 +71,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
     }
 
 	//2. если нет запрашиваем у api и кэшируем
-	apiResp, err := s.apiClient.FetchData(groupId, scheduleDay)
+	apiResp, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
 	if err != nil {
 		return c.JSON(http.StatusServiceUnavailable, map[string]any{
 			"code": 1,

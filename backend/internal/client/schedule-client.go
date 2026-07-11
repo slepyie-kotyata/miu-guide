@@ -25,7 +25,7 @@ func NewScheduleAPIClient() *ScheduleAPIClient {
 	}
 }
 
-func (s *ScheduleAPIClient) FetchData(groupId string, scheduleDay string) (*http.Response, error) {
+func (s *ScheduleAPIClient) FetchScheduleResponse(groupId string, scheduleDay string) (*http.Response, error) {
 	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf(
 		"/schedule/group/%s?start=%s&finish=%s&lng=1", 
 		groupId, 
