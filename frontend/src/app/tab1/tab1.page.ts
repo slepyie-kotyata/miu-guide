@@ -22,13 +22,9 @@ export class Tab1Page {
 
 
   constructor() {}
-
-  // Список этажей
   get currentFloors(): number[] {
     return this.currentMode === 'ГК' ? [6, 5, 4, 3, 2, 1] : [4, 3, 2, 1];
   }
-
-  // ЗДЕСЬ БЫЛА ОШИБКА: не хватало закрывающей скобки }
   get mapTitle(): string {
     return this.currentMode === 'ГК' ? 'Карта: Главный корпус' : 'Карта: Зельев переулок';
   }
@@ -58,7 +54,6 @@ export class Tab1Page {
 
   getMapImage(): string {
     const subFolder = this.currentMode === 'ГК' ? 'maps_1' : 'maps_2';
-    // Обрати внимание: тут у тебя расширение .svg, если карты в векторе, то все верно
     return `/assets/maps/${subFolder}/map_${this.currentFloor}.svg`;
   }
 }

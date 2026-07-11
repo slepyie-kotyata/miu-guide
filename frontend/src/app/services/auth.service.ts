@@ -5,7 +5,6 @@ export class AuthService {
   isAuthenticated = false;
 
   login(username: string, pass: string) {
-    // Твоя логика проверки "в лоб" или запрос к API
     if (username === 'student' && pass === '123') {
       this.isAuthenticated = true;
       return true;
@@ -15,6 +14,5 @@ export class AuthService {
 
   loginAsGuest() {
     this.isAuthenticated = true;
-    // Гость не требует пароля
   }
 }

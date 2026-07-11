@@ -2,7 +2,6 @@ ion-content {
   --background: #f8f9fa;
 }
 
-/* Обертка на весь экран для правильного позиционирования кнопок внизу */
 .schedule-content {
   display: flex;
   flex-direction: column;
@@ -10,7 +9,6 @@ ion-content {
   padding-bottom: 20px;
 }
 
-/* Заголовок страницы (взят из твоего предыдущего кода) */
 .page-title {
   font-size: 26px;
   font-weight: 800;
@@ -18,7 +16,6 @@ ion-content {
   margin: 20px 24px;
 }
 
-/* Белая карточка расписания */
 .schedule-block {
   background-color: #ffffff;
   margin: 0 24px 24px;
@@ -27,24 +24,21 @@ ion-content {
   padding: 16px 0;
 }
 
-/* Элемент одного занятия */
 .lesson-item {
   display: flex;
   align-items: flex-start;
   padding: 12px 20px;
 }
 
-/* Блок для кружка с цифрой */
 .lesson-number-wrapper {
   margin-right: 16px;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 2px; /* Легкая корректировка по высоте */
+  padding-top: 2px; 
 }
 
-/* Сам кружок с цифрой (чистый CSS) */
 .lesson-number {
   width: 40px;
   height: 40px;
@@ -58,7 +52,6 @@ ion-content {
   color: #1a1a1a;
 }
 
-/* Текстовая часть расписания */
 .lesson-text {
   flex: 1;
 }
@@ -83,55 +76,46 @@ ion-content {
   line-height: 1.3;
 }
 
-/* =========================================
-   Навигация по дням недели (кнопки внизу) 
-   ========================================= */
-
 .days-nav-wrapper {
-  margin-top: auto; /* Автоматически прижимает блок к низу экрана */
+  margin-top: auto; 
   padding: 10px 24px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Невидимая кнопка-обертка (увеличивает зону клика пальцем) */
 .nav-arrow-btn {
   background: transparent;
   border: none;
-  padding: 4px 8px; /* Делаем кнопку чуть шире самой иконки для удобства */
+  padding: 4px 8px; 
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 8px; /* Скругленные углы при затемнении */
+  border-radius: 8px;
 }
 
-/* Мгновенное легкое затемнение при нажатии (как у других кнопок) */
 .nav-arrow-btn:active {
   background-color: rgba(0, 0, 0, 0.06); 
 }
 
-/* Сама иконка внутри кнопки */
 .nav-arrow {
   font-size: 28px;
   color: #d1d1d6; 
 }
 
-/* Контейнер для кнопок дней */
 .days-group {
   display: flex;
-  gap: 6px; /* Отступы между днями */
+  gap: 6px;
   flex: 1;
   margin: 0 10px;
   justify-content: center;
 }
 
-/* Сами кнопки дней недели */
 .day-btn {
   flex: 1;
-  aspect-ratio: 1 / 1; /* Делает их идеальными квадратами */
+  aspect-ratio: 1 / 1; 
   max-width: 40px; 
   border-radius: 8px;
   border: none;
@@ -148,12 +132,10 @@ ion-content {
   transition: background-color 0.1s ease;
 }
 
-/* Мгновенное легкое затемнение при нажатии */
 .day-btn:active {
   background-color: #c7c7cc;
 }
 
-/* Класс для активного/выбранного дня */
 .day-btn.active {
   background-color: #d1d1d6; 
 }
