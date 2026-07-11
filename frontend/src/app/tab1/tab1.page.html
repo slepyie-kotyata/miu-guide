@@ -1,17 +1,30 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Tab 1
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<h1 class="page-title">{{ mapTitle }}</h1>
+  <!-- Контейнер-холст на весь экран -->
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+    
+    <!-- Карта -->
+    <pinch-zoom class="map-zoom-container" *ngIf="showMap">
+      <div class="map-viewport">
+  <!-- Добавляем wrapper с отступом -->
+
+    <img [src]="getMapImage()" class="map-image" alt="Карта" />
+
+  </div>
+</pinch-zoom>
+ <!-- Выбор этажей (справа по центру) -->
+<div class="floor-selector">
+  <button 
+    *ngFor="let floor of currentFloors" 
+    class="floor-btn" 
+    [class.active]="currentFloor === floor"
+    (click)="selectFloor(floor)">
+    {{ floor }}
+  </button>
+</div>
+
+    <!-- Кнопка переключения ГК/ЗП (снизу справа) -->
+    <button class="mode-toggle-btn" (click)="toggleMode()">
+      {{ currentMode }}
+    </button>
 </ion-content>

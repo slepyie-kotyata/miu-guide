@@ -1,0 +1,76 @@
+.login-content {
+  --background: #f4f4f4;
+  /* Центрируем карточку по вертикали и горизонтали */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Высота на весь экран */
+  height: 100%;
+}
+
+.yellow-card {
+  background-color: #ffd600;
+  /* Занимает 90% ширины экрана, остальное — отступы */
+  width: 90%;
+  /* Высота подстраивается под содержимое */
+  height: auto;
+  /* Отступы внутри карточки в процентах от ширины экрана */
+  padding: 8% 5%;
+  margin: auto;
+  margin-top: 50%;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  
+  h1 {
+    /* Размер шрифта адаптивный (относительно ширины вьюпорта) */
+    font-size: 6vw; 
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 8% 0;
+    color: #000;
+  }
+}
+
+.input-wrapper {
+  background: white;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  /* Padding в процентах */
+  padding: 4% 5%;
+  margin-bottom: 4%;
+  
+  input {
+    border: none;
+    outline: none;
+    width: 100%; /* Занимает всю ширину wrapper */
+    font-size: 4vw;
+    background: transparent;
+    color: #000; /* <-- Добавь эту строку */
+  }
+}
+
+.login-btn {
+  width: 100%;
+  background: #000;
+  color: #fff;
+  border: none;
+  /* Размер кнопки зависит от контента + padding */
+  padding: 4% 0;
+  border-radius: 50px;
+  font-size: 4.5vw;
+  font-weight: 600;
+  margin-top: 2%;
+  cursor: pointer;
+}
+
+.guest-link {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 3.5vw;
+  margin-top: 5%;
+  font-weight: 500;
+  text-decoration: underline;
+}

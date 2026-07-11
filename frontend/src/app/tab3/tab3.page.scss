@@ -55,13 +55,29 @@ ion-content {
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.04);
   padding: 8px 0;
+  overflow: hidden; 
 }
 
 .menu-item {
   display: flex;
   align-items: center;
   padding: 12px 20px;
+  
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: none; 
+  outline: none;
 }
+
+.menu-item:active {
+  background-color: rgba(0, 0, 0, 0.06); 
+}
+
 
 .icon-wrapper {
   margin-right: 16px;
@@ -109,4 +125,8 @@ ion-content {
   color: #888;
   margin: 0 24px 10px;
   font-weight: 500;
+}
+
+ion-icon{
+  color:#888
 }
