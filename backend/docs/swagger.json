@@ -14,6 +14,113 @@
     },
     "basePath": "/",
     "paths": {
+        "/schedule/{group}": {
+            "get": {
+                "description": "Возвращает расписание для указанной группы на выбранный день.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Расписание на конкретный день",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Группы (число)",
+                        "name": "group",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Дата расписания (формат: YYYY.MM.DD)",
+                        "name": "day",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ (данные из кэша или API)",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Schedule"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный ID группы (code: 1)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/schedule/{group}/today": {
+            "get": {
+                "description": "Возвращает расписание для указанной группы на текущий день.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Расписание на сегодня",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Группы (число)",
+                        "name": "group",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ (данные из кэша или API)",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Schedule"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидный ID группы (code: 1)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Возвращает успешное сообщение для проверки работоспособности API",
@@ -33,6 +140,61 @@
                                 "type": "string"
                             }
                         }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2
+                    ],
+                    "example": 1
+                }
+            }
+        },
+        "models.LecturerInfo": {
+            "type": "object",
+            "properties": {
+                "auditorium": {
+                    "type": "string"
+                },
+                "lecturer": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Schedule": {
+            "type": "object",
+            "properties": {
+                "beginLesson": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "dayOfWeekString": {
+                    "type": "string"
+                },
+                "discipline": {
+                    "type": "string"
+                },
+                "endLesson": {
+                    "type": "string"
+                },
+                "kindOfWork": {
+                    "type": "string"
+                },
+                "listOfLecturers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.LecturerInfo"
                     }
                 }
             }

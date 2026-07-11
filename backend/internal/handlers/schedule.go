@@ -107,6 +107,17 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
     return c.JSON(http.StatusOK, result)
 }
 
+
+// @Summary Расписание на сегодня
+// @Description Возвращает расписание для указанной группы на текущий день.
+// @Tags schedule
+// @Produce json
+// @Param group path int true "ID Группы (число)"
+// @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
+// @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
+// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
+// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Router /schedule/{group}/today [get]
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
@@ -118,6 +129,17 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	return s.getSchedule(c, groupId, getDate())
 }
 
+// @Summary Расписание на конкретный день
+// @Description Возвращает расписание для указанной группы на выбранный день.
+// @Tags schedule
+// @Produce json
+// @Param group path int true "ID Группы (число)"
+// @Param day query string true "Дата расписания (формат: YYYY.MM.DD)"
+// @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
+// @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
+// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
+// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Router /schedule/{group} [get]
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
 	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
