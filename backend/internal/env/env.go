@@ -9,6 +9,7 @@ const (
 	ScheduleUsername = "MIU_SCHEDULE_API_USERNAME"
 	SchedulePassword = "MIU_SCHEDULE_API_PASSWORD"
 	RedisUrl = "REDIS_CONNECTION_URL"
+	SqlitePath = "SQLITE_PATH"
 )
 
 func GetEnv(key EnvKey) string {

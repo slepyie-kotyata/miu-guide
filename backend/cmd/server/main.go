@@ -25,6 +25,11 @@ func main() {
         log.Println(".env not found. using system environment")
     }
 
+	_, err := connection.GetSqliteConnection()
+  	if err != nil {
+    	log.Fatal(err)
+  	}
+
 	rdb, err := connection.GetRedisConnection()
     if err != nil {
         log.Fatalf("error initializing Redis: %v", err)
