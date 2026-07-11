@@ -19,15 +19,12 @@ export class LoginPage {
   
   login() {
     if (this.auth.login(this.username, this.password)) {
-      this.navCtrl.navigateRoot('/tabs'); // Переход во вкладки
-    } else {
+      this.navCtrl.navigateRoot('/tabs'); 
       alert('Неверный логин или пароль');
     }
   }
 
 guestLogin() {
-    // Перекидываем пользователя на карту (tab1)
-    // Убедись, что путь к твоей карте именно '/tabs/tab1'
     this.navCtrl.navigateRoot('/tabs/tab1'); 
   }
 }

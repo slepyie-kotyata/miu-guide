@@ -1,18 +1,14 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info" />
 <h1 class="page-title">{{ mapTitle }}</h1>
-  <!-- Контейнер-холст на весь экран -->
 
-    
-    <!-- Карта -->
-    <pinch-zoom class="map-zoom-container" *ngIf="showMap">
+        <pinch-zoom class="map-zoom-container" *ngIf="showMap">
       <div class="map-viewport">
-  <!-- Добавляем wrapper с отступом -->
 
     <img [src]="getMapImage()" class="map-image" alt="Карта" />
 
   </div>
 </pinch-zoom>
- <!-- Выбор этажей (справа по центру) -->
 <div class="floor-selector">
   <button 
     *ngFor="let floor of currentFloors" 
@@ -23,8 +19,10 @@
   </button>
 </div>
 
-    <!-- Кнопка переключения ГК/ЗП (снизу справа) -->
     <button class="mode-toggle-btn" (click)="toggleMode()">
       {{ currentMode }}
     </button>
+
+<app-assistant-cat></app-assistant-cat>
+
 </ion-content>

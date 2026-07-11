@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login', // Сначала кидаем на логин
+    redirectTo: 'login',
     pathMatch: 'full',
   },
   {
@@ -13,6 +13,5 @@ export const routes: Routes = [
   {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
-    // Здесь позже можно добавить Guard, чтобы нельзя было зайти без логина
   },
 ];
