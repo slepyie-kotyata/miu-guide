@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
@@ -23,12 +24,24 @@ import (
 //TODO: 5) обработка "неправильных" ответов (da)
 //TODO: 6) работа с redis (если нет -> запрос к апи и кэшируем, если есть -> вытаскиваем) (da)
 //TODO: 7) проверка на формат даты (da)
+//TODO: 8) определение дня по time zone (da)
 
 var layout = "2006.01.02"
 
 func validateDate(date string) bool {
 	_, err := time.Parse(layout, date)
 	return err == nil
+}
+
+func getDate() string {
+	loc, err := time.LoadLocation("Europe/Moscow")
+	if err != nil {
+		fmt.Println("error loading location:", err)
+		return time.Now().Format(layout)
+	}
+
+	moscowTime := time.Now().In(loc)
+	return moscowTime.Format(layout)
 }
 
 type ScheduleHandler struct {
@@ -43,21 +56,13 @@ func NewScheduleHandler(ac *client.ScheduleAPIClient, rdb *redis.Client) *Schedu
     }
 }
 
-func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
-	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
-	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code": 1,
-		})
-	}
-
-	//1. проверяем redis
-
+func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleDay string) error {
 	key := groupId + ":" + scheduleDay
 
-	ctx, cancel := context.WithTimeout(c.Request().Context(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 2 * time.Second)
 	defer cancel()
 
+	//1. проверяем redis
 	thisSchedule, err := s.redisClient.Get(ctx, key).Result()
 	if err == nil {
         return c.JSONBlob(http.StatusOK, []byte(thisSchedule))
@@ -75,7 +80,6 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
     }
 
 	//2. если нет запрашиваем у api и кэшируем
-
 	apiResp, err := s.apiClient.FetchData(groupId, scheduleDay)
 	if err != nil {
 		return c.JSON(http.StatusServiceUnavailable, map[string]any{
@@ -84,6 +88,8 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	}
 
 	var schedule []models.RawSchedule
+	
+	defer apiResp.Body.Close()
 
 	body, err := io.ReadAll(apiResp.Body)
 	if err := json.Unmarshal(body, &schedule); err != nil {
@@ -99,4 +105,26 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
     }
 
     return c.JSON(http.StatusOK, result)
+}
+
+func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
+	groupId := c.Param("group")
+	if _, err := strconv.Atoi(groupId); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"code": 1,
+		})
+	}
+
+	return s.getSchedule(c, groupId, getDate())
+}
+
+func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
+	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
+	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"code": 1,
+		})
+	}
+
+	return s.getSchedule(c, groupId, scheduleDay)
 }

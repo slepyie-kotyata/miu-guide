@@ -27,7 +27,7 @@ func main() {
 
 	rdb, err := connection.GetRedisConnection()
     if err != nil {
-        log.Fatalf("Error initializing Redis: %v", err)
+        log.Fatalf("error initializing Redis: %v", err)
     }
     defer rdb.Close()
 
