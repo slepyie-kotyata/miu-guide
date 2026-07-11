@@ -1,30 +1,30 @@
 <ion-content [fullscreen]="true">
-  <!-- Главный контейнер карты (в будущем сюда добавим логику зума) -->
-  <div class="map-viewport">
+<h1 class="page-title">{{ mapTitle }}</h1>
+  <!-- Контейнер-холст на весь экран -->
+
     
-    <!-- Оборачиваем картинку в pinch-zoom -->
-    <pinch-zoom>
-      <img [src]="getMapImage()" class="map-image" alt="Карта этажа" />
-    </pinch-zoom>
+    <!-- Карта -->
+    <pinch-zoom class="map-zoom-container" *ngIf="showMap">
+      <div class="map-viewport">
+  <!-- Добавляем wrapper с отступом -->
 
-    <!-- Плавающая панель выбора этажей справа -->
-    <div class="floor-selector">
-      <!-- Перебираем массив этажей и создаем кнопки -->
-      <button 
-        *ngFor="let floor of floors" 
-        class="floor-btn" 
-        [class.active]="currentFloor === floor"
-        (click)="selectFloor(floor)"
-        type="button">
-        {{ floor }}
-      </button>
-    </div>
-
-    <!-- Кнопка в правом нижнем углу -->
-    <button class="action-btn" type="button">
-      <!-- Сюда можно добавить иконку геолокации или сброса зума -->
-    </button>
+    <img [src]="getMapImage()" class="map-image" alt="Карта" />
 
   </div>
+</pinch-zoom>
+ <!-- Выбор этажей (справа по центру) -->
+<div class="floor-selector">
+  <button 
+    *ngFor="let floor of currentFloors" 
+    class="floor-btn" 
+    [class.active]="currentFloor === floor"
+    (click)="selectFloor(floor)">
+    {{ floor }}
+  </button>
+</div>
 
+    <!-- Кнопка переключения ГК/ЗП (снизу справа) -->
+    <button class="mode-toggle-btn" (click)="toggleMode()">
+      {{ currentMode }}
+    </button>
 </ion-content>
