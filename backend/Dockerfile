@@ -1,5 +1,6 @@
 FROM golang:1.26.5-alpine AS builder
 WORKDIR /build/
+RUN apk add --no-cache tzdata
 COPY . .
 RUN go mod download
 RUN CGO_ENABLED=0 go build -o miu-guide-back ./cmd/server
