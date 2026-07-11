@@ -4,6 +4,7 @@ import (
 	"log"
 	_ "miu-guide/docs"
 	"miu-guide/internal/client"
+	"miu-guide/internal/connection"
 	"miu-guide/internal/handlers"
 	"miu-guide/internal/routes"
 
@@ -21,11 +22,17 @@ import (
 // @BasePath /
 func main() {
 	if err := godotenv.Load(); err != nil {
-        log.Println("Файл .env не найден, используем системные переменные")
+        log.Println(".env not found. using system environment")
     }
 
-	apiClient := client.NewScheduleAPIClient()
-    scheduleHandler := handlers.NewScheduleHandler(apiClient)
+	rdb, err := connection.GetRedisConnection()
+    if err != nil {
+        log.Fatalf("Error initializing Redis: %v", err)
+    }
+    defer rdb.Close()
+
+	ac := client.NewScheduleAPIClient()
+    scheduleHandler := handlers.NewScheduleHandler(ac, rdb)
 	
 	e := echo.New()
 

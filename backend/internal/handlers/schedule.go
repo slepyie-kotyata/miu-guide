@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 //TODO: 1) принимаем id группы и день (da)
@@ -29,12 +30,14 @@ func validateDate(date string) bool {
 }
 
 type ScheduleHandler struct {
-    apiClient *client.ScheduleAPIClient
+    apiClient 	*client.ScheduleAPIClient
+	redisClient *redis.Client
 }
 
-func NewScheduleHandler(apiClient *client.ScheduleAPIClient) *ScheduleHandler {
+func NewScheduleHandler(ac *client.ScheduleAPIClient, rdb *redis.Client) *ScheduleHandler {
     return &ScheduleHandler{
-        apiClient: apiClient,
+        apiClient: ac,
+		redisClient: rdb,
     }
 }
 
