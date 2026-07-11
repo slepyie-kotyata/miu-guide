@@ -1,8 +1,11 @@
 package main
 
 import (
-	"miu-guide/internal/routes"
+	"log"
 	_ "miu-guide/docs"
+	"miu-guide/internal/routes"
+
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	echoSwagger "github.com/swaggo/echo-swagger/v2"
 )
@@ -15,9 +18,15 @@ import (
 // @license.name MIT License
 // @BasePath /
 func main() {
+	if err := godotenv.Load(); err != nil {
+        log.Println("Файл .env не найден, используем системные переменные")
+    }
+	
 	e := echo.New()
 
 	routes.InitAuthRoutes(e)
+	routes.InitScheduleRoutes(e)
+
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	
 	if err := e.Start(":1323"); err != nil {

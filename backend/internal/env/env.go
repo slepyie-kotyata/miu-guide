@@ -1,11 +1,11 @@
-package environment
+package env
 
 import "os"
 
 type EnvKey string
 
 const (
-	ScheduleBaseApiUrl = "MUI_SCHEDULE_BASE_API_URL"
+	ScheduleBaseApiUrl = "MIU_SCHEDULE_BASE_API_URL"
 	ScheduleUsername = "MIU_SCHEDULE_API_USERNAME"
 	SchedulePassword = "MIU_SCHEDULE_API_PASSWORD"
 )
