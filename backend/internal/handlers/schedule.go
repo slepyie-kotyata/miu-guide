@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
@@ -19,7 +21,7 @@ import (
 //TODO: 3) фильтр по disciplineOid, lessonNumberStart (da)
 //TODO: 4) структура ответа (da)
 //TODO: 5) обработка "неправильных" ответов (da)
-//TODO: 6) работа с redis (если нет -> запрос к апи и кэшируем, если есть -> вытаскиваем)
+//TODO: 6) работа с redis (если нет -> запрос к апи и кэшируем, если есть -> вытаскиваем) (da)
 //TODO: 7) проверка на формат даты (da)
 
 var layout = "2006.01.02"
@@ -49,6 +51,31 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 		})
 	}
 
+	//1. проверяем redis
+
+	key := groupId + ":" + scheduleDay
+
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 2*time.Second)
+	defer cancel()
+
+	thisSchedule, err := s.redisClient.Get(ctx, key).Result()
+	if err == nil {
+        return c.JSONBlob(http.StatusOK, []byte(thisSchedule))
+    }
+
+	if !errors.Is(err, redis.Nil) {
+        if errors.Is(err, context.DeadlineExceeded) {
+            return c.JSON(http.StatusServiceUnavailable, map[string]any{
+				"code": 2,
+			})
+        }
+        return c.JSON(http.StatusInternalServerError, map[string]any{
+			"code": 2,
+		})
+    }
+
+	//2. если нет запрашиваем у api и кэшируем
+
 	apiResp, err := s.apiClient.FetchData(groupId, scheduleDay)
 	if err != nil {
 		return c.JSON(http.StatusServiceUnavailable, map[string]any{
@@ -66,5 +93,10 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	}
 
 	result := filter.FilterSchedule(schedule)
-	return c.JSON(http.StatusOK, result)
+
+	if resultBytes, err := json.Marshal(result); err == nil {
+        s.redisClient.Set(ctx, key, resultBytes, 24 * time.Hour)
+    }
+
+    return c.JSON(http.StatusOK, result)
 }
