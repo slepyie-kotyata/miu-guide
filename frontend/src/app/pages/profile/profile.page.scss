@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f8f9fa; 
+  --background: #f8f9fa;
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
@@ -60,27 +60,30 @@ ion-content {
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.04);
   padding: 8px 0;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  
+
   width: 100%;
   background: transparent;
   border: none;
   text-align: left;
   font-family: inherit;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition: none; 
+  transition: none;
   outline: none;
 }
 
-.menu-item:active {
-  background-color: rgba(0, 0, 0, 0.06); 
+button.menu-item {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.menu-item:active {
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 

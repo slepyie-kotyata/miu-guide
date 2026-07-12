@@ -59,13 +59,14 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
-		log.Printf("error: %s", err.Error())
+		log.Printf("error: %s\n", err.Error())
 		return "", ErrUnavaliableAPI
 	}
 	defer apiResp.Body.Close()
 
 	var result TokenResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
+		log.Printf("error: %s\n", err.Error())
 		return "", ErrInternal
 	}
 
@@ -94,6 +95,7 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 
 	var result UserIdResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
+		log.Printf("error: %s\n", err.Error())
 		return 0, ErrInternal
 	}
 
@@ -117,12 +119,14 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
+		log.Printf("error: %s\n", err.Error())
 		return nil, ErrUnavaliableAPI
 	}
 	defer apiResp.Body.Close()
 
 	var result []UserInfoResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
+		log.Printf("error: %s\n", err.Error())
 		return nil, ErrInvalidToken
 	}
 
@@ -145,6 +149,7 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
+		log.Printf("error: %s\n", err.Error())
 		return nil, ErrUnavaliableAPI
 	}
 	defer apiResp.Body.Close()
