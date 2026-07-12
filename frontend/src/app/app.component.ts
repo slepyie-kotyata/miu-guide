@@ -1,11 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { AssistantDialogService } from './services/assistant';
+import { StatusBarService } from './services/capacitor/status-bar.service';
+import { KeyboardService } from './services/capacitor/keyboard.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   imports: [IonApp, IonRouterOutlet],
 })
-export class AppComponent {
-  constructor() {}
+export class AppComponent implements OnInit {
+  private assistantDialogService = inject(AssistantDialogService);
+  private statusBarService = inject(StatusBarService);
+  private keyboardService = inject(KeyboardService);
+
+  ngOnInit() {
+    localStorage.removeItem('hasSeenOnboarding');
+
+    this.statusBarService.setup();
+    this.keyboardService.setup();
+    this.assistantDialogService.startOnboarding();
+  }
 }

@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  isAuthenticated = false;
+  private _isAuthenticated = signal(false);
+  readonly isAuthenticated = computed(() => this._isAuthenticated());
 
-  login(username: string, pass: string) {
-    // Твоя логика проверки "в лоб" или запрос к API
+  login(username: string, pass: string): boolean {
     if (username === 'student' && pass === '123') {
-      this.isAuthenticated = true;
+      this._isAuthenticated.set(true);
       return true;
     }
     return false;
   }
 
-  loginAsGuest() {
-    this.isAuthenticated = true;
-    // Гость не требует пароля
+  logout(): void {
+    this._isAuthenticated.set(false);
   }
 }

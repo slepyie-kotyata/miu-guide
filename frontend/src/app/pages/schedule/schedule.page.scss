@@ -1,0 +1,184 @@
+ion-content {
+  --background: #f8f9fa;
+}
+
+.schedule-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; 
+  padding-bottom: 20px;
+}
+
+.header-container {
+  text-align: center;
+  margin: 16px 0; 
+
+  .main-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+  }
+
+  .date-subtitle {
+    font-size: 16px;
+    font-weight: normal; 
+    color: #707070;   
+    margin: 4px 0 0 0;
+  }
+}
+.schedule-block {
+  background-color: #ffffff;
+  margin: 0 24px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  padding: 16px 0;
+  min-height: 200px;
+  
+  display: flex;
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: stretch; 
+}
+
+.empty-state-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  width: 100%;
+  color: #a0a0a0;
+  font-size: 16px;
+  padding: 20px; 
+  text-align: center;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 20px;
+}
+
+.lesson-number-wrapper {
+  margin-right: 16px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2px; 
+}
+
+.lesson-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.lesson-text {
+  flex: 1;
+}
+
+.lesson-time {
+  font-size: 11px;
+  color: #888888;
+  margin-bottom: 2px;
+}
+
+.lesson-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.lesson-subtitle {
+  font-size: 11px;
+  color: #a0a0a0;
+  line-height: 1.3;
+}
+
+.days-nav-wrapper {
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+}
+
+.nav-arrow-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 8px; 
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 8px; 
+}
+
+.nav-arrow-btn:active {
+  background-color: rgba(0, 0, 0, 0.06); 
+}
+
+.nav-arrow {
+  font-size: 28px;
+  color: #d1d1d6; 
+}
+
+.days-group {
+  display: flex;
+  gap: 6px; 
+  flex: 1;
+  margin: 0 10px;
+  justify-content: center;
+}
+
+.day-btn {
+  flex: 1;
+  aspect-ratio: 1 / 1; 
+  max-width: 40px; 
+  border-radius: 8px;
+  border: none;
+  background-color: #e5e5ea;
+  color: #1a1a1a;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+  transition: background-color 0.1s ease;
+}
+
+.day-btn:active {
+  background-color: #c7c7cc;
+}
+
+.day-btn.active {
+  background-color: #d1d1d6; 
+}
+
+.loader-wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: center;     
+  height: 150px;           
+  width: 100%;            
+  background: transparent;
+
+  ion-spinner {
+    width: 40px;
+    height: 40px;
+    color: #a0a0a0;     
+  }
+}
