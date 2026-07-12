@@ -133,3 +133,7 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 
 	return s.getSchedule(c, groupId, scheduleDay)
 }
+
+func (s *ScheduleHandler) GetLecturer(c *echo.Context) error {
+	panic("error")
+}

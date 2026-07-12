@@ -56,7 +56,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2",
+                        "description": "{\"code\": 1} - Пустой токен в Bearer",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -65,7 +65,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "{\"code\": 2} - Невалидный токен(истек срок)",
+                        "description": "{\"code\": 1} - Неправильные данные пользователя, {\"code\": 2} - Невалидный токен(истек срок)",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -73,8 +73,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "500": {
-                        "description": "{\"code\": 1} - Внутренняя ошибка сервера",
+                    "404": {
+                        "description": "{\"code\": 1} - Не найден пользователь",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -149,8 +149,8 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "500": {
-                        "description": "{\"code\": 1} - Внутренняя ошибка сервера",
+                    "404": {
+                        "description": "{\"code\": 1} - Не найден список предметов",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

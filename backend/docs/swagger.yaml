@@ -90,20 +90,20 @@ paths:
           schema:
             $ref: '#/definitions/models.UserInfo'
         "400":
-          description: 'Неверный формат ID - code: 1, Пустой токен в Bearer - code:
-            2'
+          description: '{"code": 1} - Пустой токен в Bearer'
           schema:
             additionalProperties:
               type: integer
             type: object
         "401":
-          description: '{"code": 2} - Невалидный токен(истек срок)'
+          description: '{"code": 1} - Неправильные данные пользователя, {"code": 2}
+            - Невалидный токен(истек срок)'
           schema:
             additionalProperties:
               type: integer
             type: object
-        "500":
-          description: '{"code": 1} - Внутренняя ошибка сервера'
+        "404":
+          description: '{"code": 1} - Не найден пользователь'
           schema:
             additionalProperties:
               type: integer
@@ -153,8 +153,8 @@ paths:
             additionalProperties:
               type: integer
             type: object
-        "500":
-          description: '{"code": 1} - Внутренняя ошибка сервера'
+        "404":
+          description: '{"code": 1} - Не найден список предметов'
           schema:
             additionalProperties:
               type: integer

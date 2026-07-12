@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"log"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
@@ -36,27 +37,23 @@ const (
 	SourceSchedule  APISource   = "SCHEDULE_API"
     SourceRedis     APISource   = "REDIS"
 )
+var sourceErrorCodes = map[APISource]int{
+    SourceMIU:      3,
+    SourceSchedule: 1,
+    SourceRedis:    2,
+}
 
 // желательно отделить как-нибудь от ручки
 func (u *UserHandler) handleAPIError(c *echo.Context, err error, source APISource) error {
+    log.Printf("[ERROR] %v", err)
 	switch {
 	case errors.Is(err, client.ErrUnavaliableAPI):
-        var code int
-
-        switch(source){
-        case SourceMIU:
-            code = 3
-        case SourceSchedule:
-            code = 1
-        case SourceRedis:
-            code = 2
-        default:
-            code = 0 
-        }
-		return c.JSON(http.StatusServiceUnavailable, map[string]any{"code": code})
+        code := sourceErrorCodes[source]
+        return c.JSON(http.StatusServiceUnavailable, map[string]any{"code": code})
 	case errors.Is(err, client.ErrInternal):
 		return c.JSON(http.StatusInternalServerError, map[string]any{"code": 1})
-
+    case errors.Is(err, client.ErrNotFound):
+        return c.JSON(http.StatusNotFound, map[string]any{ "code": 1 })
 	default:
 		return c.JSON(http.StatusInternalServerError, map[string]any{"code": 1})
 	}
@@ -88,25 +85,27 @@ func determineCourse(groupName string, now time.Time) int {
 // @Security     BearerAuth
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  models.UserInfo "Успешный ответ"
-// @Failure      400  {object}  map[string]int  "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2"
-// @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
-// @Failure      500  {object}  map[string]int  "{"code": 1} - Внутренняя ошибка сервера"
+// @Failure      400  {object}  map[string]int  "{"code": 1} - Пустой токен в Bearer"
+// @Failure      401  {object}  map[string]int  "{"code": 1} - Неправильные данные пользователя, {"code": 2} - Невалидный токен(истек срок)"
+// @Failure      404  {object}  map[string]int  "{"code": 1} - Не найден пользователь"
 // @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1"
 // @Router       /access/users/{id} [get]
 func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))
     if err != nil {
-        return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+        return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 1 })
     }
 
     // получаем часть данных из API ЛК ММУ
     userInfo, err := u.miuApiClient.GetUserInfo(token, userId)
     if err != nil {
         if errors.Is(err, client.ErrInvalidToken) {
+            log.Printf("[ERROR] %v", err)
             return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+        } else {
+            return u.handleAPIError(c, err, SourceMIU)
         }
-        return u.handleAPIError(c, err, SourceMIU)
     }
 
     // получаем айди группы из API расписания ММУ
@@ -138,7 +137,7 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
 // @Success      200  {object}  []string "Успешный ответ"
 // @Failure      400  {object}  map[string]int  "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2"
 // @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
-// @Failure      500  {object}  map[string]int  "{"code": 1} - Внутренняя ошибка сервера"
+// @Failure      404  {object}  map[string]int  "{"code": 1} - Не найден список предметов"
 // @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3"
 // @Router       /access/users/{id}/subjects [get]
 func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
@@ -151,9 +150,11 @@ func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
     subjectsList, err := u.miuApiClient.GetSubjectsList(token, userId)
     if err != nil {
         if errors.Is(err, client.ErrInvalidToken) {
+            log.Printf("[ERROR] %v", err)
             return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+        } else {
+            return u.handleAPIError(c, err, SourceMIU)
         }
-        return u.handleAPIError(c, err, SourceMIU)
     }
 
     return c.JSON(http.StatusOK, filter.MergeDuplicateSubjects(filter.FilterSubjectsBySemester(subjectsList)))
