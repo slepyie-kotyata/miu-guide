@@ -6,11 +6,13 @@ import (
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
 	"miu-guide/internal/handlers"
-	"miu-guide/internal/middleware"
 	"miu-guide/internal/routes"
+	"miu-guide/internal/service"
+	"net/http"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger/v2"
 )
 
@@ -36,7 +38,12 @@ func main() {
     scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, rdb), handlers.NewUserHandler(mc, sc)
 	
 	e := echo.New()
-	access := e.Group("/access", middleware.ExtractTokenMiddleware)
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8100"},
+      	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+    	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+  	}))
+	access := e.Group("/access", service.ExtractTokenMiddleware)
 
 	routes.InitScheduleRoutes(e, scheduleHandler)
 	routes.InitAuthRoutes(e, userHandler)
