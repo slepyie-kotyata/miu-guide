@@ -4,7 +4,7 @@ import { NavController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { HapticsService } from '../../services/capacitor/haptics.service';
-import { ImpactStyle } from '@capacitor/haptics';
+import { ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 @Component({
   selector: 'app-login',
@@ -23,10 +23,10 @@ export class LoginPage {
 
   login() {
     if (this.auth.login(this.username(), this.password())) {
-      this.haptics.impact(ImpactStyle.Medium);
+      this.haptics.notification(NotificationType.Success);
       this.navCtrl.navigateRoot('/tabs/map');
     } else {
-      this.haptics.impact(ImpactStyle.Light);
+      this.haptics.notification(NotificationType.Error);
       alert('Неверный логин или пароль');
     }
   }

@@ -1,5 +1,5 @@
 import { Component, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
 import { AssistantCatComponent } from '../../components/assistant-cat/assistant-cat.component';
@@ -11,7 +11,7 @@ import { ImpactStyle } from '@capacitor/haptics';
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, AssistantCatComponent],
+  imports: [IonContent, AssistantCatComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MapPage {
@@ -39,7 +39,7 @@ export class MapPage {
   }
 
   selectFloor(floor: number) {
-    this.haptics.impact(ImpactStyle.Light);
+    this.haptics.selection();
     this.currentFloor.set(floor);
     this.triggerMapReset();
   }

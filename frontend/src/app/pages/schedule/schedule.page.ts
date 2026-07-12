@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { IonFooter, IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { caretBack, caretForward } from 'ionicons/icons';
@@ -13,7 +13,7 @@ import { formatDateStr, generateWeekDays, getWeekNumber, getMondayFromWeek, getS
   selector: 'app-page-schedule',
   templateUrl: 'schedule.page.html',
   styleUrls: ['schedule.page.scss'],
-  imports: [IonContent, IonIcon, CommonModule, IonSpinner, IonFooter],
+  imports: [IonContent, IonIcon, IonSpinner, IonFooter],
 })
 export class SchedulePage implements OnInit {
   lessons = signal<Lesson[]>([]);
@@ -80,7 +80,7 @@ export class SchedulePage implements OnInit {
   }
 
   selectDay(index: number) {
-    this.haptics.impact(ImpactStyle.Light);
+    this.haptics.selection();
     this.activeDayIndex.set(index);
     this.isLoading.set(true);
     this.errorMessage.set(null);

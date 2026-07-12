@@ -1,5 +1,4 @@
 import { Component, ViewChild, ElementRef, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AssistantEmotionService } from '../../services/assistant/assistant-emotion.service';
 import { AssistantDialogService } from '../../services/assistant/assistant-dialog.service';
 import { AssistantChatService } from '../../services/assistant/assistant-chat.service';
@@ -8,7 +7,7 @@ import { AssistantVisibilityService } from '../../services/assistant/assistant-v
 @Component({
   selector: 'app-assistant-cat',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './assistant-cat.component.html',
   styleUrls: ['./assistant-cat.component.scss'],
 })

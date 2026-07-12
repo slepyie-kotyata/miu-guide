@@ -8,35 +8,45 @@
 
     <div class="schedule-block">
 
-      <div class="loader-wrapper" *ngIf="isLoading()">
-        <ion-spinner name="crescent"></ion-spinner>
-      </div>
-
-      <div class="empty-state-wrapper" *ngIf="!isLoading() && errorMessage()">
-        <p>{{ errorMessage() }}</p>
-      </div>
-
-      <div class="empty-state-wrapper" *ngIf="!isLoading() && !errorMessage() && lessons().length === 0">
-        <p>На этот день расписания нет</p>
-      </div>
-
-      <ng-container *ngIf="!isLoading() && !errorMessage() && lessons().length > 0">
-        <div class="lesson-item" *ngFor="let lesson of lessons(); let i = index">
-          <div class="lesson-number-wrapper">
-            <div class="lesson-number">{{ i + 1 }}</div>
-          </div>
-          <div class="lesson-text">
-            <div class="lesson-time">{{ lesson.beginLesson }} – {{ lesson.endLesson }}</div>
-            <div class="lesson-title">{{ lesson.discipline }}</div>
-            <div class="lesson-subtitle" *ngFor="let prof of lesson.listOfLecturers">
-              {{ prof.auditorium }} – {{ prof.lecturer }}
-            </div>
-            <div class="lesson-type" style="font-size: 0.8em; color: #666;">
-              {{ lesson.kindOfWork }}
-            </div>
-          </div>
+      @if (isLoading()) {
+        <div class="loader-wrapper">
+          <ion-spinner name="crescent"></ion-spinner>
         </div>
-      </ng-container>
+      }
+
+      @if (!isLoading() && errorMessage()) {
+        <div class="empty-state-wrapper">
+          <p>{{ errorMessage() }}</p>
+        </div>
+      }
+
+      @if (!isLoading() && !errorMessage() && lessons().length === 0) {
+        <div class="empty-state-wrapper">
+          <p>На этот день расписания нет</p>
+        </div>
+      }
+
+      @if (!isLoading() && !errorMessage() && lessons().length > 0) {
+        @for (lesson of lessons(); track lesson.beginLesson + lesson.discipline; let i = $index) {
+          <div class="lesson-item">
+            <div class="lesson-number-wrapper">
+              <div class="lesson-number">{{ i + 1 }}</div>
+            </div>
+            <div class="lesson-text">
+              <div class="lesson-time">{{ lesson.beginLesson }} – {{ lesson.endLesson }}</div>
+              <div class="lesson-title">{{ lesson.discipline }}</div>
+              @for (prof of lesson.listOfLecturers; track prof.lecturer + prof.auditorium) {
+                <div class="lesson-subtitle">
+                  {{ prof.auditorium }} – {{ prof.lecturer }}
+                </div>
+              }
+              <div class="lesson-type" style="font-size: 0.8em; color: #666;">
+                {{ lesson.kindOfWork }}
+              </div>
+            </div>
+          </div>
+        }
+      }
 
     </div>
   </div>
@@ -48,14 +58,15 @@
       </button>
 
       <div class="days-group">
-        <button
-          *ngFor="let day of weekDays(); let i = index"
-          class="day-btn"
-          [class.active]="activeDayIndex() === i"
-          (click)="selectDay(i)"
-          type="button">
-          {{ day.name }}
-        </button>
+        @for (day of weekDays(); track day.name + day.date.getTime(); let i = $index) {
+          <button
+            class="day-btn"
+            [class.active]="activeDayIndex() === i"
+            (click)="selectDay(i)"
+            type="button">
+            {{ day.name }}
+          </button>
+        }
       </div>
 
       <button class="nav-arrow-btn" type="button" (click)="nextWeek()">
