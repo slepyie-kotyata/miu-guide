@@ -15,19 +15,10 @@ ion-content {
 }
 
 
-.map-viewport {
-  width: 100%;
-  height: calc(100% - 100px); 
-  display: grid;
-  place-items: center; 
-  overflow: hidden;
-  padding: 2%;
-}
-
 .map-zoom-container {
   display: block !important; 
   width: 100%;
-  height: 100%;
+  height: 80%;
 }
 .map-wrapper {
   width: 100%;
@@ -90,4 +81,19 @@ ion-content {
   height: 32px;
   z-index: 1000;
   cursor: pointer;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; 
+}
+
+.map-view {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
 }

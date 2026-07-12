@@ -2,10 +2,11 @@
   <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info" />
   <h1 class="page-title">{{ mapTitle() }}</h1>
 
-  @if (showMap()) {
+@if (showMap()) {
     <pinch-zoom class="map-zoom-container">
-      <div class="map-viewport">
-        <img [src]="mapImage()" class="map-image" alt="Карта" />
+      <div class="map-container" 
+           [innerHTML]="svgContent()" 
+           (click)="onMapClick($event)">
       </div>
     </pinch-zoom>
   }
@@ -26,5 +27,33 @@
   </button>
 
   <app-assistant-cat></app-assistant-cat>
+
+  <ion-modal
+    [isOpen]="isModalOpen()"
+    (didDismiss)="closeRoomModal()"
+    [initialBreakpoint]="0.3"
+    [breakpoints]="[0, 0.3, 0.5, 0.85]"
+    backdropBreakpoint="0.5"
+  >
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <!-- Выводим ID кабинета. Потом заменишь на название из базы -->
+          <ion-title>Кабинет {{ selectedRoomId() }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeRoomModal()">Закрыть</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <div class="room-info-container">
+          <h3>Информация</h3>
+          <p>Здесь ты потом сверстаешь вывод данных для кабинета: расписание, кто там сидит и т.д.</p>
+          <p>ID для запроса к API: <strong>{{ selectedRoomId() }}</strong></p>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>
