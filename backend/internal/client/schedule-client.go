@@ -52,8 +52,8 @@ func (s *ScheduleAPIClient) GetGroupId(groupName string) (int, error) {
 	}
 	defer apiResp.Body.Close()
 
-	var result GroupId
+	var result []GroupId
 	_ = json.NewDecoder(apiResp.Body).Decode(&result)
 
-	return result.GroupId, nil
+	return result[0].GroupId, nil
 }

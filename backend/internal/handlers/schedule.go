@@ -9,6 +9,7 @@ import (
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
+	"miu-guide/internal/service"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,24 +17,6 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/redis/go-redis/v9"
 )
-
-var layout = "2006.01.02"
-
-func validateDate(date string) bool {
-	_, err := time.Parse(layout, date)
-	return err == nil
-}
-
-func getDate() string {
-	loc, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		fmt.Println("error loading location:", err)
-		return time.Now().Format(layout)
-	}
-
-	moscowTime := time.Now().In(loc)
-	return moscowTime.Format(layout)
-}
 
 type ScheduleHandler struct {
     apiClient 	*client.ScheduleAPIClient
@@ -122,7 +105,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 		})
 	}
 
-	return s.getSchedule(c, groupId, getDate())
+	return s.getSchedule(c, groupId, service.GetDate())
 }
 
 // @Summary Расписание на конкретный день
@@ -138,7 +121,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 // @Router /schedule/{group} [get]
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
-	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
+	if _, err := strconv.Atoi(groupId); err != nil || !service.ValidateDate(scheduleDay) {
 		return c.JSON(http.StatusBadRequest, map[string]any{
 			"code": 1,
 		})
