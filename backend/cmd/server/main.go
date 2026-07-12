@@ -6,6 +6,7 @@ import (
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
 	"miu-guide/internal/handlers"
+	"miu-guide/internal/middleware"
 	"miu-guide/internal/routes"
 
 	"github.com/joho/godotenv"
@@ -35,9 +36,11 @@ func main() {
     scheduleHandler, authHandler := handlers.NewScheduleHandler(ac, rdb), handlers.NewAuthHandler(mc)
 	
 	e := echo.New()
+	auth := e.Group("/access", middleware.ExtractTokenMiddleware)
 
 	routes.InitAuthRoutes(e, authHandler)
 	routes.InitScheduleRoutes(e, scheduleHandler)
+	routes.InitUserRoutes(auth)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	
