@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { IonFooter, IonToolbar, IonTitle, IonContent, IonIcon, IonSpinner, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { addIcons } from 'ionicons'; 
 import { caretBack, caretForward } from 'ionicons/icons'; 
@@ -16,7 +16,7 @@ interface WeekDay {
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
-  imports: [IonContent, IonIcon, CommonModule, IonSpinner, IonLabel, IonItem] 
+  imports: [IonContent, IonIcon, CommonModule, IonSpinner, IonLabel, IonItem, IonFooter] 
 })
 export class Tab2Page implements OnInit {
   lessons: Lesson[] = []; 
@@ -28,7 +28,7 @@ export class Tab2Page implements OnInit {
 
   weekType: string = '';
   dateRange: string = '';
-  groupId = '39'; 
+  groupId = 150; 
 
   constructor(private scheduleService: ScheduleService) {
     addIcons({ caretBack, caretForward });
@@ -109,8 +109,8 @@ ngOnInit() {
     this.isLoading = true;
     
     const targetDate = this.weekDays[index].date;
-    const dateString = targetDate.toISOString().split('T')[0];
-    
+    const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');   
+
     this.scheduleService.getDaySchedule(this.groupId, dateString).subscribe({
       next: (data) => {
         this.lessons = data;

@@ -36,9 +36,20 @@ ion-content {
   box-shadow: 0 4px 15px rgba(0,0,0,0.04);
   padding: 16px 0;
   min-height: 200px;
+  
+  /* ИЗМЕНЕНИЯ ЗДЕСЬ: */
   display: flex;
-  justify-content: center; 
-  align-items: center;   
+  flex-direction: column; /* Элементы идут сверху вниз */
+  justify-content: flex-start; /* Старт с верхнего края */
+  align-items: stretch; /* Растягиваем элементы на всю ширину */
+}
+
+/* Добавь это для центрирования пустого состояния и загрузки */
+.empty-state-wrapper, .loader-wrapper {
+  flex: 1; /* Занимает всё свободное место */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Элемент одного занятия */
@@ -101,12 +112,13 @@ ion-content {
    Навигация по дням недели (кнопки внизу) 
    ========================================= */
 
+/* Удаляем margin-top: auto, так как футер сам прижат к низу */
 .days-nav-wrapper {
-  margin-top: auto; /* Автоматически прижимает блок к низу экрана */
-  padding: 10px 24px 10px;
+  padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #f8f9fa; /* Тот же цвет, что и фон страницы */
 }
 
 /* Невидимая кнопка-обертка (увеличивает зону клика пальцем) */
