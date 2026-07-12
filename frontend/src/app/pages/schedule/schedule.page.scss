@@ -182,3 +182,8 @@ ion-content {
     color: #a0a0a0;     
   }
 }
+
+ion-footer {
+  --border-width: 0;
+    box-shadow: none;
+}

@@ -5,7 +5,7 @@
 
 .cat-wrapper {
   position: absolute;
-  bottom: 30px;
+  bottom: 40px;
   left: -5px;
   width: 140px;
   z-index: 1005;
@@ -149,10 +149,11 @@
 .chat-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
+  background: #fff;
 }
 
 .chat-input:focus {
