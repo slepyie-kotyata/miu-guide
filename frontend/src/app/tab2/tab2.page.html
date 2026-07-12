@@ -9,12 +9,9 @@
 
     <div class="schedule-block">
       
-      <!-- Показываем спиннер, пока идет загрузка -->
-      <ion-item *ngIf="isLoading" style="text-align: center; padding: 20px;" >
-          <ion-label>Загрузка расписания</ion-label>
-        <ion-spinner name="crescent" ></ion-spinner>
-      </ion-item>
-
+<div class="loader-wrapper" *ngIf="isLoading">
+  <ion-spinner name="crescent"></ion-spinner>
+</div>
       <!-- Если загрузка прошла, но список пуст -->
       <div *ngIf="!isLoading && lessons.length === 0" style="text-align: center; padding: 20px; color: #888;">
         На этот день расписания нет

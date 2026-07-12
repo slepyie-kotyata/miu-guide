@@ -35,6 +35,10 @@ ion-content {
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.04);
   padding: 16px 0;
+  min-height: 200px;
+  display: flex;
+  justify-content: center; 
+  align-items: center;   
 }
 
 /* Элемент одного занятия */
@@ -166,4 +170,19 @@ ion-content {
 /* Класс для активного/выбранного дня */
 .day-btn.active {
   background-color: #d1d1d6; 
+}
+
+.loader-wrapper {
+  display: flex;
+  justify-content: center; /* Центрирует по горизонтали */
+  align-items: center;     /* Центрирует по вертикали */
+  height: 150px;           /* Высота области, где будет спиннер */
+  width: 100%;             /* Занимает всю ширину карточки */
+  background: transparent;
+
+  ion-spinner {
+    width: 40px;
+    height: 40px;
+    color: #a0a0a0;        /* Цвет вашего спиннера */
+  }
 }
