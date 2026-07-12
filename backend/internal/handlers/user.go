@@ -13,8 +13,8 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-// get /me -> get /access/users/:id
-// get /subjects -> get /access/users/:id/subjects
+// get /me -> get /access/users/:id (есть)
+// get /subjects -> get /access/users/:id/subjects 
 
 type UserHandler struct {
 	miuApiClient	*client.MIUClient
@@ -126,4 +126,6 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
         Institution: userInfo.Institution,
     })
 }
+
+func (u *UserHandler) GetUserSubjects(c *echo.Context) error
 

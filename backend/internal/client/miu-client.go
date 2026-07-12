@@ -129,3 +129,5 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 
 	return &result[0], nil
 }
+
+func (m *MIUClient) GetSubjectsList(token string, userId int) ()
