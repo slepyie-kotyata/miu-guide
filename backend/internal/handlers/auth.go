@@ -19,6 +19,7 @@ func NewAuthHandler(mc *client.MIUClient) *AuthHandler {
     }
 }
 
+
 func (a *AuthHandler) Authorize(c *echo.Context) error {
     //получаем Token
     token, err := a.apiClient.GetToken(models.AuthRequest{
