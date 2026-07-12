@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
@@ -101,6 +102,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
+		log.Printf("err: %s", err)
 		return c.JSON(http.StatusBadRequest, map[string]any{
 			"code": 1,
 		})
@@ -123,6 +125,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
 	if _, err := strconv.Atoi(groupId); err != nil || !service.ValidateDate(scheduleDay) {
+		log.Printf("err: %s", err)
 		return c.JSON(http.StatusBadRequest, map[string]any{
 			"code": 1,
 		})
