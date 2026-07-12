@@ -8,4 +8,5 @@ import (
 
 func InitUserRoutes(auth *echo.Group, uh *handlers.UserHandler) {
 	auth.GET("/users/:id", uh.GetUserInfo)
+	auth.GET("/users/:id/subjects", uh.GetUserSubjects)
 }

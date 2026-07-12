@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 	"miu-guide/internal/client"
+	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
 	"miu-guide/internal/service"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 )
 
 // get /me -> get /access/users/:id (есть)
-// get /subjects -> get /access/users/:id/subjects 
+// get /subjects -> get /access/users/:id/subjects
 
 type UserHandler struct {
 	miuApiClient	*client.MIUClient
@@ -127,5 +128,20 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     })
 }
 
-func (u *UserHandler) GetUserSubjects(c *echo.Context) error
+func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
+    token, _ := c.Get("token").(string)
+    userId, err := strconv.Atoi(c.Param("id"))
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+    }
 
+    subjectsList, err := u.miuApiClient.GetSubjectsList(token, userId)
+    if err != nil {
+        if errors.Is(err, client.ErrInvalidToken) {
+            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+        }
+        return u.handleAPIError(c, err, SourceMIU)
+    }
+
+    return c.JSON(http.StatusOK, filter.MergeDuplicateSubjects(filter.FilterSubjectsBySemester(subjectsList)))
+}
