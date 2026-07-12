@@ -5,7 +5,7 @@ package models
 //TODO: получение GroupId есть
 //TODO: получение Major есть
 //TODO: получение Specialization есть
-//TODO: получение Course
+//TODO: получение Course есть
 //TODO: получение Institution есть
 type UserInfo struct {
 	FullName 		string 	`json:"full_name"`
