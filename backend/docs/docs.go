@@ -127,29 +127,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/test": {
-            "get": {
-                "description": "Возвращает успешное сообщение для проверки работоспособности API",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "test"
-                ],
-                "summary": "Тестовый эндпоинт",
-                "responses": {
-                    "200": {
-                        "description": "Успешное выполнение",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {

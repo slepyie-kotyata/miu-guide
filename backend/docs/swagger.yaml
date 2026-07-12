@@ -122,19 +122,4 @@ paths:
       summary: Расписание на сегодня
       tags:
       - schedule
-  /test:
-    get:
-      description: Возвращает успешное сообщение для проверки работоспособности API
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Успешное выполнение
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Тестовый эндпоинт
-      tags:
-      - test
 swagger: "2.0"
