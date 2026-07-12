@@ -36,7 +36,6 @@ isEmpty: boolean = false;
     addIcons({ caretBack, caretForward });
   }
 
-// В ngOnInit
 ngOnInit() {
   this.generateWeek(this.currentBaseDate);
   
@@ -45,7 +44,6 @@ ngOnInit() {
   
   this.activeDayIndex = todayIndex;
   
-  // ВМЕСТО this.loadToday(), вызывайте:
   this.selectDay(this.activeDayIndex); 
 }
   formatDateStr(date: Date): string {
@@ -56,7 +54,6 @@ ngOnInit() {
 
   generateWeek(baseDate: Date) {
     this.weekDays = [];
-    // Добавили "Вс"
     const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']; 
     
     const dateCopy = new Date(baseDate.getTime());
@@ -65,11 +62,9 @@ ngOnInit() {
     const diff = dateCopy.getDate() - day + (day === 0 ? -6 : 1);
     const monday = new Date(dateCopy.setDate(diff));
 
-    // ИСПРАВЛЕНИЕ: Добавили расчет воскресенья для заголовка
     const sunday = new Date(monday.getTime());
     sunday.setDate(monday.getDate() + 6);
 
-    // Теперь цикл идет до 7, чтобы захватить все дни недели
     for (let i = 0; i < 7; i++) {
       const nextDay = new Date(monday.getTime());
       nextDay.setDate(monday.getDate() + i);
@@ -111,21 +106,20 @@ ngOnInit() {
 selectDay(index: number) {
   this.activeDayIndex = index;
   this.isLoading = true;
-  this.errorMessage = null; // Очищаем ошибку перед новым запросом
+  this.errorMessage = null; 
   
   const targetDate = this.weekDays[index].date;
   const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');   
 
  this.scheduleService.getDaySchedule(this.groupId, dateString).subscribe({
   next: (data) => {
-    // ВАЖНО: принудительно делаем массив, даже если пришел null
     this.lessons = Array.isArray(data) ? data : []; 
     this.isLoading = false;
   },
   error: (err) => {
     console.error('Ошибка загрузки', err);
     this.errorMessage = 'Ошибка сервера. Попробуйте обновить страницу.';
-    this.lessons = []; // Гарантированно пустой массив
+    this.lessons = []; 
     this.isLoading = false;
   }
 });
@@ -133,20 +127,19 @@ selectDay(index: number) {
 
   loadSchedule() {
   this.isLoading = true;
-  this.errorMessage = null; // Сбрасываем старые ошибки
-  this.isEmpty = false;     // Сбрасываем флаг пустоты
+  this.errorMessage = null; 
+  this.isEmpty = false;    
 
   this.scheduleService.getDaySchedule(39, '2026.09.08').subscribe({
     next: (data) => {
       this.isLoading = false;
       this.lessons = data;
-      // Проверяем, пустой ли массив
       this.isEmpty = data.length === 0;
     },
     error: (err) => {
       this.isLoading = false;
       this.errorMessage = 'Что-то пошло не так. Попробуйте позже.';
-      this.lessons = []; // Очищаем список при ошибке
+      this.lessons = []; 
     }
   });
 }

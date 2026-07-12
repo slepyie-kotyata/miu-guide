@@ -1,7 +1,6 @@
 <ion-content [fullscreen]="true">
   <div class="schedule-content">
     
-    <!-- Выводим динамический заголовок со строкой дат -->
     <div class="header-container">
   <h1 class="main-title">{{ weekType }}</h1>
   <p class="date-subtitle">{{ dateRange }}</p>
@@ -43,9 +42,7 @@
   </div>
 </ion-content>
 <ion-footer class="ion-no-border">
-    <!-- Блок с переключением дней недели -->
     <div class="days-nav-wrapper">
-      <!-- ДОБАВЛЕНО: (click)="prevWeek()" -->
       <button class="nav-arrow-btn" type="button" (click)="prevWeek()">
         <ion-icon name="caret-back" class="nav-arrow"></ion-icon>
       </button>      
@@ -57,12 +54,10 @@
           [class.active]="activeDayIndex === i"
           (click)="selectDay(i)"
           type="button">
-          <!-- ДОБАВЛЕНО: .name, так как теперь это объект -->
           {{ day.name }}
         </button>
       </div>
       
-      <!-- ДОБАВЛЕНО: (click)="nextWeek()" -->
       <button class="nav-arrow-btn" type="button" (click)="nextWeek()">
         <ion-icon name="caret-forward" class="nav-arrow"></ion-icon>
       </button>

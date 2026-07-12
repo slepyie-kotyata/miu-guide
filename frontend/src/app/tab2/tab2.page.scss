@@ -2,7 +2,6 @@ ion-content {
   --background: #f8f9fa;
 }
 
-/* Обертка на весь экран для правильного позиционирования кнопок внизу */
 .schedule-content {
   display: flex;
   flex-direction: column;
@@ -12,7 +11,7 @@ ion-content {
 
 .header-container {
   text-align: center;
-  margin: 16px 0; // Отступ сверху и снизу, чтобы не прилипало к контенту
+  margin: 16px 0; 
 
   .main-title {
     font-size: 24px;
@@ -23,12 +22,11 @@ ion-content {
 
   .date-subtitle {
     font-size: 16px;
-    font-weight: normal; // Это делает текст нежирным
-    color: #707070;      // Серый цвет для дат, чтобы они не спорили с заголовком
-    margin: 4px 0 0 0;   // Небольшой отступ от заголовка
+    font-weight: normal; 
+    color: #707070;   
+    margin: 4px 0 0 0;
   }
 }
-/* Белая карточка расписания */
 .schedule-block {
   background-color: #ffffff;
   margin: 0 24px 24px;
@@ -37,43 +35,39 @@ ion-content {
   padding: 16px 0;
   min-height: 200px;
   
-  /* ИЗМЕНЕНИЯ ЗДЕСЬ: */
   display: flex;
-  flex-direction: column; /* Элементы идут сверху вниз */
-  justify-content: flex-start; /* Старт с верхнего края */
-  align-items: stretch; /* Растягиваем элементы на всю ширину */
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: stretch; 
 }
 
 .empty-state-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 150px; /* Обязательно дай высоту */
+  min-height: 150px;
   width: 100%;
   color: #a0a0a0;
   font-size: 16px;
-  padding: 20px; /* Добавь немного воздуха */
+  padding: 20px; 
   text-align: center;
 }
 
-/* Элемент одного занятия */
 .lesson-item {
   display: flex;
   align-items: flex-start;
   padding: 12px 20px;
 }
 
-/* Блок для кружка с цифрой */
 .lesson-number-wrapper {
   margin-right: 16px;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 2px; /* Легкая корректировка по высоте */
+  padding-top: 2px; 
 }
 
-/* Сам кружок с цифрой (чистый CSS) */
 .lesson-number {
   width: 40px;
   height: 40px;
@@ -87,7 +81,6 @@ ion-content {
   color: #1a1a1a;
 }
 
-/* Текстовая часть расписания */
 .lesson-text {
   flex: 1;
 }
@@ -112,56 +105,45 @@ ion-content {
   line-height: 1.3;
 }
 
-/* =========================================
-   Навигация по дням недели (кнопки внизу) 
-   ========================================= */
-
-/* Удаляем margin-top: auto, так как футер сам прижат к низу */
 .days-nav-wrapper {
   padding: 10px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f8f9fa; /* Тот же цвет, что и фон страницы */
+  background-color: #f8f9fa;
 }
 
-/* Невидимая кнопка-обертка (увеличивает зону клика пальцем) */
 .nav-arrow-btn {
   background: transparent;
   border: none;
-  padding: 4px 8px; /* Делаем кнопку чуть шире самой иконки для удобства */
-  display: flex;
+  padding: 4px 8px; 
   justify-content: center;
   align-items: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 8px; /* Скругленные углы при затемнении */
+  border-radius: 8px; 
 }
 
-/* Мгновенное легкое затемнение при нажатии (как у других кнопок) */
 .nav-arrow-btn:active {
   background-color: rgba(0, 0, 0, 0.06); 
 }
 
-/* Сама иконка внутри кнопки */
 .nav-arrow {
   font-size: 28px;
   color: #d1d1d6; 
 }
 
-/* Контейнер для кнопок дней */
 .days-group {
   display: flex;
-  gap: 6px; /* Отступы между днями */
+  gap: 6px; 
   flex: 1;
   margin: 0 10px;
   justify-content: center;
 }
 
-/* Сами кнопки дней недели */
 .day-btn {
   flex: 1;
-  aspect-ratio: 1 / 1; /* Делает их идеальными квадратами */
+  aspect-ratio: 1 / 1; 
   max-width: 40px; 
   border-radius: 8px;
   border: none;
@@ -178,27 +160,25 @@ ion-content {
   transition: background-color 0.1s ease;
 }
 
-/* Мгновенное легкое затемнение при нажатии */
 .day-btn:active {
   background-color: #c7c7cc;
 }
 
-/* Класс для активного/выбранного дня */
 .day-btn.active {
   background-color: #d1d1d6; 
 }
 
 .loader-wrapper {
   display: flex;
-  justify-content: center; /* Центрирует по горизонтали */
-  align-items: center;     /* Центрирует по вертикали */
-  height: 150px;           /* Высота области, где будет спиннер */
-  width: 100%;             /* Занимает всю ширину карточки */
+  justify-content: center; 
+  align-items: center;     
+  height: 150px;           
+  width: 100%;            
   background: transparent;
 
   ion-spinner {
     width: 40px;
     height: 40px;
-    color: #a0a0a0;        /* Цвет вашего спиннера */
+    color: #a0a0a0;     
   }
 }
