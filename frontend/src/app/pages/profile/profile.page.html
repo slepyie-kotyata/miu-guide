@@ -7,65 +7,62 @@
         <img src="/assets/icons/profile_student_icon.svg" />
       </div>
       <div class="user-info">
-        <h2>Иванов Иван</h2>
-        <p>Группа: ИПС311-2</p>
+        <h2>{{ user().full_name }}</h2>
+        <p>Группа: {{ user().group_name }}</p>
       </div>
     </div>
 
     <div class="menu-block">
-      
+
       <div class="menu-item hide-chevron">
         <div class="icon-wrapper">
           <img src="/assets/icons/profile_icon_2.svg" />
         </div>
         <div class="menu-text">
-          <div class="menu-title">Курс, семестр</div>
-          <div class="menu-subtitle">3 курс, 8 семестр</div>
+          <div class="menu-title">Курс</div>
+          <div class="menu-subtitle">{{ user().course }} курс</div>
         </div>
-        <ion-icon name="chevron-forward-outline"></ion-icon>
       </div>
 
-  <button class="menu-item" type="button">
+  <button (click)="openMajorDetails()" class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/doc_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/doc_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">Направление подготовки</div>
-      <div class="menu-subtitle">09.03.02</div>
+      <div class="menu-subtitle">{{getMajorCode()}}</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
+    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
   </button>
 
-  <button class="menu-item" type="button">
+  <button (click)="openSubjectsList()" class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/books_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/books_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">Дисциплины текущего семестра</div>
       <div class="menu-subtitle">Нажмите чтобы узнать</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
+    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
   </button>
 
-  <button class="menu-item" type="button">
+  <button (click)="openMoodleWebsite()" class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/id_card_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/id_card_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">Открыть ЛК в браузере</div>
       <div class="menu-subtitle">Нажмите чтобы перейти в браузер</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
   </button>
 
-  <button class="menu-item" type="button">
+  <button (click)="logout()" class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/logout_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/logout_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">Выход</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
   </button>
 
 </div>
@@ -73,25 +70,25 @@
 <div class="section-title">Информация</div>
 
 <div class="menu-block">
-  
+
   <button class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/notification_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/notification_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">Помощь и поддержка</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
+    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
   </button>
 
   <button class="menu-item" type="button">
     <div class="icon-wrapper">
-      <img src="/assets/icons/heart_icon.svg" alt="icon" />
+      <img alt="icon" src="/assets/icons/heart_icon.svg" />
     </div>
     <div class="menu-text">
       <div class="menu-title">О приложении</div>
     </div>
-    <ion-icon name="chevron-forward-outline" class="menu-chevron"></ion-icon>
+    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
   </button>
 
 </div>
