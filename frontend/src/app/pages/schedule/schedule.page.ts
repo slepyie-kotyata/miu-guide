@@ -1,16 +1,23 @@
-import { Component, OnInit, signal, computed, inject, effect } from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 
-import { IonFooter, IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { caretBack, caretForward } from 'ionicons/icons';
-import { ScheduleService } from '../../services/schedule.service';
-import { Lesson, WeekDay } from '../../models/schedule.model';
-import { HapticsService } from '../../services/capacitor/haptics.service';
-import { ImpactStyle } from '@capacitor/haptics';
-import { formatDateStr, generateWeekDays, getWeekNumber, getMondayFromWeek, getSundayFromWeek } from '../../utils/date-utils';
-import { AssistantCatComponent } from "src/app/components/assistant-cat/assistant-cat.component";
-import { ChatNavigationService, ScheduleTargetDay } from '../../services/assistant/chat-navigation.service';
-import { AssistantEmotionService } from '../../services/assistant/assistant-emotion.service';
+import {IonContent, IonFooter, IonIcon, IonSpinner} from '@ionic/angular/standalone';
+import {addIcons} from 'ionicons';
+import {caretBack, caretForward} from 'ionicons/icons';
+import {ScheduleService} from '../../services/schedule.service';
+import {Lesson, WeekDay} from '../../models/schedule.model';
+import {HapticsService} from '../../services/capacitor/haptics.service';
+import {ImpactStyle} from '@capacitor/haptics';
+import {
+  formatDateStr,
+  generateWeekDays,
+  getMondayFromWeek,
+  getSundayFromWeek,
+  getWeekNumber
+} from '../../utils/date-utils';
+import {AssistantCatComponent} from "src/app/components/assistant-cat/assistant-cat.component";
+import {ChatNavigationService, ScheduleTargetDay} from '../../services/assistant/chat-navigation.service';
+import {AssistantEmotionService} from '../../services/assistant/assistant-emotion.service';
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-page-schedule',
@@ -26,23 +33,19 @@ export class SchedulePage implements OnInit {
   currentBaseDate = signal<Date>(new Date());
   weekDays = signal<WeekDay[]>([]);
   activeDayIndex = signal<number>(0);
-
   readonly weekType = computed(() => {
     const monday = getMondayFromWeek(this.weekDays());
     if (!monday) return '';
     const weekNum = getWeekNumber(monday);
     return weekNum % 2 === 0 ? 'Четная неделя' : 'Нечетная неделя';
   });
-
   readonly dateRange = computed(() => {
     const monday = getMondayFromWeek(this.weekDays());
     const sunday = getSundayFromWeek(this.weekDays());
     if (!monday || !sunday) return '';
     return `${formatDateStr(monday)}-${formatDateStr(sunday)}`;
   });
-
-  groupId = 150;
-
+  private userService = inject(UserService);
   private scheduleService = inject(ScheduleService);
   private haptics = inject(HapticsService);
   private chatNavigation = inject(ChatNavigationService);
@@ -101,7 +104,7 @@ export class SchedulePage implements OnInit {
     const targetDate = this.weekDays()[index].date;
     const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');
 
-    this.scheduleService.getDaySchedule(this.groupId, dateString).subscribe({
+    this.scheduleService.getDaySchedule(this.userService.userSignal()!.group_id, dateString).subscribe({
       next: (data) => {
         this.lessons.set(Array.isArray(data) ? data : []);
         this.isLoading.set(false);
@@ -111,24 +114,6 @@ export class SchedulePage implements OnInit {
         this.errorMessage.set('Ошибка сервера. Попробуйте обновить страницу.');
         this.lessons.set([]);
         this.isLoading.set(false);
-        this.emotionService.setEmotion('sad-eclosed-mclosed');
-      },
-    });
-  }
-
-  loadSchedule() {
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    this.scheduleService.getDaySchedule(39, '2026.09.08').subscribe({
-      next: (data) => {
-        this.isLoading.set(false);
-        this.lessons.set(data);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Что-то пошло не так. Попробуйте позже.');
-        this.lessons.set([]);
         this.emotionService.setEmotion('sad-eclosed-mclosed');
       },
     });

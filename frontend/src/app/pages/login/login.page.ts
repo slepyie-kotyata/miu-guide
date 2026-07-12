@@ -1,10 +1,11 @@
-import { Component, signal, inject } from '@angular/core';
-import { IonContent } from '@ionic/angular/standalone';
-import { NavController } from '@ionic/angular/standalone';
-import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { HapticsService } from '../../services/capacitor/haptics.service';
-import { ImpactStyle, NotificationType } from '@capacitor/haptics';
+import {Component, inject, signal} from '@angular/core';
+import {IonContent, NavController} from '@ionic/angular/standalone';
+import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../services/auth.service';
+import {HapticsService} from '../../services/capacitor/haptics.service';
+import {NotificationType} from '@capacitor/haptics';
+import {UserService} from "../../services/user.service";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-login',
@@ -20,23 +21,25 @@ export class LoginPage {
 
   private navCtrl = inject(NavController);
   private auth = inject(AuthService);
+  private userService = inject(UserService);
   private haptics = inject(HapticsService);
 
 async login() {
   this.error.set('');
-  const credentials = { 
-    login: this.username(), 
-    password: this.password() 
+  const credentials = {
+    login: this.username(),
+    password: this.password()
   };
 
   try {
-    await this.auth.login(credentials).toPromise();
-    
-    this.haptics.notification(NotificationType.Success);
-    this.navCtrl.navigateRoot('/tabs/map');
+    await firstValueFrom(this.auth.login(credentials));
+    await firstValueFrom(this.userService.loadUser(true));
+
+    await this.haptics.notification(NotificationType.Success);
+    await this.navCtrl.navigateRoot('/tabs/map');
   } catch (error: any) {
     if(error.status == 401){
-      this.error.set('Неверный логин или пароль'); 
+      this.error.set('Неверный логин или пароль');
     }
     else{
       this.error.set('Ошибка соединения с сервером')

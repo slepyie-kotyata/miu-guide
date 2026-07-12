@@ -1,5 +1,6 @@
-import { Component, EnvironmentInjector, inject } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standalone';
+import {Component, EnvironmentInjector, inject} from '@angular/core';
+import {IonIcon, IonTabBar, IonTabButton, IonTabs} from '@ionic/angular/standalone';
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-tabs',
@@ -9,4 +10,10 @@ import { IonTabs, IonTabBar, IonTabButton, IonIcon } from '@ionic/angular/standa
 })
 export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
+
+  private userService = inject(UserService);
+
+  constructor() {
+    this.userService.loadUser();
+  }
 }
