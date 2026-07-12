@@ -1,0 +1,47 @@
+<div class="cat-wrapper" *ngIf="visibilityService.isVisible()">
+
+  <div
+    class="backdrop"
+    *ngIf="dialogService.currentMessage()"
+    (click)="dialogService.handleScreenTap()">
+  </div>
+
+  <div
+    class="speech-bubble"
+    *ngIf="dialogService.currentMessage() as message"
+    (click)="dialogService.handleScreenTap()">
+    <p class="dialog-text" [innerHTML]="message.text"></p>
+    <div class="dialog-buttons" *ngIf="message.buttons && message.buttons.length > 0">
+      <button
+        *ngFor="let btn of message.buttons"
+        class="dialog-btn"
+        (click)="btn.action(); $event.stopPropagation()">
+        {{ btn.text }}
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-backdrop" *ngIf="chatService.isChatOpen()" (click)="chatService.closeChat()"></div>
+
+  <div class="speech-bubble chat-mode" *ngIf="chatService.isChatOpen()">
+    <button class="close-icon" (click)="chatService.closeChat()">×</button>
+
+    <div class="chat-history" #chatScroll>
+      <div *ngFor="let msg of chatService.conversation()"
+           [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg')">
+        {{ msg.text }}
+      </div>
+    </div>
+    <div class="input-container">
+      <input type="text" placeholder="Спроси меня..." class="chat-input" #chatInput
+             (keyup.enter)="onSendMessage(chatInput.value); chatInput.value = ''" />
+      <button class="send-btn"
+              (click)="onSendMessage(chatInput.value); chatInput.value = ''">
+        ➤
+      </button>
+    </div>
+  </div>
+
+  <img [src]="emotionService.currentEmotion()" class="cat-img" alt="Мико" (click)="chatService.handleCatClick()"/>
+
+</div>
