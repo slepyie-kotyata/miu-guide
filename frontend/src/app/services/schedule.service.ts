@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators'; // Обязательно импортируй
 import { Lesson } from '../models/schedule.model'; // Твой путь к интерфейсу
 
 @Injectable({
@@ -18,6 +19,12 @@ getDaySchedule(groupId: number, date: string): Observable<Lesson[]> {
     params: {
       day: date
     }
-  });
-}
+  }).pipe(
+      // Перехватываем ошибку
+      catchError((error: HttpErrorResponse) => {
+        console.error('Ошибка API:', error);
+        return throwError(() => new Error('Сервер недоступен или произошла ошибка'));
+      })
+    );
+  }
 }

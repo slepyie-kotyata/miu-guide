@@ -44,12 +44,16 @@ ion-content {
   align-items: stretch; /* Растягиваем элементы на всю ширину */
 }
 
-/* Добавь это для центрирования пустого состояния и загрузки */
-.empty-state-wrapper, .loader-wrapper {
-  flex: 1; /* Занимает всё свободное место */
+.empty-state-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 150px; /* Обязательно дай высоту */
+  width: 100%;
+  color: #a0a0a0;
+  font-size: 16px;
+  padding: 20px; /* Добавь немного воздуха */
+  text-align: center;
 }
 
 /* Элемент одного занятия */

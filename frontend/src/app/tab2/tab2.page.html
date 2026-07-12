@@ -7,37 +7,39 @@
   <p class="date-subtitle">{{ dateRange }}</p>
 </div>
 
-    <div class="schedule-block">
-      
-<div class="loader-wrapper" *ngIf="isLoading">
-  <ion-spinner name="crescent"></ion-spinner>
+<div class="schedule-block">
+  
+  <div class="loader-wrapper" *ngIf="isLoading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="empty-state-wrapper" *ngIf="!isLoading && errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div class="empty-state-wrapper" *ngIf="!isLoading && !errorMessage && lessons.length === 0">
+    <p>На этот день расписания нет</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !errorMessage && lessons.length > 0">
+    <div class="lesson-item" *ngFor="let lesson of lessons; let i = index">
+      <div class="lesson-number-wrapper">
+        <div class="lesson-number">{{ i + 1 }}</div>
+      </div>
+      <div class="lesson-text">
+        <div class="lesson-time">{{ lesson.beginLesson }} – {{ lesson.endLesson }}</div>
+        <div class="lesson-title">{{ lesson.discipline }}</div>
+        <div class="lesson-subtitle" *ngFor="let prof of lesson.listOfLecturers">
+          {{ prof.auditorium }} – {{ prof.lecturer }}
+        </div>
+        <div class="lesson-type" style="font-size: 0.8em; color: #666;">
+          {{ lesson.kindOfWork }}
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
 </div>
-      <!-- Если загрузка прошла, но список пуст -->
-      <div class="empty-state-wrapper" *ngIf="!isLoading && lessons.length === 0">
-        На этот день расписания нет
-      </div>
-
-    <ng-container *ngIf="!isLoading && lessons.length > 0">
-      <div class="lesson-item" *ngFor="let lesson of lessons; let i = index">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">{{ i + 1 }}</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">{{ lesson.beginLesson }} – {{ lesson.endLesson }}</div>
-          <div class="lesson-title">{{ lesson.discipline }}</div>
-          
-          <div class="lesson-subtitle" *ngFor="let prof of lesson.listOfLecturers">
-            {{ prof.auditorium }} – {{ prof.lecturer }}
-          </div>
-          
-          <div class="lesson-type" style="font-size: 0.8em; color: #666;">
-            {{ lesson.kindOfWork }}
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-    </div>  
   </div>
 </ion-content>
 <ion-footer class="ion-no-border">

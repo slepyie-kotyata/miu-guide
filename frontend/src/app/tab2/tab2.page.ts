@@ -21,7 +21,9 @@ interface WeekDay {
 export class Tab2Page implements OnInit {
   lessons: Lesson[] = []; 
   isLoading: boolean = true;
-  
+  errorMessage: string | null = null;
+isEmpty: boolean = false;
+
   currentBaseDate: Date = new Date(); 
   weekDays: WeekDay[] = []; 
   activeDayIndex: number = 0; 
@@ -104,23 +106,48 @@ ngOnInit() {
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1)/7);
   }
 
-  selectDay(index: number) {
-    this.activeDayIndex = index;
-    this.isLoading = true;
-    
-    const targetDate = this.weekDays[index].date;
-    const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');   
+  // tab2.page.ts
 
-    this.scheduleService.getDaySchedule(this.groupId, dateString).subscribe({
-      next: (data) => {
-        this.lessons = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Ошибка загрузки', err);
-        this.isLoading = false;
-        this.lessons = [];
-      }
-    });
+selectDay(index: number) {
+  this.activeDayIndex = index;
+  this.isLoading = true;
+  this.errorMessage = null; // Очищаем ошибку перед новым запросом
+  
+  const targetDate = this.weekDays[index].date;
+  const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');   
+
+ this.scheduleService.getDaySchedule(this.groupId, dateString).subscribe({
+  next: (data) => {
+    // ВАЖНО: принудительно делаем массив, даже если пришел null
+    this.lessons = Array.isArray(data) ? data : []; 
+    this.isLoading = false;
+  },
+  error: (err) => {
+    console.error('Ошибка загрузки', err);
+    this.errorMessage = 'Ошибка сервера. Попробуйте обновить страницу.';
+    this.lessons = []; // Гарантированно пустой массив
+    this.isLoading = false;
   }
+});
+}
+
+  loadSchedule() {
+  this.isLoading = true;
+  this.errorMessage = null; // Сбрасываем старые ошибки
+  this.isEmpty = false;     // Сбрасываем флаг пустоты
+
+  this.scheduleService.getDaySchedule(39, '2026.09.08').subscribe({
+    next: (data) => {
+      this.isLoading = false;
+      this.lessons = data;
+      // Проверяем, пустой ли массив
+      this.isEmpty = data.length === 0;
+    },
+    error: (err) => {
+      this.isLoading = false;
+      this.errorMessage = 'Что-то пошло не так. Попробуйте позже.';
+      this.lessons = []; // Очищаем список при ошибке
+    }
+  });
+}
 }
