@@ -1,0 +1,30 @@
+<ion-content [fullscreen]="true" [scrollY]="false">
+  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info" />
+  <h1 class="page-title">{{ mapTitle() }}</h1>
+
+  @if (showMap()) {
+    <pinch-zoom class="map-zoom-container">
+      <div class="map-viewport">
+        <img [src]="mapImage()" class="map-image" alt="Карта" />
+      </div>
+    </pinch-zoom>
+  }
+
+  <div class="floor-selector">
+    @for (floor of currentFloors(); track floor) {
+      <button
+        class="floor-btn"
+        [class.active]="currentFloor() === floor"
+        (click)="selectFloor(floor)">
+        {{ floor }}
+      </button>
+    }
+  </div>
+
+  <button class="mode-toggle-btn" (click)="toggleMode()">
+    {{ currentMode() }}
+  </button>
+
+  <app-assistant-cat></app-assistant-cat>
+
+</ion-content>

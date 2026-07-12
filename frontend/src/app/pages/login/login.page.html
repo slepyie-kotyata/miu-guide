@@ -1,0 +1,19 @@
+<ion-content class="login-content">
+  <div class="yellow-card">
+    <h1>МОСКОВСКИЙ<br>МЕЖДУНАРОДНЫЙ<br>УНИВЕРСИТЕТ</h1>
+
+    <div class="input-wrapper">
+      <input type="text" placeholder="Логин" [ngModel]="username()" (ngModelChange)="username.set($event)">
+    </div>
+
+    <div class="input-wrapper">
+      <input type="password" placeholder="Пароль" [ngModel]="password()" (ngModelChange)="password.set($event)">
+    </div>
+
+    <button class="login-btn" (click)="login()">Вход</button>
+
+    <button class="guest-link" (click)="guestLogin()">
+      Войти как гость
+    </button>
+  </div>
+</ion-content>
