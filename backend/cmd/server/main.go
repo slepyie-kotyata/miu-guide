@@ -32,8 +32,8 @@ func main() {
     }
     defer rdb.Close()
 
-	ac, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
-    scheduleHandler, userHandler := handlers.NewScheduleHandler(ac, rdb), handlers.NewUserHandler(mc)
+	sc, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
+    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, rdb), handlers.NewUserHandler(mc, sc)
 	
 	e := echo.New()
 	access := e.Group("/access", middleware.ExtractTokenMiddleware)

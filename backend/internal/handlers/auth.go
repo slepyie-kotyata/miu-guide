@@ -24,7 +24,7 @@ import (
 // @Router       /auth [post]
 func (u *UserHandler) Authorize(c *echo.Context) error {
     //получаем Token
-    token, err := u.apiClient.GetToken(models.AuthRequest{
+    token, err := u.miuApiClient.GetToken(models.AuthRequest{
         Login:    c.FormValue("login"), 
         Password: c.FormValue("password"),
     })
@@ -37,7 +37,7 @@ func (u *UserHandler) Authorize(c *echo.Context) error {
     }
 
     // получаем UserID
-    userId, err := u.apiClient.GetUserId(token)
+    userId, err := u.miuApiClient.GetUserId(token)
     if err != nil {
         if errors.Is(err, client.ErrExternalFailure) {
             return c.JSON(http.StatusBadGateway, map[string]any{ "code": 1 })
