@@ -10,7 +10,7 @@ import { KeyboardService } from './services/capacitor/keyboard.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit {
-  private assistantDialogService = inject(AssistantDialogService);
+  //private assistantDialogService = inject(AssistantDialogService);
   private statusBarService = inject(StatusBarService);
   private keyboardService = inject(KeyboardService);
 
@@ -19,6 +19,6 @@ export class AppComponent implements OnInit {
 
     this.statusBarService.setup();
     this.keyboardService.setup();
-    this.assistantDialogService.startOnboarding();
+    //this.assistantDialogService.startOnboarding();
   }
 }

@@ -28,28 +28,21 @@
 
   <app-assistant-cat></app-assistant-cat>
 
-  <ion-modal
-    [isOpen]="isModalOpen()"
-    (didDismiss)="closeRoomModal()"
-    [initialBreakpoint]="0.3"
-    [breakpoints]="[0, 0.3, 0.5, 0.85]"
-    backdropBreakpoint="0.5"
-  >
-    <ng-template>
-      <ion-title>{{ roomData()?.name || 'Информация' }}</ion-title>
-
-<ion-content class="ion-padding">
-  @if (roomData()) {
-    <div class="room-info-container">
+  @if (isModalOpen() && roomData()) {
+  <div class="custom-info-card">
+    <div class="card-header">
       <h3>{{ roomData().name }}</h3>
-      <p>{{ roomData().category }}</p>
-      <p>{{ roomData().description }}</p>
+      <button class="close-btn" (click)="closeRoomModal()">×</button>
     </div>
-  } @else {
-    <p>Информация для {{ selectedRoomId() }} еще не добавлена.</p>
-  }
-</ion-content>
-    </ng-template>
-  </ion-modal>
+    <div class="card-content">
+      <p><strong>Категория:</strong> {{ roomData().category }}</p>
+      <p><strong></strong> {{ roomData().description }}</p>
+    </div>
+  </div>
+}
+
+@if (isModalOpen()) {
+  <div class="backdrop" (click)="closeRoomModal()"></div>
+}
 
 </ion-content>
