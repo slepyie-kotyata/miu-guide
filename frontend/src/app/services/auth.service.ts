@@ -1,19 +1,24 @@
-import { Injectable, signal, computed } from '@angular/core';
+// src/app/services/auth.service.ts
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private _isAuthenticated = signal(false);
-  readonly isAuthenticated = computed(() => this._isAuthenticated());
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
-  login(username: string, pass: string): boolean {
-    if (username === 'student' && pass === '123') {
-      this._isAuthenticated.set(true);
-      return true;
-    }
-    return false;
-  }
-
-  logout(): void {
-    this._isAuthenticated.set(false);
+  login(credentials: { login: string, password: string }): Observable<any> {
+    const formData = new FormData();
+    formData.append('login', credentials.login);
+    formData.append('password', credentials.password);
+    return this.http.post<{token:string, user_id:number}>(`${this.apiUrl}/auth`, formData).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user_id', response.user_id.toString());
+      })
+    );
   }
 }

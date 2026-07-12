@@ -21,15 +21,26 @@ export class LoginPage {
   private auth = inject(AuthService);
   private haptics = inject(HapticsService);
 
-  login() {
-    if (this.auth.login(this.username(), this.password())) {
-      this.haptics.notification(NotificationType.Success);
-      this.navCtrl.navigateRoot('/tabs/map');
-    } else {
-      this.haptics.notification(NotificationType.Error);
-      alert('Неверный логин или пароль');
-    }
+// Внутри LoginPage
+async login() {
+  const credentials = { 
+    login: this.username(), 
+    password: this.password() 
+  };
+
+  try {
+    // Ждем ответ от сервера
+    await this.auth.login(credentials).toPromise();
+    
+    // Если запрос прошел успешно (статус 200)
+    this.haptics.notification(NotificationType.Success);
+    this.navCtrl.navigateRoot('/tabs/map');
+  } catch (error) {
+    // Если ошибка (например, 401 Unauthorized)
+    this.haptics.notification(NotificationType.Error);
+    alert('Неверный логин или пароль');
   }
+}
 
   guestLogin() {
     this.haptics.impact(ImpactStyle.Light);
