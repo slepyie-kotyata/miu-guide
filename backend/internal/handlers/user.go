@@ -128,6 +128,19 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     })
 }
 
+// @Summary      Получение списка предметов
+// @Description  Получение списка предметов на текущий семестр
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      int  true  "ID пользователя"
+// @Success      200  {object}  []string "Успешный ответ"
+// @Failure      400  {object}  map[string]int  "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2"
+// @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
+// @Failure      500  {object}  map[string]int  "{"code": 1} - Внутренняя ошибка сервера"
+// @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3"
+// @Router       /access/users/{id}/subjects [get]
 func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))

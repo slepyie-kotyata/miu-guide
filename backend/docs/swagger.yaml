@@ -120,6 +120,56 @@ paths:
       summary: Получение информации о пользователе
       tags:
       - users
+  /access/users/{id}/subjects:
+    get:
+      consumes:
+      - application/json
+      description: Получение списка предметов на текущий семестр
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: 'Неверный формат ID - code: 1, Пустой токен в Bearer - code:
+            2'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "401":
+          description: '{"code": 2} - Невалидный токен(истек срок)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "500":
+          description: '{"code": 1} - Внутренняя ошибка сервера'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: '{"code": 3} - Недоступность API ЛК ММУ - code: 3'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение списка предметов
+      tags:
+      - users
   /auth:
     post:
       consumes:
