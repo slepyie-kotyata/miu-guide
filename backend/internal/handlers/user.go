@@ -12,12 +12,14 @@ import (
 // get /subjects -> get /access/users/:id/subjects
 
 type UserHandler struct {
-	apiClient	*client.MIUClient
+	miuApiClient	*client.MIUClient
+	scheduleApiClient *client.ScheduleAPIClient
 }
 
-func NewUserHandler(mc *client.MIUClient) *UserHandler {
+func NewUserHandler(mc *client.MIUClient, sc *client.ScheduleAPIClient) *UserHandler {
     return &UserHandler{
-        apiClient: mc,
+        miuApiClient: mc,
+		scheduleApiClient: sc,
     }
 }
 
