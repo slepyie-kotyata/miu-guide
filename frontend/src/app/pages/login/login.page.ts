@@ -16,29 +16,32 @@ import { ImpactStyle, NotificationType } from '@capacitor/haptics';
 export class LoginPage {
   username = signal('');
   password = signal('');
+  error = signal('');
 
   private navCtrl = inject(NavController);
   private auth = inject(AuthService);
   private haptics = inject(HapticsService);
 
-// Внутри LoginPage
 async login() {
+  this.error.set('');
   const credentials = { 
     login: this.username(), 
     password: this.password() 
   };
 
   try {
-    // Ждем ответ от сервера
     await this.auth.login(credentials).toPromise();
     
-    // Если запрос прошел успешно (статус 200)
     this.haptics.notification(NotificationType.Success);
     this.navCtrl.navigateRoot('/tabs/map');
-  } catch (error) {
-    // Если ошибка (например, 401 Unauthorized)
+  } catch (error: any) {
+    if(error.status == 401){
+      this.error.set('Неверный логин или пароль'); 
+    }
+    else{
+      this.error.set('Ошибка соединения с сервером')
+    }
     this.haptics.notification(NotificationType.Error);
-    alert('Неверный логин или пароль');
   }
 }
 
