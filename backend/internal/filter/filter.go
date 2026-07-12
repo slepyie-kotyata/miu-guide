@@ -2,8 +2,12 @@ package filter
 
 import (
 	"miu-guide/internal/models"
+	"miu-guide/internal/service"
+	"regexp"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type GroupKey struct {
@@ -65,4 +69,51 @@ func FilterSchedule(rawLessons []models.RawSchedule) []models.Schedule {
 	})
 
 	return result
+}
+
+var coursePattern = regexp.MustCompile(`(?i)(весна|осень)\s+(\d{4})/(\d{2})`)
+
+func expectedSemesterInfo(t time.Time) (string, int, int) {
+	var (
+		startYear int
+		endYear int
+		expectedSeason string
+	)
+	thisMonth, thisYear := t.Month(), t.Year()
+
+	if thisMonth >= time.September && thisMonth < time.February {
+		startYear = thisYear
+		expectedSeason = "осень"
+	} else {
+		startYear = thisYear - 1
+		expectedSeason = "весна"
+	}
+
+	endYear = startYear + 1
+	return expectedSeason, startYear, endYear
+}
+
+func IsCurrentSubject(shortname string, currentTime time.Time) bool {
+	matches := coursePattern.FindStringSubmatch(shortname)
+	if len(matches) < 4 {
+		return false
+	}
+
+	parsedSeason := matches[1]
+	parsedStartYear, _ := strconv.Atoi(matches[2])
+	parsedEndYear, _ := strconv.Atoi(matches[3])
+
+	expectedSeason, expStartYear, expEndYear := expectedSemesterInfo(currentTime)
+
+	return parsedSeason == expectedSeason && parsedStartYear == expStartYear && parsedEndYear + 2000 == expEndYear
+}
+
+func FilterSubjectsList(subjects []models.Subjects) []string {
+	filteredSubjects := make([]string, 0)
+	for _, subject := range subjects {
+		if IsCurrentSubject(subject.ShortName, service.GetTime()) {
+			filteredSubjects = append(filteredSubjects, subject.FullName)
+		}
+	}
+	return filteredSubjects
 }
