@@ -1,5 +1,9 @@
 package routes
 
-import "github.com/labstack/echo/v5"
+import (
+	"miu-guide/internal/handlers"
 
-func InitUserRoutes(auth *echo.Group)
+	"github.com/labstack/echo/v5"
+)
+
+func InitUserRoutes(auth *echo.Group, uh *handlers.UserHandler)

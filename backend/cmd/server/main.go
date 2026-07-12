@@ -33,14 +33,14 @@ func main() {
     defer rdb.Close()
 
 	ac, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
-    scheduleHandler, authHandler := handlers.NewScheduleHandler(ac, rdb), handlers.NewAuthHandler(mc)
+    scheduleHandler, userHandler := handlers.NewScheduleHandler(ac, rdb), handlers.NewUserHandler(mc)
 	
 	e := echo.New()
-	auth := e.Group("/access", middleware.ExtractTokenMiddleware)
+	access := e.Group("/access", middleware.ExtractTokenMiddleware)
 
-	routes.InitAuthRoutes(e, authHandler)
 	routes.InitScheduleRoutes(e, scheduleHandler)
-	routes.InitUserRoutes(auth)
+	routes.InitAuthRoutes(e, userHandler)
+	routes.InitUserRoutes(access, userHandler)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	
