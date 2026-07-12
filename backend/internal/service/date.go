@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const layout = "2006-01-02"
+const layout = "2006.01.02"
 var mskLoc *time.Location
 
 func init() {
@@ -13,7 +13,7 @@ func init() {
 	mskLoc, err = time.LoadLocation("Europe/Moscow")
 	if err != nil {
 		log.Printf("error loading timezone location, using system time: %v", err)
-		mskLoc = time.Local 
+		mskLoc = time.Local
 	}
 }
 
