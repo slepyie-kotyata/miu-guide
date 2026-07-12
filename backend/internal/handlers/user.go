@@ -76,9 +76,22 @@ func determineCourse(groupName string, now time.Time) int {
 		academicYearEnd++
 	}
 
-	return (academicYearEnd%10 - enrollDigit + 10) % 10
+	return (academicYearEnd % 10 - enrollDigit + 10) % 10
 }
 
+// @Summary      Получение информации о пользователе
+// @Description  Получение данных о студенте
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      int  true  "ID пользователя"
+// @Success      200  {object}  models.UserInfo "Успешный ответ"
+// @Failure      400  {object}  map[string]int  "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2"
+// @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
+// @Failure      500  {object}  map[string]int  "{"code": 1} - Внутренняя ошибка сервера"
+// @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1"
+// @Router       /access/users/{id} [get]
 func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))

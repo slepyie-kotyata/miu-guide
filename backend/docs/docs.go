@@ -21,6 +21,79 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/access/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение данных о студенте",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получение информации о пользователе",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"code\": 2} - Невалидный токен(истек срок)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "{\"code\": 1} - Внутренняя ошибка сервера",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "{\"code\": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth": {
             "post": {
                 "description": "Проксирует запрос в MIU API, проверяет логин/пароль и возвращает токен и ID пользователя",
@@ -210,10 +283,6 @@ const docTemplate = `{
             "properties": {
                 "code": {
                     "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ],
                     "example": 1
                 }
             }
@@ -271,6 +340,43 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "models.UserInfo": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "type": "integer"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "integer"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "institution": {
+                    "description": "формат учебы (очный/заочный и т.п.)",
+                    "type": "string"
+                },
+                "major": {
+                    "description": "направление",
+                    "type": "string"
+                },
+                "specialization": {
+                    "description": "профиль",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Вставьте токен в формате: Bearer {ваш_токен}",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -3,9 +3,6 @@ definitions:
   handlers.ErrorResponse:
     properties:
       code:
-        enum:
-        - 1
-        - 2
         example: 1
         type: integer
     type: object
@@ -44,6 +41,26 @@ definitions:
           $ref: '#/definitions/models.LecturerInfo'
         type: array
     type: object
+  models.UserInfo:
+    properties:
+      course:
+        type: integer
+      full_name:
+        type: string
+      group_id:
+        type: integer
+      group_name:
+        type: string
+      institution:
+        description: формат учебы (очный/заочный и т.п.)
+        type: string
+      major:
+        description: направление
+        type: string
+      specialization:
+        description: профиль
+        type: string
+    type: object
 info:
   contact:
     name: Команда "Слепые Котята"
@@ -54,6 +71,55 @@ info:
   title: MIU-Guide API
   version: "1.0"
 paths:
+  /access/users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получение данных о студенте
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: 'Неверный формат ID - code: 1, Пустой токен в Bearer - code:
+            2'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "401":
+          description: '{"code": 2} - Невалидный токен(истек срок)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "500":
+          description: '{"code": 1} - Внутренняя ошибка сервера'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: '{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность
+            API Расписания - code: 1'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение информации о пользователе
+      tags:
+      - users
   /auth:
     post:
       consumes:
@@ -180,4 +246,10 @@ paths:
       summary: Расписание на сегодня
       tags:
       - schedule
+securityDefinitions:
+  BearerAuth:
+    description: 'Вставьте токен в формате: Bearer {ваш_токен}'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

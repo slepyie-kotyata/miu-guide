@@ -23,6 +23,10 @@ import (
 // @contact.url https://github.com/slepyie-kotyata/miu-guide
 // @license.name MIT License
 // @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Вставьте токен в формате: Bearer {ваш_токен}
 func main() {
 	if err := godotenv.Load(); err != nil {
         log.Println(".env not found. using system environment")
