@@ -8,12 +8,13 @@ import { Lesson, WeekDay } from '../../models/schedule.model';
 import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
 import { formatDateStr, generateWeekDays, getWeekNumber, getMondayFromWeek, getSundayFromWeek } from '../../utils/date-utils';
+import { AssistantCatComponent } from "src/app/components/assistant-cat/assistant-cat.component";
 
 @Component({
   selector: 'app-page-schedule',
   templateUrl: 'schedule.page.html',
   styleUrls: ['schedule.page.scss'],
-  imports: [IonContent, IonIcon, IonSpinner, IonFooter],
+  imports: [IonContent, IonIcon, IonSpinner, IonFooter, AssistantCatComponent],
 })
 export class SchedulePage implements OnInit {
   lessons = signal<Lesson[]>([]);
