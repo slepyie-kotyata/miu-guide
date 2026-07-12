@@ -13,6 +13,8 @@ import {
 import { AssistantCatComponent } from '../../components/assistant-cat/assistant-cat.component';
 import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
+import { ROOMS_DATA } from 'src/app/data/map-data';
+
 
 @Component({
   selector: 'app-page-map',
@@ -37,6 +39,11 @@ export class MapPage {
   svgContent = signal<SafeHtml | null>(null);
   selectedRoomId = signal<string | null>(null);
   isModalOpen = signal<boolean>(false);
+  
+  readonly roomData = computed(() => {
+  const id = this.selectedRoomId();
+  return id ? ROOMS_DATA[id] : null;
+});
 
   readonly currentFloors = computed(() =>
     this.currentMode() === 'ГК' ? [6, 5, 4, 3, 2, 1] : [4, 3, 2, 1],
@@ -71,25 +78,24 @@ export class MapPage {
   }
 
 onMapClick(event: MouseEvent) {
-    const target = event.target as Element;
-    const clickedElement = target.closest('[id]');
+  const target = event.target as Element;
+  
+  const clickedPoint = target.closest('[id$="_point"]');
+  
+  if (clickedPoint) {
+    const fullId = clickedPoint.id;
     
-    if (clickedElement) {
-      const id = clickedElement.id;
-      
-      if (id !== 'map-root' && !id.startsWith('ion-')) {
-        console.log('📍 Клик по кабинету:', id);
-        this.haptics.impact(ImpactStyle.Light);
-        
-        this.selectedRoomId.set(id);
-        this.isModalOpen.set(true);
-      }
-    }
+    const cleanId = fullId.replace('_point', '');
+    
+    console.log('📍 Клик по точке:', cleanId);
+    this.haptics.impact(ImpactStyle.Light);
+    
+    this.selectedRoomId.set(cleanId);
+    this.isModalOpen.set(true);
   }
-
+}
   closeRoomModal() {
     this.isModalOpen.set(false);
-    // Небольшая задержка, чтобы текст не пропадал до окончания анимации закрытия
     setTimeout(() => this.selectedRoomId.set(null), 300);
   }
 
