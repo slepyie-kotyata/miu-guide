@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import { MascotPhrase, MascotQuestion } from './assistant.models';
+import {inject, Injectable} from '@angular/core';
+import {MascotPhrase, MascotQuestion} from './assistant.models';
 
 import mascotPhrasesData from '../../../assets/mascot/mascot-phrases.json';
 import mascotQuestionsData from '../../../assets/mascot/mascot-questions.json';
+import {UserService} from "../user.service";
 
 @Injectable({ providedIn: 'root' })
 export class MascotDataService {
@@ -11,6 +12,8 @@ export class MascotDataService {
 
   private readonly greetingIds = [100, 101, 102];
   private readonly errorPhraseIds = [103, 104, 105];
+
+  private userService = inject(UserService);
 
   getPhrases(): MascotPhrase[] {
     return this.phrases;
@@ -86,7 +89,15 @@ export class MascotDataService {
   }
 
   private getStudentName(): string {
-    return localStorage.getItem('studentName') || 'студент';
+    const full_name = this.userService.userSignal()?.full_name;
+    if (full_name) {
+      const names = full_name.split(' ');
+      if (names.length > 1) {
+        return names[1];
+      }
+    }
+
+    return 'студент';
   }
 
   private interpolate(text: string, value: string): string {
