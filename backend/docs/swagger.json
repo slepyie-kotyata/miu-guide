@@ -14,6 +14,81 @@
     },
     "basePath": "/",
     "paths": {
+        "/auth": {
+            "post": {
+                "description": "Проксирует запрос в MIU API, проверяет логин/пароль и возвращает токен и ID пользователя",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Логин пользователя (имя пользователя)",
+                        "name": "login",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Пароль пользователя",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверный логин или пароль (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка MIUApi (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Сервис недоступен (code: 3 - недоступность\\таймаут MIUApi)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/schedule/{group}": {
             "get": {
                 "description": "Возвращает расписание для указанной группы на выбранный день.",
@@ -113,7 +188,7 @@
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "description": "Сервис недоступен (code: 1 - недоступность\\таймаут API расписания, code: 2 - недоступность\\таймаут Redis)",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -133,6 +208,17 @@
                         2
                     ],
                     "example": 1
+                }
+            }
+        },
+        "models.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
