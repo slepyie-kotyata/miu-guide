@@ -59,6 +59,7 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
+		log.Printf("error: %s", err.Error())
 		return "", ErrUnavaliableAPI
 	}
 	defer apiResp.Body.Close()
@@ -86,6 +87,7 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
+		log.Printf("error: %s", err.Error())
 		return 0, ErrUnavaliableAPI
 	}
 	defer apiResp.Body.Close()
