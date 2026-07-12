@@ -22,7 +22,7 @@ export class AssistantDialogService {
       this.playDialog([
         {
           text: 'Привет, я, Мико!<br>У тебя уже есть данные от личного кабинета?',
-          emotion: 'miko-sit-eopen-mclosed',
+          emotion: 'sit-eopen-mclosed',
           buttons: [
             {
               text: 'Да, войти',
@@ -37,12 +37,12 @@ export class AssistantDialogService {
                 this.playDialog([
                   {
                     text: 'Отлично! Тогда давай я помогу тебе определиться. Какое направление тебе ближе?',
-                    emotion: 'miko-paw-eopen-mclosed_1',
+                    emotion: 'paw-eopen-mclosed_1',
                     buttons: [],
                   },
                   {
                     text: 'Обучение завершено! Теперь я буду жить на карте.',
-                    emotion: 'miko-sit-eopen-mclosed',
+                    emotion: 'sit-eopen-mclosed',
                     buttons: [
                       {
                         text: 'Понятно',

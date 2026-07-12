@@ -36,9 +36,27 @@
         <button class="close-icon" (click)="chatService.closeChat()">×</button>
 
         <div class="chat-history" #chatScroll>
-          @for (msg of chatService.conversation(); track msg.text + msg.sender) {
-            <div [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg')">
+          @for (msg of chatService.conversation(); track $index) {
+            <div [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg') + (msg.isError ? ' error-msg' : '')">
               {{ msg.text }}
+            </div>
+            @if (msg.sender === 'cat' && msg.showSuggestions && chatService.suggestedQuestions().length > 0) {
+              <div class="suggested-questions">
+                @for (question of chatService.suggestedQuestions(); track question) {
+                  <button
+                    class="suggested-question-card"
+                    (click)="chatService.selectSuggestedQuestion(question)">
+                    {{ question }}
+                  </button>
+                }
+              </div>
+            }
+          }
+          @if (chatService.isTyping()) {
+            <div class="message-bubble cat-msg typing-bubble">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
             </div>
           }
         </div>
