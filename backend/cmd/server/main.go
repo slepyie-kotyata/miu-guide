@@ -7,6 +7,7 @@ import (
 	"miu-guide/internal/connection"
 	"miu-guide/internal/handlers"
 	"miu-guide/internal/routes"
+	"miu-guide/internal/service"
 	"net/http"
 
 	"github.com/joho/godotenv"
@@ -22,6 +23,10 @@ import (
 // @contact.url https://github.com/slepyie-kotyata/miu-guide
 // @license.name MIT License
 // @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Вставьте токен в формате: Bearer {ваш_токен}
 func main() {
 	if err := godotenv.Load(); err != nil {
         log.Println(".env not found. using system environment")
@@ -33,18 +38,20 @@ func main() {
     }
     defer rdb.Close()
 
-	ac := client.NewScheduleAPIClient()
-    scheduleHandler := handlers.NewScheduleHandler(ac, rdb)
+	sc, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
+    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, rdb), handlers.NewUserHandler(mc, sc)
 	
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:8100"},
       	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-      	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
+    	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
   	}))
+	access := e.Group("/access", service.ExtractTokenMiddleware)
 
-	routes.InitAuthRoutes(e)
 	routes.InitScheduleRoutes(e, scheduleHandler)
+	routes.InitAuthRoutes(e, userHandler)
+	routes.InitUserRoutes(access, userHandler)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	

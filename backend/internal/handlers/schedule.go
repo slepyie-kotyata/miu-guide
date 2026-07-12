@@ -9,6 +9,7 @@ import (
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
+	"miu-guide/internal/service"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,24 +17,6 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/redis/go-redis/v9"
 )
-
-var layout = "2006.01.02"
-
-func validateDate(date string) bool {
-	_, err := time.Parse(layout, date)
-	return err == nil
-}
-
-func getDate() string {
-	loc, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		fmt.Println("error loading location:", err)
-		return time.Now().Format(layout)
-	}
-
-	moscowTime := time.Now().In(loc)
-	return moscowTime.Format(layout)
-}
 
 type ScheduleHandler struct {
     apiClient 	*client.ScheduleAPIClient
@@ -71,7 +54,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
     }
 
 	//2. если нет запрашиваем у api и кэшируем
-	apiResp, err := s.apiClient.FetchData(groupId, scheduleDay)
+	apiResp, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
 	if err != nil {
 		fmt.Printf("API fetch error: %v\n", err)
 		return c.JSON(http.StatusServiceUnavailable, map[string]any{
@@ -113,7 +96,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 // @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
 // @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
 // @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
-// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность\таймаут API расписания, code: 2 - недоступность\таймаут Redis)"
 // @Router /schedule/{group}/today [get]
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
@@ -123,7 +106,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 		})
 	}
 
-	return s.getSchedule(c, groupId, getDate())
+	return s.getSchedule(c, groupId, service.GetDate())
 }
 
 // @Summary Расписание на конкретный день
@@ -139,7 +122,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 // @Router /schedule/{group} [get]
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
-	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
+	if _, err := strconv.Atoi(groupId); err != nil || !service.ValidateDate(scheduleDay) {
 		return c.JSON(http.StatusBadRequest, map[string]any{
 			"code": 1,
 		})
