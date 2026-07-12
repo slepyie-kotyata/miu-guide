@@ -19,7 +19,19 @@ func NewAuthHandler(mc *client.MIUClient) *AuthHandler {
     }
 }
 
-
+// @Summary      Авторизация пользователя
+// @Description  Проксирует запрос в MIU API, проверяет логин/пароль и возвращает токен и ID пользователя
+// @Tags         auth
+// @Accept       x-www-form-urlencoded
+// @Produce      json
+// @Param        login    formData  string  true  "Логин пользователя (имя пользователя)"
+// @Param        password formData  string  true  "Пароль пользователя"
+// @Success      200      {object}  models.AuthResponse
+// @Failure      401      {object}  map[string]int  "Неверный логин или пароль (code: 1)"
+// @Failure      500      {object}  map[string]int  "Внутренняя ошибка сервера (code: 1)"
+// @Failure      502      {object}  map[string]int  "Ошибка MIUApi (code: 1)"
+// @Failure      503      {object}  map[string]int  "Сервис недоступен (code: 3 - недоступность\таймаут MIUApi)"
+// @Router       /auth [post]
 func (a *AuthHandler) Authorize(c *echo.Context) error {
     //получаем Token
     token, err := a.apiClient.GetToken(models.AuthRequest{
@@ -29,7 +41,7 @@ func (a *AuthHandler) Authorize(c *echo.Context) error {
     
     if err != nil {
         if errors.Is(err, client.ErrInvalidLogin) {
-            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 1 })
         }
         return a.handleAPIError(c, err)
     }
@@ -38,7 +50,7 @@ func (a *AuthHandler) Authorize(c *echo.Context) error {
     userId, err := a.apiClient.GetUserId(token)
     if err != nil {
         if errors.Is(err, client.ErrExternalFailure) {
-            return c.JSON(http.StatusBadGateway, map[string]any{ "code": 3 })
+            return c.JSON(http.StatusBadGateway, map[string]any{ "code": 1 })
         }
         return a.handleAPIError(c, err)
     }

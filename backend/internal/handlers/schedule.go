@@ -112,7 +112,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 // @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
 // @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
 // @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
-// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность\таймаут API расписания, code: 2 - недоступность\таймаут Redis)"
 // @Router /schedule/{group}/today [get]
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
