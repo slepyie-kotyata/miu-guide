@@ -118,14 +118,14 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 	}
 	defer apiResp.Body.Close()
 
-	var result UserInfoResponse
+	var result []UserInfoResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		return nil, ErrInternal
-	}
-
-	if result.ErrorCode == InvalidTokenCode {
 		return nil, ErrInvalidToken
 	}
 
-	return &result, nil
+	if len(result) == 0 {
+		return nil, ErrInternal
+	}
+
+	return &result[0], nil
 }

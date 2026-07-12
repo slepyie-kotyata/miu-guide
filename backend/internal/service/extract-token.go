@@ -13,7 +13,7 @@ func ExtractTokenMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		
 		if token == "" {
-			return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+			return c.JSON(http.StatusBadRequest, map[string]any{ "code": 2 })
 		}
 
 		c.Set("token", token)
