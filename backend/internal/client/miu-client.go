@@ -22,6 +22,7 @@ var (
 	ErrInvalidToken		= errors.New("invalid moodle token")
 	ErrUnavaliableAPI	= errors.New("unavaliable api error")
 	ErrInternal			= errors.New("internal error")
+	ErrExternalFailure	= errors.New("failure in api error")
 )
 
 func NewMIUClient() *MIUClient {
@@ -41,7 +42,7 @@ type TokenResponse struct {
 
 type UserIdResponse struct {
 	UserId 		int 	`json:"userid"`
-	ErrorCode 	string 	`json:"errorcode,omitempty"`
+	ErrorCode 	string `json:"errorcode,omitempty"`
 }
 
 const InvalidTokenCode = "invalidtoken"
@@ -95,7 +96,7 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	}
 
 	if result.ErrorCode == InvalidTokenCode {
-		return 0, ErrInvalidToken
+		return 0, ErrExternalFailure
 	}
 
 	return result.UserId, nil

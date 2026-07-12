@@ -31,12 +31,12 @@ func main() {
     }
     defer rdb.Close()
 
-	ac := client.NewScheduleAPIClient()
-    scheduleHandler := handlers.NewScheduleHandler(ac, rdb)
+	ac, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
+    scheduleHandler, authHandler := handlers.NewScheduleHandler(ac, rdb), handlers.NewAuthHandler(mc)
 	
 	e := echo.New()
 
-	routes.InitAuthRoutes(e)
+	routes.InitAuthRoutes(e, authHandler)
 	routes.InitScheduleRoutes(e, scheduleHandler)
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
