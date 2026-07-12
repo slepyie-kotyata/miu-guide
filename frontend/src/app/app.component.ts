@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { AssistantService } from './services/assistant.service';
+import { AssistantDialogService } from './services/assistant';
+import { StatusBarService } from './services/capacitor/status-bar.service';
+import { KeyboardService } from './services/capacitor/keyboard.service';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +10,15 @@ import { AssistantService } from './services/assistant.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit {
-  constructor(private assistantService: AssistantService) {}
+  private assistantDialogService = inject(AssistantDialogService);
+  private statusBarService = inject(StatusBarService);
+  private keyboardService = inject(KeyboardService);
 
-ngOnInit() {
-    // ВРЕМЕННАЯ СТРОЧКА ДЛЯ ТЕСТОВ (удаляет память о том, что мы видели диалог)
+  ngOnInit() {
     localStorage.removeItem('hasSeenOnboarding');
-    
-    // Запуск проверки
-    this.assistantService.startOnboarding();
+
+    this.statusBarService.setup();
+    this.keyboardService.setup();
+    this.assistantDialogService.startOnboarding();
   }
 }
