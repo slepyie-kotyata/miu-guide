@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, effect } from '@angular/core';
 
 import { IonFooter, IonContent, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -9,6 +9,8 @@ import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
 import { formatDateStr, generateWeekDays, getWeekNumber, getMondayFromWeek, getSundayFromWeek } from '../../utils/date-utils';
 import { AssistantCatComponent } from "src/app/components/assistant-cat/assistant-cat.component";
+import { ChatNavigationService, ScheduleTargetDay } from '../../services/assistant/chat-navigation.service';
+import { AssistantEmotionService } from '../../services/assistant/assistant-emotion.service';
 
 @Component({
   selector: 'app-page-schedule',
@@ -43,9 +45,19 @@ export class SchedulePage implements OnInit {
 
   private scheduleService = inject(ScheduleService);
   private haptics = inject(HapticsService);
+  private chatNavigation = inject(ChatNavigationService);
+  private emotionService = inject(AssistantEmotionService);
 
   constructor() {
     addIcons({ caretBack, caretForward });
+
+    effect(() => {
+      const pendingDay = this.chatNavigation.pendingScheduleDay();
+      if (!pendingDay) return;
+
+      this.applyScheduleDay(pendingDay);
+      this.chatNavigation.consumePendingScheduleDay();
+    });
   }
 
   ngOnInit() {
@@ -99,6 +111,7 @@ export class SchedulePage implements OnInit {
         this.errorMessage.set('Ошибка сервера. Попробуйте обновить страницу.');
         this.lessons.set([]);
         this.isLoading.set(false);
+        this.emotionService.setEmotion('sad-eclosed-mclosed');
       },
     });
   }
@@ -116,7 +129,37 @@ export class SchedulePage implements OnInit {
         this.isLoading.set(false);
         this.errorMessage.set('Что-то пошло не так. Попробуйте позже.');
         this.lessons.set([]);
+        this.emotionService.setEmotion('sad-eclosed-mclosed');
       },
     });
+  }
+
+  private applyScheduleDay(target: ScheduleTargetDay): void {
+    const today = new Date();
+
+    if (target === 'today') {
+      this.currentBaseDate.set(new Date(today.getTime()));
+    } else if (target === 'tomorrow') {
+      const tomorrow = new Date(today.getTime());
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      this.currentBaseDate.set(tomorrow);
+    }
+
+    this.generateWeek(this.currentBaseDate());
+
+    let dayIndex: number;
+    if (target === 'today') {
+      dayIndex = today.getDay() - 1;
+      if (dayIndex === -1) dayIndex = 6;
+    } else if (target === 'tomorrow') {
+      const tomorrow = new Date(today.getTime());
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      dayIndex = tomorrow.getDay() - 1;
+      if (dayIndex === -1) dayIndex = 6;
+    } else {
+      dayIndex = this.activeDayIndex();
+    }
+
+    this.selectDay(dayIndex);
   }
 }

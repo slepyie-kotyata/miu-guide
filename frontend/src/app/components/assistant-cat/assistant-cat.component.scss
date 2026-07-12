@@ -5,7 +5,7 @@
 
 .cat-wrapper {
   position: absolute;
-  bottom: 30px;
+  bottom: 40px;
   left: -5px;
   width: 140px;
   z-index: 1005;
@@ -98,6 +98,46 @@
   color: #000;
 }
 
+.error-msg {
+  background: #ffe0e0;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #999;
+  animation: typing-pulse 1.2s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-pulse {
+  0%, 60%, 100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .dialog-text {
   font-size: 14px;
   line-height: 1.4;
@@ -121,6 +161,32 @@
   color: #333;
   cursor: pointer;
   text-align: left;
+}
+
+.suggested-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 8px 0;
+  width: 100%;
+}
+
+.suggested-question-card {
+  background: #fff8e1;
+  border: 1px solid #fca311;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, transform 0.1s ease;
+  width: 100%;
+}
+
+.suggested-question-card:active {
+  background: #ffe082;
+  transform: scale(0.98);
 }
 
 .close-icon {
@@ -149,10 +215,12 @@
 .chat-input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
+  color: black;
+  background: #fff;
 }
 
 .chat-input:focus {
