@@ -42,8 +42,4 @@ async login() {
   }
 }
 
-  guestLogin() {
-    this.haptics.impact(ImpactStyle.Light);
-    this.navCtrl.navigateRoot('/tabs/map');
-  }
 }
