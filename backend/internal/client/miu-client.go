@@ -2,11 +2,11 @@ package client
 
 import (
 	"encoding/json"
-	"errors"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -16,14 +16,6 @@ type MIUClient struct {
 	MIUApiLoginUrl		string
 	MIUApiAccountUrl	string
 }
-
-var (
-	ErrInvalidLogin		= errors.New("invalid login or password")
-	ErrInvalidToken		= errors.New("invalid moodle token")
-	ErrUnavaliableAPI	= errors.New("unavaliable api error")
-	ErrInternal			= errors.New("internal error")
-	ErrExternalFailure	= errors.New("failure in api error")
-)
 
 func NewMIUClient() *MIUClient {
 	return &MIUClient{
@@ -49,6 +41,7 @@ type UserInfoResponse struct {
 	FullName 	string `json:"fullname"`
 	Department 	string `json:"department"`
 	Institution string `json:"institution"`
+	ErrorCode 	string `json:"errorcode,omitempty"`
 }
 
 const InvalidTokenCode = "invalidtoken"
@@ -106,4 +99,33 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	}
 
 	return result.UserId, nil
+}
+
+func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, error) {
+	data := url.Values{}
+	data.Set("wstoken", token)
+	data.Set("wsfunction", "core_user_get_users_by_field")
+	data.Set("moodlewsrestformat", "json")
+	data.Set("field", "id")
+	data.Set("values[0]", strconv.Itoa(userId))
+
+	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiAccountUrl, strings.NewReader(data.Encode()))
+	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	apiResp, err := m.httpClient.Do(apiReq)
+	if err != nil {
+		return nil, ErrUnavaliableAPI
+	}
+	defer apiResp.Body.Close()
+
+	var result UserInfoResponse
+	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
+		return nil, ErrInternal
+	}
+
+	if result.ErrorCode == InvalidTokenCode {
+		return nil, ErrInvalidToken
+	}
+
+	return &result, nil
 }
