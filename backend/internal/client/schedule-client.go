@@ -36,3 +36,5 @@ func (s *ScheduleAPIClient) FetchScheduleResponse(groupId string, scheduleDay st
 
 	return s.httpClient.Do(apiReq)
 }
+
+func (s *ScheduleAPIClient) GetGroupId()

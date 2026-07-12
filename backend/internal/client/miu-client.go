@@ -45,6 +45,12 @@ type UserIdResponse struct {
 	ErrorCode 	string `json:"errorcode,omitempty"`
 }
 
+type UserInfoResponse struct {
+	FullName 	string `json:"fullname"`
+	Department 	string `json:"department"`
+	Institution string `json:"institution"`
+}
+
 const InvalidTokenCode = "invalidtoken"
 const InvalidLoginCode = "invalidlogin"
 

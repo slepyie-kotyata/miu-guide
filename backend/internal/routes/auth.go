@@ -6,6 +6,6 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-func InitAuthRoutes(e *echo.Echo, ah *handlers.AuthHandler) {
-	e.POST("/auth", ah.Authorize)
+func InitAuthRoutes(e *echo.Echo, uh *handlers.UserHandler) {
+	e.POST("/auth", uh.Authorize)
 }
