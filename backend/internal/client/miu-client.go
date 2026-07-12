@@ -63,14 +63,14 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiLoginUrl, strings.NewReader(data.Encode()))
 	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	resp, err := m.httpClient.Do(apiReq)
+	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
 		return "", ErrUnavaliableAPI
 	}
-	defer resp.Body.Close()
+	defer apiResp.Body.Close()
 
 	var result TokenResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
 		return "", ErrInternal
 	}
 

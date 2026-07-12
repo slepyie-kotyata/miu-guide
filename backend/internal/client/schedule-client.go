@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"miu-guide/internal/env"
 	"net/http"
@@ -12,6 +13,10 @@ type ScheduleAPIClient struct {
     BaseURL    	string
 	APILogin	string
 	APIPassword	string
+}
+
+type GroupId struct {
+	GroupId int `json:"id"`
 }
 
 func NewScheduleAPIClient() *ScheduleAPIClient {
@@ -37,4 +42,18 @@ func (s *ScheduleAPIClient) FetchScheduleResponse(groupId string, scheduleDay st
 	return s.httpClient.Do(apiReq)
 }
 
-func (s *ScheduleAPIClient) GetGroupId()
+func (s *ScheduleAPIClient) GetGroupId(groupName string) (int, error) {
+	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf("/search?term=%s&type=group", groupName), nil)
+	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
+
+	apiResp, err := s.httpClient.Do(apiReq)
+	if err != nil {
+		return 0, ErrUnavaliableAPI
+	}
+	defer apiResp.Body.Close()
+
+	var result GroupId
+	_ = json.NewDecoder(apiResp.Body).Decode(&result)
+
+	return result.GroupId, nil
+}
