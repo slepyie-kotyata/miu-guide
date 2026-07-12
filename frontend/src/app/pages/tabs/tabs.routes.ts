@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
-import { scheduleGuard } from '../../guards/schedule.guard';
 
 export const routes: Routes = [
   {
@@ -14,7 +13,6 @@ export const routes: Routes = [
       },
       {
         path: 'schedule',
-        canActivate: [scheduleGuard],
         loadComponent: () =>
           import('../schedule/schedule.page').then((m) => m.SchedulePage),
       },
