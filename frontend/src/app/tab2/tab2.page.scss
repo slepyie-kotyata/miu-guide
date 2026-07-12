@@ -10,14 +10,24 @@ ion-content {
   padding-bottom: 20px;
 }
 
-/* Заголовок страницы (взят из твоего предыдущего кода) */
-.page-title {
-  font-size: 26px;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin: 20px 24px;
-}
+.header-container {
+  text-align: center;
+  margin: 16px 0; // Отступ сверху и снизу, чтобы не прилипало к контенту
 
+  .main-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #000;
+  }
+
+  .date-subtitle {
+    font-size: 16px;
+    font-weight: normal; // Это делает текст нежирным
+    color: #707070;      // Серый цвет для дат, чтобы они не спорили с заголовком
+    margin: 4px 0 0 0;   // Небольшой отступ от заголовка
+  }
+}
 /* Белая карточка расписания */
 .schedule-block {
   background-color: #ffffff;

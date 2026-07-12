@@ -1,95 +1,70 @@
 <ion-content [fullscreen]="true">
   <div class="schedule-content">
     
-    <h1 class="page-title">Четная неделя</h1>
+    <!-- Выводим динамический заголовок со строкой дат -->
+    <div class="header-container">
+  <h1 class="main-title">{{ weekType }}</h1>
+  <p class="date-subtitle">{{ dateRange }}</p>
+</div>
 
     <div class="schedule-block">
       
-      <div class="lesson-item">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">1</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">9:00-10:20</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
-        </div>
+      <!-- Показываем спиннер, пока идет загрузка -->
+      <ion-item *ngIf="isLoading" style="text-align: center; padding: 20px;" >
+          <ion-label>Загрузка расписания</ion-label>
+        <ion-spinner name="crescent" ></ion-spinner>
+      </ion-item>
+
+      <!-- Если загрузка прошла, но список пуст -->
+      <div *ngIf="!isLoading && lessons.length === 0" style="text-align: center; padding: 20px; color: #888;">
+        На этот день расписания нет
       </div>
 
-      <div class="lesson-item">
+    <ng-container *ngIf="!isLoading && lessons.length > 0">
+      <div class="lesson-item" *ngFor="let lesson of lessons; let i = index">
         <div class="lesson-number-wrapper">
-          <div class="lesson-number">2</div>
+          <div class="lesson-number">{{ i + 1 }}</div>
         </div>
         <div class="lesson-text">
-          <div class="lesson-time">10:30-11:50</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
+          <div class="lesson-time">{{ lesson.beginLesson }} – {{ lesson.endLesson }}</div>
+          <div class="lesson-title">{{ lesson.discipline }}</div>
+          
+          <div class="lesson-subtitle" *ngFor="let prof of lesson.listOfLecturers">
+            {{ prof.auditorium }} – {{ prof.lecturer }}
+          </div>
+          
+          <div class="lesson-type" style="font-size: 0.8em; color: #666;">
+            {{ lesson.kindOfWork }}
+          </div>
         </div>
       </div>
-
-      <div class="lesson-item">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">3</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">12:30-13:50</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
-        </div>
-      </div>
-
-      <div class="lesson-item">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">4</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">14:20-15:40</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
-        </div>
-      </div>
-
-      <div class="lesson-item">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">5</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">16:10-17:30</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
-        </div>
-      </div>
-
-      <div class="lesson-item">
-        <div class="lesson-number-wrapper">
-          <div class="lesson-number">6</div>
-        </div>
-        <div class="lesson-text">
-          <div class="lesson-time">17:40-19:00</div>
-          <div class="lesson-title">Проектирование ИТ- инфраструктуры (Лек.)</div>
-          <div class="lesson-subtitle">Главный корпус/210(л) – Кромский Г.А.</div>
-        </div>
-      </div>
+    </ng-container>
 
     </div>
 
     <!-- Блок с переключением дней недели -->
     <div class="days-nav-wrapper">
-<button class="nav-arrow-btn" type="button">
-    <ion-icon name="caret-back" class="nav-arrow"></ion-icon>
-  </button>      
+      <!-- ДОБАВЛЕНО: (click)="prevWeek()" -->
+      <button class="nav-arrow-btn" type="button" (click)="prevWeek()">
+        <ion-icon name="caret-back" class="nav-arrow"></ion-icon>
+      </button>      
+      
       <div class="days-group">
-        <button class="day-btn active" type="button">Пн</button>
-        <button class="day-btn" type="button">Вт</button>
-        <button class="day-btn" type="button">Ср</button>
-        <button class="day-btn" type="button">Чт</button>
-        <button class="day-btn" type="button">Пт</button>
-        <button class="day-btn" type="button">Сб</button>
+        <button 
+          *ngFor="let day of weekDays; let i = index"
+          class="day-btn" 
+          [class.active]="activeDayIndex === i"
+          (click)="selectDay(i)"
+          type="button">
+          <!-- ДОБАВЛЕНО: .name, так как теперь это объект -->
+          {{ day.name }}
+        </button>
       </div>
       
-<button class="nav-arrow-btn" type="button">
-    <ion-icon name="caret-forward" class="nav-arrow"></ion-icon>
-  </button>
+      <!-- ДОБАВЛЕНО: (click)="nextWeek()" -->
+      <button class="nav-arrow-btn" type="button" (click)="nextWeek()">
+        <ion-icon name="caret-forward" class="nav-arrow"></ion-icon>
+      </button>
     </div>
 
   </div>
