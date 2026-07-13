@@ -83,14 +83,14 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 
 // @Summary Имена преподавателей
 // @Description Возвращает найденные ФИО преподавателей
-// @Tags schedule
+// @Tags search
 // @Produce json
 // @Param lecturer query string true "Фамилия преподавателя"
 // @Success 200 {array} 	[]string 		"Успешный ответ"
 // @Failure 400 {object}  	ErrorResponse   "{"code": 2} - Пустой параметр lecturer"
 // @Failure 404 {object}  	map[string]int  "{"code": 1} - Не найдены ФИО преподавателей"
 // @Failure 503 {object}  	map[string]int  "{"code": 1} - Недоступность API Расписания"
-// @Router /schedule/{group} [get]
+// @Router /search [get]
 func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
 	lecturerName := c.QueryParam("lecturer")
 	if lecturerName == "" {

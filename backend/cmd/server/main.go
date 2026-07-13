@@ -5,6 +5,7 @@ import (
 	_ "miu-guide/docs"
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
+	"miu-guide/internal/env"
 	"miu-guide/internal/handlers"
 	"miu-guide/internal/routes"
 	"miu-guide/internal/service"
@@ -44,12 +45,13 @@ func main() {
 	
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost", "https://localhost"},
+		AllowOrigins: env.GetEnvAsSlice(env.AllowOrigins),
       	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
     	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete, http.MethodOptions},
   	}))
 	access := e.Group("/access", service.ExtractTokenMiddleware)
 
+	routes.InitMajorRoutes(e)
 	routes.InitScheduleRoutes(e, scheduleHandler)
 	routes.InitSeatchRoutes(e, scheduleHandler)
 	routes.InitAuthRoutes(e, userHandler)
