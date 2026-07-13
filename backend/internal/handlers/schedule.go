@@ -45,22 +45,16 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 
 	if !errors.Is(err, redis.Nil) {
         if errors.Is(err, context.DeadlineExceeded) {
-            return c.JSON(http.StatusServiceUnavailable, map[string]any{
-				"code": 2,
-			})
+            return c.JSON(http.StatusServiceUnavailable, map[string]any{ "code": 2 })
         }
-        return c.JSON(http.StatusInternalServerError, map[string]any{
-			"code": 2,
-		})
+        return c.JSON(http.StatusInternalServerError, map[string]any{ "code": 2 })
     }
 
 	//2. если нет запрашиваем у api и кэшируем
 	apiResp, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
 	if err != nil {
 		fmt.Printf("API fetch error: %v\n", err)
-		return c.JSON(http.StatusServiceUnavailable, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusServiceUnavailable, map[string]any{ "code": 1 })
 	}
 
 	var schedule []models.RawSchedule
@@ -69,9 +63,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 
 	body, _ := io.ReadAll(apiResp.Body)
 	if err := json.Unmarshal(body, &schedule); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusInternalServerError, map[string]any{ "code": 1 })
 	}
 
 	result := filter.FilterSchedule(schedule)
@@ -103,9 +95,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
 		log.Printf("err: %s", err)
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
 	}
 
 	return s.getSchedule(c, groupId, service.GetDate())
@@ -126,14 +116,21 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
 	if _, err := strconv.Atoi(groupId); err != nil || !service.ValidateDate(scheduleDay) {
 		log.Printf("err: %s", err)
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
 	}
 
 	return s.getSchedule(c, groupId, scheduleDay)
 }
 
-func (s *ScheduleHandler) GetLecturer(c *echo.Context) error {
-	panic("error")
+func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
+	lastName := c.QueryParam("lecturer")
+	if lastName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 2 })
+	}
+	apiResp, err := s.apiClient.GetLecturers(lastName)
+	if err != nil {
+		handleAPIError(c, err, SourceSchedule)
+	}
+
+	return c.JSON(http.StatusOK, filter.GetUniqueLabels(apiResp))
 }

@@ -30,35 +30,6 @@ func NewUserHandler(mc *client.MIUClient, sc *client.ScheduleAPIClient) *UserHan
     }
 }
 
-// потом это нормально вынести куда-нибудь в нормальное место (refactor)
-type APISource string
-const (
-	SourceMIU       APISource   = "MIU_API"
-	SourceSchedule  APISource   = "SCHEDULE_API"
-    SourceRedis     APISource   = "REDIS"
-)
-var sourceErrorCodes = map[APISource]int{
-    SourceMIU:      3,
-    SourceSchedule: 1,
-    SourceRedis:    2,
-}
-
-// желательно отделить как-нибудь от ручки
-func (u *UserHandler) handleAPIError(c *echo.Context, err error, source APISource) error {
-    log.Printf("[ERROR] %v", err)
-	switch {
-	case errors.Is(err, client.ErrUnavaliableAPI):
-        code := sourceErrorCodes[source]
-        return c.JSON(http.StatusServiceUnavailable, map[string]any{"code": code})
-	case errors.Is(err, client.ErrInternal):
-		return c.JSON(http.StatusInternalServerError, map[string]any{"code": 1})
-    case errors.Is(err, client.ErrNotFound):
-        return c.JSON(http.StatusNotFound, map[string]any{ "code": 1 })
-	default:
-		return c.JSON(http.StatusInternalServerError, map[string]any{"code": 1})
-	}
-}
-
 func determineCourse(groupName string, now time.Time) int {
 	var enrollDigit int
 	for _, char := range groupName {
@@ -104,14 +75,14 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
             log.Printf("[ERROR] %v", err)
             return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
         } else {
-            return u.handleAPIError(c, err, SourceMIU)
+            return handleAPIError(c, err, SourceMIU)
         }
     }
 
     // получаем айди группы из API расписания ММУ
     groupId, err := u.scheduleApiClient.GetGroupId(userInfo.Department)
     if err != nil {
-        return u.handleAPIError(c, err, SourceSchedule)
+        return handleAPIError(c, err, SourceSchedule)
     }
 
     groupCode := string([]rune(userInfo.Department)[:3])
@@ -153,7 +124,7 @@ func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
             log.Printf("[ERROR] %v", err)
             return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
         } else {
-            return u.handleAPIError(c, err, SourceMIU)
+            return handleAPIError(c, err, SourceMIU)
         }
     }
 

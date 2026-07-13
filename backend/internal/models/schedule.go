@@ -38,3 +38,7 @@ type Subjects struct {
 	FullName	string	`json:"fullname"`
 	ShortName	string	`json:"shortname"`
 }
+
+type Lecturer struct {
+    Label string `json:"label"`
+}
