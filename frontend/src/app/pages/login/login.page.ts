@@ -6,7 +6,7 @@ import {HapticsService} from '../../services/capacitor/haptics.service';
 import {NotificationType} from '@capacitor/haptics';
 import {UserService} from "../../services/user.service";
 import {firstValueFrom} from "rxjs";
-import { AssistantDialogService } from 'src/app/services/assistant';
+import {AssistantChatService, AssistantDialogService} from 'src/app/services/assistant';
 
 @Component({
   selector: 'app-login',
@@ -25,30 +25,37 @@ export class LoginPage {
   private userService = inject(UserService);
   private haptics = inject(HapticsService);
   private dialogService = inject(AssistantDialogService);
+  private chatService = inject(AssistantChatService);
 
-async login() {
-  this.error.set('');
-  const credentials = {
-    login: this.username(),
-    password: this.password()
-  };
+  async login() {
+    this.error.set('');
+    const credentials = {
+      login: this.username(),
+      password: this.password()
+    };
 
-  try {
-    await firstValueFrom(this.auth.login(credentials));
-    await firstValueFrom(this.userService.loadUser(true));
+    try {
+      await firstValueFrom(this.auth.login(credentials));
+      await firstValueFrom(this.userService.loadUser(true));
 
-    await this.haptics.notification(NotificationType.Success);
-    await this.navCtrl.navigateRoot('/tabs/map');
-    this.dialogService.startOnboarding(7);
-  } catch (error: any) {
-    if(error.status == 401){
-      this.error.set('Неверный логин или пароль');
+      await this.haptics.notification(NotificationType.Success);
+      await this.navCtrl.navigateRoot('/tabs/map');
+      if (this.userService.userSignal() && this.userService.userSignal()!.course > 1) {
+        this.dialogService.finishOnboarding();
+        this.chatService.handleCatClick();
+      } else {
+        this.dialogService.startOnboarding(7);
+      }
+
+
+    } catch (error: any) {
+      if (error.status == 401) {
+        this.error.set('Неверный логин или пароль');
+      } else {
+        this.error.set('Ошибка соединения с сервером')
+      }
+      this.haptics.notification(NotificationType.Error);
     }
-    else{
-      this.error.set('Ошибка соединения с сервером')
-    }
-    this.haptics.notification(NotificationType.Error);
   }
-}
 
 }

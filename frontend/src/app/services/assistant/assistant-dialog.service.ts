@@ -26,16 +26,6 @@ export class AssistantDialogService {
   readonly isLoaded = signal<boolean>(false);
   readonly highlightId = signal<string | null>(null);
   readonly directions = signal<string[]>([]);
-  readonly currentFloor = computed<number>(() => {
-    const msg = this.currentMessage();
-    return msg?.mapFloor ?? 1;
-  });
-  readonly isDarkBackdrop = computed(() => {
-    const msg = this.currentMessage();
-    if (!msg) return false;
-
-    return msg.id < 19 || msg.id > 55;
-  });
   private router = inject(Router);
   private http = inject(HttpClient);
   private emotionService = inject(AssistantEmotionService);
@@ -71,6 +61,16 @@ export class AssistantDialogService {
       highlight: step.highlight,
       mapFloor: step.mapFloor,
     };
+  });
+  readonly currentFloor = computed<number>(() => {
+    const msg = this.currentMessage();
+    return msg?.mapFloor ?? 1;
+  });
+  readonly isDarkBackdrop = computed(() => {
+    const msg = this.currentMessage();
+    if (!msg) return false;
+
+    return msg.id < 19 || msg.id > 55;
   });
   private searchService = inject(SearchService);
 
@@ -175,8 +175,6 @@ export class AssistantDialogService {
 
     this.currentStepId.set(0);
     this.highlightId.set(null);
-    this.visibilityService.setVisible(false);
-
 
     if (!this.authService.isAuthenticated) {
       this.router.navigate(['/login']);
