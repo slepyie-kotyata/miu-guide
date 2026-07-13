@@ -51,7 +51,6 @@ func determineCourse(groupName string, now time.Time) int {
 // @Summary      Получение информации о пользователе
 // @Description  Получение данных о студенте
 // @Tags         users
-// @Accept       json
 // @Produce      json
 // @Security     BearerAuth
 // @Param        id   path      int  true  "ID пользователя"
@@ -101,7 +100,6 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
 // @Summary      Получение списка предметов
 // @Description  Получение списка предметов на текущий семестр
 // @Tags         users
-// @Accept       json
 // @Produce      json
 // @Security     BearerAuth
 // @Param        id   path      int  true  "ID пользователя"

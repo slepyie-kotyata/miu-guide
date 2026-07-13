@@ -29,9 +29,6 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Получение данных о студенте",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -102,9 +99,6 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Получение списка предметов на текущий семестр",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -247,56 +241,58 @@ const docTemplate = `{
         },
         "/schedule/{group}": {
             "get": {
-                "description": "Возвращает расписание для указанной группы на выбранный день.",
+                "description": "Возвращает найденные ФИО преподавателей",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "schedule"
                 ],
-                "summary": "Расписание на конкретный день",
+                "summary": "Имена преподавателей",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "ID Группы (число)",
-                        "name": "group",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "type": "string",
-                        "description": "Дата расписания (формат: YYYY.MM.DD)",
-                        "name": "day",
+                        "description": "Фамилия преподавателя",
+                        "name": "lecturer",
                         "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ (данные из кэша или API)",
+                        "description": "Успешный ответ",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Schedule"
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     },
                     "400": {
-                        "description": "Невалидный ID группы (code: 1)",
+                        "description": "{\"code\": 2} - Пустой параметр lecturer",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                    "404": {
+                        "description": "{\"code\": 1} - Не найдены ФИО преподавателей",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "description": "{\"code\": 1} - Недоступность API Расписания",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }
@@ -323,7 +319,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ (данные из кэша или API)",
+                        "description": "Успешный ответ",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -332,19 +328,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Невалидный ID группы (code: 1)",
+                        "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                        "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 1 - недоступность\\таймаут API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
