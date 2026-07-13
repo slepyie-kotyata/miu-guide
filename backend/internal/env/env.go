@@ -22,15 +22,15 @@ func GetEnv(key EnvKey) string {
 }
 
 func GetEnvAsSlice(key EnvKey) []string {
-	valStr := GetEnv(key)
-	if valStr == "" {
+	valuesStr := GetEnv(key)
+	if valuesStr == "" {
 		return []string{}
 	}
 
-	origins := strings.Split(valStr, ",")
+	values := strings.Split(valuesStr, ",")
 
-	for i := range origins {
-		origins[i] = strings.TrimSpace(origins[i])
+	for i := range values {
+		values[i] = strings.TrimSpace(values[i])
 	}
-	return origins
+	return values
 }

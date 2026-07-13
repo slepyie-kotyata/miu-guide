@@ -232,25 +232,16 @@
                 }
             }
         },
-        "/schedule/{group}": {
+        "/majors": {
             "get": {
-                "description": "Возвращает найденные ФИО преподавателей",
+                "description": "Возвращает список направлений",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "schedule"
+                    "major"
                 ],
-                "summary": "Имена преподавателей",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Фамилия преподавателя",
-                        "name": "lecturer",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
+                "summary": "Список направлений",
                 "responses": {
                     "200": {
                         "description": "Успешный ответ",
@@ -263,29 +254,62 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/schedule/{group}": {
+            "get": {
+                "description": "Возвращает расписание для указанной группы на выбранный день.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "schedule"
+                ],
+                "summary": "Расписание на конкретный день",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID Группы (число)",
+                        "name": "group",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Дата расписания (формат: YYYY.MM.DD)",
+                        "name": "day",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Schedule"
+                            }
+                        }
                     },
                     "400": {
-                        "description": "{\"code\": 2} - Пустой параметр lecturer",
+                        "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
-                    "404": {
-                        "description": "{\"code\": 1} - Не найдены ФИО преподавателей",
+                    "500": {
+                        "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "integer"
-                            }
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "503": {
-                        "description": "{\"code\": 1} - Недоступность API Расписания",
+                        "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "integer"
-                            }
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     }
                 }
@@ -336,6 +360,65 @@
                         "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "description": "Возвращает найденные ФИО преподавателей",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Имена преподавателей",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фамилия преподавателя",
+                        "name": "lecturer",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"code\": 2} - Пустой параметр lecturer",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{\"code\": 1} - Не найдены ФИО преподавателей",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "{\"code\": 1} - Недоступность API Расписания",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }
