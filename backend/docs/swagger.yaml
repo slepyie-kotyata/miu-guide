@@ -217,13 +217,14 @@ paths:
       summary: Авторизация пользователя
       tags:
       - auth
-  /schedule/{group}:
+  /events:
     get:
-      description: Возвращает найденные ФИО преподавателей
+      description: Возвращает расписание на 1 сентября учитывая направление (моковые
+        данные)
       parameters:
-      - description: Фамилия преподавателя
+      - description: Название направления
         in: query
-        name: lecturer
+        name: major
         required: true
         type: string
       produces:
@@ -237,23 +238,64 @@ paths:
                 type: string
               type: array
             type: array
+      summary: Расписание на 1 сентября
+      tags:
+      - mock
+  /majors:
+    get:
+      description: Возвращает список направлений (моковые значения)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+      summary: Список направлений
+      tags:
+      - mock
+  /schedule/{group}:
+    get:
+      description: Возвращает расписание для указанной группы на выбранный день.
+      parameters:
+      - description: ID Группы (число)
+        in: path
+        name: group
+        required: true
+        type: integer
+      - description: 'Дата расписания (формат: YYYY.MM.DD)'
+        in: query
+        name: day
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              $ref: '#/definitions/models.Schedule'
+            type: array
         "400":
-          description: '{"code": 2} - Пустой параметр lecturer'
+          description: '{"code": 1} - Невалидный ID группы'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
-        "404":
-          description: '{"code": 1} - Не найдены ФИО преподавателей'
+        "500":
+          description: '{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка
+            Redis'
           schema:
-            additionalProperties:
-              type: integer
-            type: object
+            $ref: '#/definitions/handlers.ErrorResponse'
         "503":
-          description: '{"code": 1} - Недоступность API Расписания'
+          description: '{"code": 1} - Недоступность API Расписания, {"code": 2} -
+            недоступность\таймаут Redis'
           schema:
-            additionalProperties:
-              type: integer
-            type: object
-      summary: Имена преподавателей
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Расписание на конкретный день
       tags:
       - schedule
   /schedule/{group}/today:
@@ -291,6 +333,45 @@ paths:
       summary: Расписание на сегодня
       tags:
       - schedule
+  /search:
+    get:
+      description: Возвращает найденные ФИО преподавателей
+      parameters:
+      - description: Фамилия преподавателя
+        in: query
+        name: lecturer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+        "400":
+          description: '{"code": 2} - Пустой параметр lecturer'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: '{"code": 1} - Не найдены ФИО преподавателей'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: '{"code": 1} - Недоступность API Расписания'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Имена преподавателей
+      tags:
+      - search
 securityDefinitions:
   BearerAuth:
     description: 'Вставьте токен в формате: Bearer {ваш_токен}'

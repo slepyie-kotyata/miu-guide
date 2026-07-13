@@ -1,6 +1,9 @@
 package env
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 type EnvKey string
 
@@ -11,8 +14,23 @@ const (
 	MIUApiLoginUrl = "MIU_API_LOGIN_URL"
 	MIUApiAccountUrl = "MIU_API_ACCOUNT_URL"
 	RedisUrl = "REDIS_CONNECTION_URL"
+	AllowOrigins = "ALLOW_ORIGINS"
 )
 
 func GetEnv(key EnvKey) string {
 	return os.Getenv(string(key))
+}
+
+func GetEnvAsSlice(key EnvKey) []string {
+	valuesStr := GetEnv(key)
+	if valuesStr == "" {
+		return []string{}
+	}
+
+	values := strings.Split(valuesStr, ",")
+
+	for i := range values {
+		values[i] = strings.TrimSpace(values[i])
+	}
+	return values
 }

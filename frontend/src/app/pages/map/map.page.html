@@ -4,8 +4,26 @@
 
   @if (showMap()) {
     <pinch-zoom class="map-zoom-container">
-      <div class="map-viewport">
-        <img [src]="mapImage()" class="map-image" alt="Карта" />
+      <div class="map-wrapper" (click)="onMapClick($event)">
+        
+        <div class="map-container" [innerHTML]="svgContent()"></div>
+
+        @if (isModalOpen() && roomData()) {
+          <div 
+            class="map-tooltip-card" 
+            [style.top.px]="tooltipTop()" 
+            [style.left.px]="tooltipLeft()"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="close-btn" (click)="closeRoomModal()">×</div>
+            
+            <div class="tooltip-content">
+              <div class="tooltip-title">{{ roomData()?.name }}</div>
+              <div class="tooltip-category">Категория: {{ roomData()?.category }}</div>
+              <div class="tooltip-desc">{{ roomData()?.description }}</div>
+            </div>
+          </div>
+        }
       </div>
     </pinch-zoom>
   }
@@ -26,5 +44,4 @@
   </button>
 
   <app-assistant-cat></app-assistant-cat>
-
 </ion-content>

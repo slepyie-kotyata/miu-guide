@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
@@ -28,25 +29,53 @@ func NewMIUClient() *MIUClient {
 	}
 }
 
-type TokenResponse struct {
-	Token 		string `json:"token"`
-	ErrorCode 	string `json:"errorcode,omitempty"`
+const (
+	InvalidTokenCode = "invalidtoken"
+	InvalidLoginCode = "invalidlogin"
+)
+
+type MIUApiErrorResponse struct {
+	Exception 	string 	`json:"exception"`
+    Errorcode 	string	`json:"errorcode"`
+    Message 	string	`json:"message"`
 }
 
-type UserIdResponse struct {
-	UserId 		int 	`json:"userid"`
-	ErrorCode 	string `json:"errorcode,omitempty"`
+func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
+	switch(errorMessage.Errorcode){
+	case InvalidTokenCode:
+		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, errorMessage.Message)
+	case InvalidLoginCode:
+		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidLogin, errorMessage.Message)
+	default:
+		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrExternalFailure, errorMessage.Message)
+	}
 }
 
-type UserInfoResponse struct {
-	FullName 	string `json:"fullname"`
-	Department 	string `json:"department"`
-	Institution string `json:"institution"`
-	ErrorCode 	string `json:"errorcode,omitempty"`
-}
+func (m *MIUClient) doAccountRequest(data url.Values, target any) error {
+	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiLoginUrl, strings.NewReader(data.Encode()))
+	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	apiResp, err := m.httpClient.Do(apiReq)
 
-const InvalidTokenCode = "invalidtoken"
-const InvalidLoginCode = "invalidlogin"
+	if err != nil {
+		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
+	}
+	defer apiResp.Body.Close()
+
+	respBody, err := io.ReadAll(apiResp.Body)
+    if err != nil {
+        return fmt.Errorf("(MIU-Main-API) failed to read body %w: %v", ErrInternal, err)
+    }
+
+	var errorMessage MIUApiErrorResponse
+    if err := json.Unmarshal(respBody, &errorMessage); err == nil && errorMessage.Errorcode != "" {
+        return parseErrorMessage(errorMessage)
+    }
+
+    if err := json.Unmarshal(respBody, target); err != nil {
+        return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
+    }
+    return nil
+}
 
 func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	data := url.Values{}
@@ -54,25 +83,12 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	data.Set("password", authReq.Password)
 	data.Set("service", "moodle_mobile_app")
 
-	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiLoginUrl, strings.NewReader(data.Encode()))
-	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	apiResp, err := m.httpClient.Do(apiReq)
-	if err != nil {
-		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
-	}
-	defer apiResp.Body.Close()
-
-	var result TokenResponse
-	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
+	var token struct{Token string}
+	if err := m.doAccountRequest(data, &token); err != nil {
+		return "", err
 	}
 
-	if result.ErrorCode == InvalidLoginCode {
-		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidLogin, result.ErrorCode)
-	}
-
-	return result.Token, nil
+	return token.Token, nil
 }
 
 func (m *MIUClient) GetUserId(token string) (int, error) {
@@ -81,25 +97,17 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	data.Set("wsfunction", "core_webservice_get_site_info")
 	data.Set("moodlewsrestformat", "json")
 
-	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiAccountUrl, strings.NewReader(data.Encode()))
-	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	apiResp, err := m.httpClient.Do(apiReq)
-	if err != nil {
-		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
+	var id struct{ UserId int }
+	if err := m.doAccountRequest(data, &id); err != nil {
+		return 0, err
 	}
-	defer apiResp.Body.Close()
+	return id.UserId, nil
+}
 
-	var result UserIdResponse
-	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
-	}
-
-	if result.ErrorCode == InvalidTokenCode {
-		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, result.ErrorCode)
-	}
-
-	return result.UserId, nil
+type UserInfoResponse struct {
+	FullName 	string `json:"fullname"`
+	Department 	string `json:"department"`
+	Institution string `json:"institution"`
 }
 
 func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, error) {
@@ -110,25 +118,16 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 	data.Set("field", "id")
 	data.Set("values[0]", strconv.Itoa(userId))
 
-	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiAccountUrl, strings.NewReader(data.Encode()))
-	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	apiResp, err := m.httpClient.Do(apiReq)
-	if err != nil {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
-	}
-	defer apiResp.Body.Close()
-
-	var result []UserInfoResponse
-	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, "this token is invalid")
+	var userInfo []UserInfoResponse
+	if err := m.doAccountRequest(data, &userInfo); err != nil {
+		return nil, err
 	}
 
-	if len(result) == 0 {
+	if len(userInfo) == 0 {
 		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any info about user %d", userId))
 	}
 
-	return &result[0], nil
+	return &userInfo[0], nil
 }
 
 func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects, error) {
@@ -138,23 +137,14 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 	data.Set("moodlewsrestformat", "json")
 	data.Set("userid", strconv.Itoa(userId))
 
-	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiAccountUrl, strings.NewReader(data.Encode()))
-	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	apiResp, err := m.httpClient.Do(apiReq)
-	if err != nil {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
-	}
-	defer apiResp.Body.Close()
-
-	var result []models.Subjects
-	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
+	var subjectsList []models.Subjects
+	if err := m.doAccountRequest(data, &subjectsList); err != nil {
 		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, "this token is invalid")
 	}
 
-	if len(result) == 0 {
+	if len(subjectsList) == 0 {
 		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any user's %d subjects", userId))
 	}
 
-	return result, nil
+	return subjectsList, nil
 }
