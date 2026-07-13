@@ -1,5 +1,21 @@
 package models
 
+import "sort"
+
+var Majors []string
+
+func init() {
+	seen := make(map[string]struct{})
+
+	for _, info := range MajorCodes {
+		if _, ok := seen[string(info.Major)]; !ok {
+			seen[string(info.Major)] = struct{}{}
+			Majors = append(Majors, string(info.Major))
+		}
+	}
+	sort.Strings(Majors)
+}
+
 type FieldInfo struct {
 	Major			MajorType
 	Specialization 	string
