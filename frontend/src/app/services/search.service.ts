@@ -11,7 +11,11 @@ export class SearchService {
 
   searchLecturer(query: string) {
     return this.http.get<string[]>(`${this.apiUrl}/search`, {
-      params: { lecturer: query }
+      params: {lecturer: query}
     });
+  }
+
+  getMajors() {
+    return this.http.get<string[]>(`${this.apiUrl}/majors`);
   }
 }

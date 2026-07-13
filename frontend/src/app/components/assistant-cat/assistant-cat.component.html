@@ -4,10 +4,10 @@
       Пропустить
     </button>
   }
-  
+
   @if (dialogService.currentMessage(); as message) {
-        <div 
-          class="backdrop" 
+        <div
+          class="backdrop"
           [class.dark-overlay]="message.id < 19 || message.id > 55">
         </div>
       }
@@ -20,8 +20,8 @@
         @if (dialogService.currentStepId() === 2) {
           <div class="dialog-buttons">
             @for (btnText of message.buttons; track btnText) {
-              <button 
-                class="dialog-btn" 
+              <button
+                class="dialog-btn"
                 (click)="dialogService.handleStep2Choice(btnText)">
                 {{ btnText }}
               </button>
@@ -31,9 +31,9 @@
 
         @if (dialogService.currentStepId() === 3) {
           <div class="dropdown-container">
-            <select 
+            <select
               class="direction-select"
-              [value]="dialogService.selectedDirection()" 
+              [value]="dialogService.selectedDirection()"
               (change)="dialogService.selectDirection($any($event.target).value)">
               <option value="" disabled selected>Выберите направление...</option>
               @for (dir of dialogService.directions(); track dir) {
@@ -44,16 +44,16 @@
         }
 
         <div class="navigation-controls">
-          <button 
-            class="nav-arrow-btn" 
-            [disabled]="dialogService.currentStepId() === 1" 
+          <button
+            class="nav-arrow-btn"
+            [disabled]="dialogService.currentStepId() === 1"
             (click)="dialogService.goToPrev()">
             &lt;
           </button>
-          
-          <button 
-            class="nav-arrow-btn" 
-            [disabled]="dialogService.isNextDisabled()" 
+
+          <button
+            class="nav-arrow-btn"
+            [disabled]="dialogService.isNextDisabled()"
             (click)="dialogService.goToNext()">
             &gt;
           </button>
