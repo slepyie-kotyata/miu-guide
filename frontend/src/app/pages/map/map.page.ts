@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, effect} from '@angular/core';
+import { Component, signal, ElementRef, computed, inject, effect} from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { 
@@ -39,6 +39,9 @@ export class MapPage {
   svgContent = signal<SafeHtml | null>(null);
   selectedRoomId = signal<string | null>(null);
   isModalOpen = signal<boolean>(false);
+
+  activeRoomId = signal<string | null>(null);
+  private el = inject(ElementRef);
   
   readonly roomData = computed(() => {
   const id = this.selectedRoomId();
@@ -65,6 +68,27 @@ export class MapPage {
     effect(() => {
       this.loadSvg(this.mapImage());
     });
+
+    effect(() => {
+      const activeId = this.activeRoomId();
+      
+      setTimeout(() => {
+        const svgElement = this.el.nativeElement.querySelector('.map-container svg');
+        
+        if (svgElement) {
+          svgElement.querySelectorAll('[id$="_place"]').forEach((el: Element) => {
+            el.classList.remove('place-active');
+          });
+          
+          if (activeId) {
+            const targetPlace = svgElement.querySelector(`#${activeId}_place`);
+            if (targetPlace) {
+              targetPlace.classList.add('place-active');
+            }
+          }
+        }
+      }, 50); 
+    });
   }
 
   async loadSvg(url: string) {
@@ -79,25 +103,25 @@ export class MapPage {
 
 onMapClick(event: MouseEvent) {
   const target = event.target as Element;
-  
   const clickedPoint = target.closest('[id$="_point"]');
   
   if (clickedPoint) {
-    const fullId = clickedPoint.id;
+    const cleanId = clickedPoint.id.replace('_point', '');
     
-    const cleanId = fullId.replace('_point', '');
-    
-    console.log('📍 Клик по точке:', cleanId);
-    this.haptics.impact(ImpactStyle.Light);
+    this.activeRoomId.set(cleanId);
     
     this.selectedRoomId.set(cleanId);
     this.isModalOpen.set(true);
+    
+    this.haptics.impact(ImpactStyle.Light);
   }
 }
-  closeRoomModal() {
-    this.isModalOpen.set(false);
-    setTimeout(() => this.selectedRoomId.set(null), 300);
-  }
+
+closeRoomModal() {
+  this.isModalOpen.set(false);
+  this.activeRoomId.set(null); 
+  setTimeout(() => this.selectedRoomId.set(null), 300);
+}
 
   showInfo() {
     console.log('Открыто инфо на карте');
