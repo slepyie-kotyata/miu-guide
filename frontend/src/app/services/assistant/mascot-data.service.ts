@@ -69,15 +69,6 @@ export class MascotDataService {
     return { text: phrase.text, emotion: 'sad-eclosed-mclosed' };
   }
 
-  getTeacherSearchPrompt(): { text: string; emotion: string } {
-    const question = this.questions.find((q) => q.intent === 'find_teacher');
-    const studentName = this.getStudentName();
-    const text = question
-      ? this.interpolate(question.answer, studentName)
-      : 'Уточни, пожалуйста, предмет или фамилию, и я подскажу полное ФИО!';
-    return { text, emotion: 'sit-eopen-mopen' };
-  }
-
   private pickEmotionForIntent(intent: string): string {
     if (intent.startsWith('rofl') || intent.startsWith('rof')) {
       return 'paw-eclosed-mopen';
