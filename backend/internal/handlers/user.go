@@ -6,7 +6,7 @@ import (
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
-	"miu-guide/internal/service"
+	"miu-guide/internal/utils"
 	"net/http"
 	"strconv"
 	"time"
@@ -93,7 +93,7 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
         GroupId: groupId,
         Major: models.MajorCodes[groupCode].Major,
         Specialization: models.MajorCodes[groupCode].Specialization,
-        Course: determineCourse(userInfo.Department, service.GetTime()),
+        Course: determineCourse(userInfo.Department, utils.GetTime()),
         Institution: userInfo.Institution,
     })
 }

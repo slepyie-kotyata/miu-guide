@@ -39,7 +39,8 @@ func main() {
     defer rdb.Close()
 
 	sc, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
-    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, rdb), handlers.NewUserHandler(mc, sc)
+	s := service.NewScheduleService(sc, rdb)
+    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, s), handlers.NewUserHandler(mc, sc)
 	
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
