@@ -1,8 +1,9 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { AssistantEmotionService } from './assistant-emotion.service';
 import { AssistantVisibilityService } from './assistant-visibility.service';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 export interface OnboardingStep {
   id: number;
@@ -12,6 +13,7 @@ export interface OnboardingStep {
   canSkip?: boolean;
   comment?: string;
   highlight?: string;
+  mapFloor?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,7 +22,7 @@ export class AssistantDialogService {
   private http = inject(HttpClient);
   private emotionService = inject(AssistantEmotionService);
   private visibilityService = inject(AssistantVisibilityService);
-
+  private authService = inject(AuthService);
   readonly steps = signal<OnboardingStep[]>([]);
 
   readonly currentStepId = signal<number>(1);
@@ -28,32 +30,40 @@ export class AssistantDialogService {
   readonly isLoaded = signal<boolean>(false);
   readonly highlightId = signal<string | null>(null);
   
-  // Список направлений для выпадающего списка (шаг 3)
   readonly directions = signal<string[]>([
-    'Информатика и вычислительная техника',
+    'Информационные системыи и базы данных',
     'Экономика',
     'Юриспруденция',
     'Дизайн',
     'Менеджмент',
     'Психология'
   ]);
+constructor() {
+    effect(() => {
+      const step = this.currentMessage(); 
+      if (step && step.emotion) {
+        this.emotionService.setEmotion(step.emotion); 
+      }
+    });
+  }
+  
+
+
   readonly currentMessage = computed<OnboardingStep | null>(() => {
   const isCompleted = localStorage.getItem('hasSeenOnboarding') === 'true';
   if (isCompleted) return null;
 
   const allSteps = this.steps();
-  if (allSteps.length === 0) return null; // Если JSON еще не загрузился
+  if (allSteps.length === 0) return null; 
 
   const step = allSteps.find(s => s.id === this.currentStepId());
   if (!step) return null;
 
   let processedText = step.text;
   if (step.id === 4) {
-    // Подставляем выбранное на шаге 3 направление
     processedText = processedText.replace('&value', this.selectedDirection() || 'выбранное направление');
   }
 
-  // Возвращаем объект, полностью соответствующий интерфейсу OnboardingStep
   return {
     id: step.id,
     emotion: step.emotion,
@@ -62,50 +72,64 @@ export class AssistantDialogService {
     canSkip: step.canSkip,
     comment: step.comment,
     highlight: step.highlight,
+    mapFloor: step.mapFloor,
   };
 });
 
-  startOnboarding(): void {
-    const hasSeen = localStorage.getItem('hasSeenOnboarding') === 'true';
+startOnboarding(forcedStepId: number = 0): void {
+  const hasSeen = localStorage.getItem('hasSeenOnboarding') === 'true';
 
-    if (!hasSeen) {
-      this.visibilityService.setVisible(true);
+  if (!hasSeen) {
+    this.visibilityService.setVisible(true);
 
-      // Загружаем сценарий из папки assets
-      this.http.get<OnboardingStep[]>('/assets/mascot/mascot-script-firstday.json').subscribe({
-        next: (data) => {
-          this.steps.set(data);
-          this.isLoaded.set(true);
+    this.http.get<OnboardingStep[]>('/assets/mascot/mascot-script-firstday.json').subscribe({
+      next: (data) => {
+        this.steps.set(data);
+        this.isLoaded.set(true);
 
-          // Восстанавливаем сохраненный прогресс только после успешной загрузки структуры
+        if (forcedStepId > 0) {
+          this.currentStepId.set(forcedStepId);
+          localStorage.setItem('onboardingStepId', forcedStepId.toString());
+        } else {
           const savedStep = localStorage.getItem('onboardingStepId');
           if (savedStep) {
             this.currentStepId.set(parseInt(savedStep, 10));
           } else {
             this.currentStepId.set(1);
           }
-
-          const savedDir = localStorage.getItem('onboardingDirection');
-          if (savedDir) {
-            this.selectedDirection.set(savedDir);
-          }
-
-          // Применяем подсветку для восстановленного шага (если есть)
-          const currentStep = data.find(s => s.id === this.currentStepId());
-          const highlight = currentStep?.highlight ?? null;
-          this.highlightId.set(highlight);
-          if (highlight && !this.router.url.includes('/tabs/map')) {
-            this.router.navigate(['/tabs/map']);
-          }
-
-          this.updateEmotion();
-        },
-        error: (err) => {
-          console.error('Не удалось загрузить сценарий онбординга mascot-phrases.json:', err);
         }
-      });
-    }
+
+        const savedDir = localStorage.getItem('onboardingDirection');
+        if (savedDir) {
+          this.selectedDirection.set(savedDir);
+        }
+
+        const currentStep = data.find(s => s.id === this.currentStepId());
+        const highlight = currentStep?.highlight ?? null;
+        this.highlightId.set(highlight);
+
+        if (highlight && !this.router.url.includes('/tabs/map')) {
+          this.router.navigate(['/tabs/map']);
+        }
+
+        this.updateEmotion();
+      },
+      error: (err) => {
+        console.error('Ошибка загрузки сценария:', err);
+      }
+    });
   }
+}
+  readonly currentFloor = computed<number>(() => {
+  const msg = this.currentMessage();
+  return msg?.mapFloor ?? 1; 
+});
+readonly isDarkBackdrop = computed(() => {
+    const msg = this.currentMessage();
+    if (!msg) return false;
+    
+    return msg.id < 19 || msg.id > 55;
+  });
 
   private updateEmotion(): void {
     const msg = this.currentMessage();
@@ -114,18 +138,15 @@ export class AssistantDialogService {
     }
   }
 
-  // Внутри класса AssistantDialogService
 
 goToNext(): void {
   const currentId = this.currentStepId();
 
-  // 1. УСЛОВИЕ РАЗВЕТВЛЕНИЯ: если мы на 5 шаге, то следующий по сценарию — 9
   if (currentId === 5) {
     this.moveToStep(9);
     return;
   }
 
-  // Стандартный поиск следующего шага по порядку в массиве JSON
   const stepsList = this.steps();
   const currentIndex = stepsList.findIndex(s => s.id === currentId);
   
@@ -133,7 +154,6 @@ goToNext(): void {
     const nextStep = stepsList[currentIndex + 1];
     this.moveToStep(nextStep.id);
   } else {
-    // Если шаги в сценарии совсем закончились
     this.finishOnboarding();
   }
 }
@@ -141,13 +161,11 @@ goToNext(): void {
 goToPrev(): void {
   const currentId = this.currentStepId();
 
-  // 2. УСЛОВИЕ ВОЗВРАТА: если мы на 9 шаге и жмем «назад», то возвращаемся на 5
   if (currentId === 9) {
     this.moveToStep(5);
     return;
   }
 
-  // Стандартный поиск предыдущего шага
   const stepsList = this.steps();
   const currentIndex = stepsList.findIndex(s => s.id === currentId);
   
@@ -157,7 +175,6 @@ goToPrev(): void {
   }
 }
 
-// Вынесем обновление шага в отдельный приватный метод, чтобы не дублировать localStorage
 private moveToStep(id: number): void {
   this.currentStepId.set(id);
   localStorage.setItem('onboardingStepId', id.toString());
@@ -171,15 +188,20 @@ private moveToStep(id: number): void {
   }
 }
 
-// Метод для полного завершения или пропуска онбординга
 finishOnboarding(): void {
   localStorage.setItem('hasSeenOnboarding', 'true');
-  localStorage.removeItem('onboardingStepId'); // очищаем прогресс
-  this.currentStepId.set(1);
+  localStorage.removeItem('onboardingStepId');
+  localStorage.removeItem('onboardingDirection');
+  
+  this.currentStepId.set(0); 
   this.highlightId.set(null);
-  this.visibilityService.setVisible(false); // скрываем кота/затемнение
+  this.visibilityService.setVisible(false);
+
+  
+  if (!this.authService.isAuthenticated) { 
+    this.router.navigate(['/login']);
+  }
 }
-  // Обработка клика по кнопкам "Да" / "Нет", которые рендерятся из JSON
   handleStep2Choice(choice: string): void {
     if (choice === 'Да') {
       this.router.navigate(['/login']);
@@ -198,8 +220,8 @@ finishOnboarding(): void {
 
   isNextDisabled(): boolean {
     const currentId = this.currentStepId();
-    if (currentId === 2) return true; // Нельзя пройти дальше кнопкой >, нужно выбрать Да/Нет
-    if (currentId === 3 && !this.selectedDirection()) return true; // Нельзя пройти, пока не выбрано направление
+    if (currentId === 2) return true; 
+    if (currentId === 3 && !this.selectedDirection()) return true; 
     return false;
   }
 

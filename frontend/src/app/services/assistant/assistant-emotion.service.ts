@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AssistantEmotionService {
@@ -6,6 +6,15 @@ export class AssistantEmotionService {
     'eclosed-mclosed',
     'eopen-mclosed',
   ];
+  private emotionKey = signal<string>('default');
+  readonly currentDialogEmotion = computed(() => {
+    return `/assets/cat/miko-${this.emotionKey()}.webp`;
+  });
+  setDialogEmotion(key: string): void {
+    if (key) {
+      this.emotionKey.set(key);
+    }
+  }
 
   readonly currentEmotion = signal<string>(this.getRandomEmotionPath());
 

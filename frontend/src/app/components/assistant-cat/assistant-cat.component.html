@@ -5,11 +5,13 @@
     </button>
   }
   
-  <div class="cat-wrapper">
-
-    @if (dialogService.currentMessage()) {
-      <div class="backdrop"></div>
-    }
+  @if (dialogService.currentMessage(); as message) {
+        <div 
+          class="backdrop" 
+          [class.dark-overlay]="message.id < 19 || message.id > 55">
+        </div>
+      }
+  <div class="cat-wrapper" [class.lifted]="isSchedulePage()">
 
     @if (dialogService.currentMessage(); as message) {
       <div class="speech-bubble">

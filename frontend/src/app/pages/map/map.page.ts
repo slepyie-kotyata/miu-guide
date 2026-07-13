@@ -1,4 +1,4 @@
-import { Component, signal, ElementRef, computed, inject, effect } from '@angular/core';
+import { Component, signal, ElementRef, computed, inject, effect, untracked } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
@@ -7,6 +7,7 @@ import { AssistantDialogService } from '../../services/assistant/assistant-dialo
 import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
 import { ROOMS_DATA } from 'src/app/data/map-data';
+
 
 @Component({
   selector: 'app-page-map',
@@ -35,6 +36,7 @@ export class MapPage {
   private haptics = inject(HapticsService);
   private sanitizer = inject(DomSanitizer);
   private dialogService = inject(AssistantDialogService);
+  
 
   readonly roomData = computed(() => {
     const id = this.selectedRoomId();
@@ -54,7 +56,21 @@ export class MapPage {
     return `/assets/maps/${subFolder}/map_${this.currentFloor()}.svg`;
   });
 
+  activeFloor: number = 1;
   constructor() {
+    effect(() => {
+    const dialogFloor = this.dialogService.currentFloor();
+    const isDialogActive = this.dialogService.currentMessage() !== null;
+
+    untracked(() => {
+      if (isDialogActive) {
+        if (this.currentFloor() !== dialogFloor) {
+          this.currentFloor.set(dialogFloor);
+          this.triggerMapReset();
+        }
+      }
+    });
+  });
     effect(() => {
       this.loadSvg(this.mapImage());
     });
@@ -86,16 +102,13 @@ effect(() => {
     }); 
   });
 
-  effect(() => {
+effect(() => {
     const highlightId = this.dialogService.highlightId();
     const svg = this.svgContent();
 
     if (highlightId) {
       if (this.currentMode() !== 'ГК') {
         this.currentMode.set('ГК');
-      }
-      if (this.currentFloor() !== 1) {
-        this.currentFloor.set(1);
       }
     }
 
@@ -194,5 +207,11 @@ ionViewWillLeave() {
     }, 10);
   }
 
-  
+private changeFloor(floor: number) {
+    if (this.currentFloor() !== floor) {
+      this.currentFloor.set(floor); 
+      this.triggerMapReset(); 
+      console.log(`[ЭТАЖ] Переключено на этаж: ${floor}`);
+    }
+  }
 }

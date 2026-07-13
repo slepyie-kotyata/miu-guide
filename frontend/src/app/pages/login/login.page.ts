@@ -6,6 +6,7 @@ import {HapticsService} from '../../services/capacitor/haptics.service';
 import {NotificationType} from '@capacitor/haptics';
 import {UserService} from "../../services/user.service";
 import {firstValueFrom} from "rxjs";
+import { AssistantDialogService } from 'src/app/services/assistant';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginPage {
   private auth = inject(AuthService);
   private userService = inject(UserService);
   private haptics = inject(HapticsService);
+  private dialogService = inject(AssistantDialogService);
 
 async login() {
   this.error.set('');
@@ -37,6 +39,7 @@ async login() {
 
     await this.haptics.notification(NotificationType.Success);
     await this.navCtrl.navigateRoot('/tabs/map');
+    this.dialogService.startOnboarding(7);
   } catch (error: any) {
     if(error.status == 401){
       this.error.set('Неверный логин или пароль');
