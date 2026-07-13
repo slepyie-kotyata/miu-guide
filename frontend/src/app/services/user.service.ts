@@ -18,6 +18,8 @@ export class UserService {
 
   private user = signal<User | null>(this.readFromStorage());
   readonly userSignal = this.user.asReadonly();
+  private userSubjects = signal<string[]>([]);
+  readonly userSubjectsSignal = this.userSubjects.asReadonly();
 
   private inflight$: Observable<User> | null = null;
 
@@ -61,9 +63,35 @@ export class UserService {
     return this.inflight$;
   }
 
+  loadUserSubjects(force = false): Observable<string[]> {
+    if (!this.auth.isAuthenticated()) {
+      return of([]);
+    }
+
+    if (!force && this.userSubjects().length > 0) {
+      return of(this.userSubjects());
+    }
+
+    const userId = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
+    if (!userId || !token) {
+      return of([]);
+    }
+
+    return this.http.get<string[]>(`${this.apiUrl}/access/users/${userId}/subjects`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).pipe(
+      tap((subjects) => {
+        this.userSubjects.set(subjects);
+      }),
+      shareReplay(1),
+    );
+  }
+
   clearUser() {
     localStorage.removeItem(this.STORAGE_KEY);
     this.user.set(null);
+    this.userSubjects.set([]);
   }
 
   private readFromStorage(): User | null {

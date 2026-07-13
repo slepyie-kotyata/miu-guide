@@ -1,5 +1,5 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {IonContent, IonIcon, NavController} from '@ionic/angular/standalone';
+import {IonContent, IonIcon, IonSpinner, NavController} from '@ionic/angular/standalone';
 import {addIcons} from 'ionicons';
 import {chevronForwardOutline} from 'ionicons/icons';
 import {UserService} from "../../services/user.service";
@@ -10,7 +10,7 @@ import {User} from "../../models/user.model";
   selector: 'app-page-profile',
   templateUrl: 'profile.page.html',
   styleUrls: ['profile.page.scss'],
-  imports: [IonContent, IonIcon],
+  imports: [IonContent, IonIcon, IonSpinner],
 })
 export class ProfilePage implements OnInit {
   isLoading = signal<boolean>(true);
@@ -42,12 +42,21 @@ export class ProfilePage implements OnInit {
           this.userService.clearUser();
           this.navCtrl.navigateRoot('/login');
         }
-        this.isLoading.set(false);
       },
       error: () => {
-        this.isLoading.set(false);
+        this.logout();
       },
     });
+
+    this.userService.loadUserSubjects().subscribe({
+        next: () => {
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.logout();
+        }
+      }
+    )
   }
 
   getMajorCode(): string {
@@ -62,7 +71,7 @@ export class ProfilePage implements OnInit {
   }
 
   openSubjectsList(){
-    console.log("Открытие списка предметов для группы:", this.user().group_name);
+    this.navCtrl.navigateRoot('/subjects');
   }
 
   openMoodleWebsite(){
