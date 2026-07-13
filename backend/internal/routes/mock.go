@@ -8,4 +8,5 @@ import (
 
 func InitMajorRoutes(e *echo.Echo) {
 	e.GET("/majors", handlers.GetMajors)
+	e.GET("/events", handlers.GetFirstDayEventSchedule)
 }
