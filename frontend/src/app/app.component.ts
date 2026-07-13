@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { AssistantDialogService } from './services/assistant';
-import { StatusBarService } from './services/capacitor/status-bar.service';
-import { KeyboardService } from './services/capacitor/keyboard.service';
+import {Component, inject, OnInit} from '@angular/core';
+import {IonApp, IonRouterOutlet} from '@ionic/angular/standalone';
+import {AssistantDialogService, AssistantVisibilityService} from './services/assistant';
+import {StatusBarService} from './services/capacitor/status-bar.service';
+import {KeyboardService} from './services/capacitor/keyboard.service';
 
 @Component({
   selector: 'app-root',
@@ -10,15 +10,15 @@ import { KeyboardService } from './services/capacitor/keyboard.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent implements OnInit {
-  //private assistantDialogService = inject(AssistantDialogService);
+  private assistantDialogService = inject(AssistantDialogService);
+  private visibilityService = inject(AssistantVisibilityService);
   private statusBarService = inject(StatusBarService);
   private keyboardService = inject(KeyboardService);
 
   ngOnInit() {
-    localStorage.removeItem('hasSeenOnboarding');
-
     this.statusBarService.setup();
     this.keyboardService.setup();
-    //this.assistantDialogService.startOnboarding();
+    this.assistantDialogService.startOnboarding();
+    this.visibilityService.setVisible(true);
   }
 }

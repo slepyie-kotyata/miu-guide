@@ -138,3 +138,10 @@ button.menu-item:active {
 ion-icon{
   color:#888
 }
+
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

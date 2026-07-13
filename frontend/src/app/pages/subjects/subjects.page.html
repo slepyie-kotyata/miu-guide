@@ -1,0 +1,10 @@
+<ion-content>
+  <h1 class="page-title">Дисциплины текущего семестра</h1>
+
+  @for (subject of userSubjects; track subject) {
+    <div class="subject-item">
+      <div class="subject-title">{{ subject }}</div>
+    </div>
+  }
+
+</ion-content>

@@ -1,0 +1,513 @@
+[
+  {
+    "id": 1,
+    "emotion": "paw-eopen-mopen",
+    "text": "Привет! Я — Мико, твой цифровой куратор Московского Международного Университета.",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 2,
+    "emotion": "sit-eopen-mopen",
+    "text": "Для начала, у тебя уже есть логин пароль от личного кабинета вуза?",
+    "buttons": ["Да", "Нет"],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 3,
+    "emotion": "sit-eopen-mopen",
+    "text": "Чтобы я помогла тебе узнать, во сколько начало мероприятия в День знаний, выбери из списка своё направление подготовки.",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 4,
+    "emotion": "sit-eclosed-mopen",
+    "text": "О, &value, это сильно!",
+    "comment": "&value - направление подготовки",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 5,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Уверена, ты станешь лучшим специалистом!",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 6,
+    "emotion": "sit-eclosed-mopen",
+    "text": "Жду с нетерпением узнать, как тебя зовут!",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 7,
+    "emotion": "paw-eopen-mopen",
+    "text": "О, рада знакомству, &value!",
+    "comment": "&value - Имя студента",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 8,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Уверена, ты станешь лучшим студентом!",
+    "buttons": [],
+    "canSkip": false,
+    "mapFloor": 1
+  },
+  {
+    "id": 9,
+    "emotion": "sit-eopen-mopen",
+    "text": "Так как ты уже студент университета, давай пройдемся по базовым правилам!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 10,
+    "emotion": "paw-eopen-mopen",
+    "text": "Всегда носи с собой пропуск — он нужен для прохода через турникеты.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 11,
+    "emotion": "sit-eopen-mopen",
+    "text": "Если вдруг забыл его дома, обратись на пост охраны: тебя пропустят по студенческому билету или паспорту.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 12,
+    "emotion": "paw-eopen-mopen",
+    "text": "Верхнюю одежду сдавай в гардероб.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 13,
+    "emotion": "sit-eopen-mopen",
+    "text": "На парах переводи телефон в беззвучный режим, чтобы не отвлекаться самому и не мешать другим.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 14,
+    "emotion": "paw-eopen-mopen",
+    "text": "На территории вуза строго запрещено пить алкоголь и курить (в том числе электронные сигареты).",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 15,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Обедать и перекусывать можно только в столовой или буфете.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 16,
+    "emotion": "sit-eopen-mopen",
+    "text": "С правилами ты уже ознакомлен, познакомлю тебя со стенами главного корпуса.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 17,
+    "emotion": "paw-eopen-mopen",
+    "text": "Чтобы тебе было проще ориентироваться, мысленно раздели здание на левое и правое крыло (если стоять лицом к главному входу).",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 18,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Точно, с него-то мы и начнём!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 19,
+    "emotion": "paw-eopen-mopen",
+    "text": "Это вход в Главный корпус. Ежедневно здесь проходят сотни студентов и ТЫ теперь один из них!",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "mainEntrance",
+    "mapFloor": 1
+  },
+  {
+    "id": 20,
+    "emotion": "sit-eopen-mopen",
+    "text": "Если зайти внутрь, то по бокам тебя встретят гардеробные, куда как я ранее сказала нужно сдавать свою верхнюю одежду. ",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "dressingRoom",
+    "mapFloor": 1
+  },
+  {
+    "id": 21,
+    "emotion": "paw-eopen-mopen",
+    "text": "Одежду нужно сдавать с пустыми карманами, а сменную обувь или мокрый зонтик в водонепроницаемом пакете.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "dressingRoom",
+    "mapFloor": 1
+  },
+  {
+    "id": 22,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Что мы всё вокруг до около. Пришло время показать самое главное!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 23,
+    "emotion": "paw-eopen-mopen",
+    "text": "Это Атриум — сердце главного корпуса.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "atrium",
+    "mapFloor": 1
+  },
+  {
+    "id": 24,
+    "emotion": "sit-eopen-mopen",
+    "text": "Попасть сюда можно как с первого, так и со второго этажа.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "atrium",
+    "mapFloor": 1
+  },
+  {
+    "id": 25,
+    "emotion": "paw-eopen-mopen",
+    "text": "Здесь есть отличные места для отдыха с креслами и просторными трибунами, а также удобный коворкинг.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "atrium",
+    "mapFloor": 1
+  },
+  {
+    "id": 26,
+    "emotion": "sit-eclosed-mopen",
+    "text": "А ещё тут стоит настоящий рояль! На нём можно поиграть, но помни: делать это разрешено только в перерывах между парами.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "atrium",
+    "mapFloor": 1
+  },
+  {
+    "id": 27,
+    "emotion": "sit-eopen-mopen",
+    "text": "Ещё в Атриуме работают кофейня и буфет.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "coffeeShop",
+    "mapFloor": 1
+  },
+  {
+    "id": 28,
+    "emotion": "paw-eopen-mopen",
+    "text": "В кофейне можно взять отличный кофе или чай, а в буфете — что-нибудь перекусить!",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "buffet",
+    "mapFloor": 1
+  },
+  {
+    "id": 29,
+    "emotion": "sit-eopen-mopen",
+    "text": "Но помни: обедать разрешается только в столовой или за столиками у буфета.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "diningHall",
+    "mapFloor": 1
+  },
+  {
+    "id": 30,
+    "emotion": "sit-eclosed-mopen",
+    "text": "Сама столовая находится на минус первом (-1) этаже. Спуститься туда можно из левого крыла.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "diningHall",
+    "mapFloor": 1
+  },
+  {
+    "id": 31,
+    "emotion": "sit-eopen-mopen",
+    "text": "Там полно места, чтобы с комфортом пообедать вместе с одногруппниками и новыми друзьями!",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "diningHall",
+    "mapFloor": 1
+  },
+  {
+    "id": 32,
+    "emotion": "paw-eopen-mopen",
+    "text": "А ещё в левом крыле на первом этаже находится типография. Очень удобно: если забыл распечатать текст к презентации или курсовую дома, это всегда можно сделать прямо в университете!",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "printing",
+    "mapFloor": 1
+  },
+  {
+    "id": 33,
+    "emotion": "sit-eopen-mopen",
+    "text": "А в правом крыле на первом этаже находится библиотека. Там ты найдешь все необходимые книги и материалы для учёбы!",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "library",
+    "mapFloor": 1
+  },
+  {
+    "id": 34,
+    "emotion": "sit-eclosed-mopen",
+    "text": "С первым этажом разобрались, поднимаемся на второй! Добраться туда можно по лестнице или на лифте.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 1
+  },
+  {
+    "id": 35,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Только раскрою один секрет: не все лифты едут до самого верхнего этажа.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 2
+  },
+  {
+    "id": 36,
+    "emotion": "paw-eopen-mopen",
+    "text": "Здесь находятся учебные аудитории и Малый актовый зал (сокращенно — МАЗ). Там часто проходят лекции, семинары и выступления приглашенных спикеров.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "SmallAssemblyHall",
+    "mapFloor": 2
+  },
+  {
+    "id": 37,
+    "emotion": "paw-eclosed-mopen",
+    "text": "А теперь переместимся на третий этаж!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 3
+  },
+  {
+    "id": 38,
+    "emotion": "sit-eopen-mopen",
+    "text": "Как и на втором, здесь очень много учебных классов. Но не переживай: чтобы ты не запутался, я всегда помогу тебе найти нужную аудиторию.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 3
+  },
+  {
+    "id": 39,
+    "emotion": "paw-eopen-mopen",
+    "text": "Самое важное место на третьем этаже — это деканат и «Единое окно». Именно здесь тебе помогут решить любые вопросы, связанные с учёбой.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "deanship",
+    "mapFloor": 3
+  },
+  {
+    "id": 40,
+    "emotion": "sit-eclosed-mopen",
+    "text": "Всё устроено просто: заходишь, берёшь в автомате талончик с нужной темой и ждёшь своего вызова.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "deanship",
+    "mapFloor": 3
+  },
+  {
+    "id": 41,
+    "emotion": "sit-eopen-mopen",
+    "text": "А теперь — четвёртый этаж!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 4
+  },
+  {
+    "id": 42,
+    "emotion": "paw-eopen-mopen",
+    "text": "Обрати внимание: начиная с этого этажа, прямого перехода между левым и правым крылом нет. Чтобы попасть из одной части здания в другую, придется спускаться ниже.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 4
+  },
+  {
+    "id": 43,
+    "emotion": "sit-eopen-mopen",
+    "text": "Что здесь самого важного? По центру находится Большой актовый зал (БАЗ). В нём проходят главные мероприятия вуза, а также общие лекции сразу для нескольких групп.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "LargeAssemblyHall",
+    "mapFloor": 4
+  },
+  {
+    "id": 44,
+    "emotion": "paw-eopen-mopen",
+    "text": "В правом крыле находятся кабинет ректора, военно-учётный стол и бухгалтерия.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 4
+  },
+  {
+    "id": 45,
+    "emotion": "sit-eopen-mopen",
+    "text": "В военно-учётном столе парням-очникам помогают оформить документы для отсрочки от армии.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "militaryAccountingDesk",
+    "mapFloor": 4
+  },
+  {
+    "id": 46,
+    "emotion": "sit-eclosed-mopen",
+    "text": "А в бухгалтерии тебе помогут с любыми вопросами по поводу оплаты и скидок на обучение.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "accounting",
+    "mapFloor": 4
+  },
+  {
+    "id": 47,
+    "emotion": "paw-eopen-mopen",
+    "text": "На очереди пятый этаж!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 5
+  },
+  {
+    "id": 48,
+    "emotion": "sit-eopen-mopen",
+    "text": "В правом крыле находится медпункт — это кабинет 515. Если вдруг почувствуешь себя неважно, смело поднимайся туда на лифте или по лестнице, там тебе обязательно помогут.",
+    "buttons": [],
+    "canSkip": true,
+    "highlight": "medicalOffice",
+    "mapFloor": 5
+  },
+  {
+    "id": 49,
+    "emotion": "paw-eclosed-mopen",
+    "text": "А на шестом этаже находятся самые просторные аудитории.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 50,
+    "emotion": "paw-eopen-mopen",
+    "text": "Напоминаю важную деталь: начиная с четвёртого этажа, прямого перехода между крыльями нет.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 51,
+    "emotion": "sit-eopen-mopen",
+    "text": "К тому же, на шестой этаж едет всего один лифт, и он находится в левом крыле. Так что в правое крыло придётся подниматься по лестнице!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 52,
+    "emotion": "paw-eopen-mopen",
+    "text": "Поэтому лучше заранее спрашивай у меня, где будет следующая пара. Так ты сразу поднимешься в нужное крыло и не опоздаешь!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 53,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Чуть не забыл о самом жизненно важном — туалетах!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 54,
+    "emotion": "paw-eopen-mopen",
+    "text": "Туалеты есть на каждом этаже. Чтобы быстро найти ближайший, просто загляни в карту этажа.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 55,
+    "emotion": "sit-eopen-mopen",
+    "text": "На этом наша экскурсия по главному корпусу подошла к концу! Теперь давай расскажу о функциях приложения.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 56,
+    "emotion": "paw-eopen-mopen",
+    "text": "Для поиска расписания просто перейди во вкладку «Расписание».",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 57,
+    "emotion": "sit-eopen-mopen",
+    "text": "Ещё ты можешь спрашивать у меня напрямую: «Какая следующая пара?» или «Покажи расписание на день».",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 58,
+    "emotion": "sit-eclosed-mopen",
+    "text": "Забыл, как точно зовут преподавателя? Просто напиши мне его фамилию или имя, и я подскажу полное ФИО!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 59,
+    "emotion": "paw-eopen-mopen",
+    "text": "А если занятие проходит онлайн, просто попроси: «Пришли ссылку на занятие», и она сразу появится на экране.",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 60,
+    "emotion": "paw-eclosed-mopen",
+    "text": "Но чтобы эта функция заработала, не забудь ввести свои логин и пароль во вкладке «Профиль».",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  },
+  {
+    "id": 61,
+    "emotion": "sit-eopen-mopen",
+    "text": "На этом у меня всё! Если понадобится найти аудиторию или вспомнить, где что находится — просто спроси. Я всегда рядом и с радостью помогу!",
+    "buttons": [],
+    "canSkip": true,
+    "mapFloor": 6
+  }
+]

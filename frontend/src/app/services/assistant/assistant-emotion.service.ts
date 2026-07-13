@@ -1,6 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AssistantEmotionService {
   private catEmotionsList: string[] = [
     'eclosed-mclosed',
@@ -15,6 +15,6 @@ export class AssistantEmotionService {
 
   private getRandomEmotionPath(): string {
     const randomIndex = Math.floor(Math.random() * this.catEmotionsList.length);
-    return `/assets/cat/${this.catEmotionsList[randomIndex]}.webp`;
+    return `/assets/cat/miko-sit-${this.catEmotionsList[randomIndex]}.webp`;
   }
 }
