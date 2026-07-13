@@ -79,6 +79,7 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     }
 
     // получаем айди группы из API расписания ММУ
+    // учитывать здесь NotFound
     groupId, err := u.scheduleApiClient.GetGroupId(userInfo.Department)
     if err != nil {
         return handleAPIError(c, err, SourceSchedule)

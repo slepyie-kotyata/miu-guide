@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
@@ -31,49 +32,57 @@ func NewScheduleAPIClient() *ScheduleAPIClient {
 	}
 }
 
-func (s *ScheduleAPIClient) FetchScheduleResponse(groupId string, scheduleDay string) (*http.Response, error) {
-	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf(
-		"/schedule/group/%s?start=%s&finish=%s&lng=1", 
-		groupId, 
-		scheduleDay, 
-		scheduleDay), nil)
-
+// разобраться с категоризацией и принятием ошибок ОБОИХ структур хэндлеров
+func (s *ScheduleAPIClient) doScheduleRequest(queryUrl string, target any) error {
+	apiReq, _ := http.NewRequest("GET", s.BaseURL + queryUrl, nil)
 	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
 
-	return s.httpClient.Do(apiReq)
+	apiResp, err := s.httpClient.Do(apiReq)
+	if err != nil {
+		return ErrUnavaliableAPI
+	}
+	defer apiResp.Body.Close()
+
+	respBody, err := io.ReadAll(apiResp.Body)
+	if err != nil {
+		return ErrInternal
+	}
+
+	if err := json.Unmarshal(respBody, target); err != nil {
+        return ErrInternal
+    }
+    return nil
+}
+
+func (s *ScheduleAPIClient) FetchScheduleResponse(groupId string, scheduleDay string) ([]models.RawSchedule, error) {
+	var rawSchedule []models.RawSchedule
+	if err := s.doScheduleRequest(fmt.Sprintf("/schedule/group/%s?start=%s&finish=%s&lng=1", groupId, scheduleDay, scheduleDay), &rawSchedule); err != nil {
+		return nil, err
+	}
+	return rawSchedule, nil
 }
 
 func (s *ScheduleAPIClient) GetGroupId(groupName string) (int, error) {
-	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf("/search?term=%s&type=group", groupName), nil)
-	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
-
-	apiResp, err := s.httpClient.Do(apiReq)
-	if err != nil {
-		return 0, ErrUnavaliableAPI
+	var groupId []GroupId
+	if err := s.doScheduleRequest(fmt.Sprintf("/search?term=%s&type=group", groupName), &groupId); err != nil {
+		return 0, err
 	}
-	defer apiResp.Body.Close()
-
-	var result []GroupId
-	_ = json.NewDecoder(apiResp.Body).Decode(&result)
-
-	return result[0].GroupId, nil
+	
+	if len(groupId) == 0 {
+		return 0, ErrNotFound
+	} else {
+		return groupId[0].GroupId, nil
+	}
 }
 
 func (s *ScheduleAPIClient) GetLecturers(lastName string) ([]models.Lecturer, error) {
-	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf("/search?term=%s&type=lecturer", lastName), nil)
-	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
-	apiResp, err := s.httpClient.Do(apiReq)
-	if err != nil {
-		return nil, ErrUnavaliableAPI
+	var lecturer []models.Lecturer
+	if err := s.doScheduleRequest(fmt.Sprintf("/search?term=%s&type=lecturer", lastName), &lecturer); err != nil {
+		return nil, err
 	}
-	defer apiResp.Body.Close()
 
-	var result []models.Lecturer
-
-	_ = json.NewDecoder(apiResp.Body).Decode(&result)
-	if len(result) == 0 {
+	if len(lecturer) == 0 {
 		return nil, ErrNotFound
 	}
-
-	return result, nil
+	return lecturer, nil
 }

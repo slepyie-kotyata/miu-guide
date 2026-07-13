@@ -29,13 +29,6 @@ func NewMIUClient() *MIUClient {
 	}
 }
 
-type UserInfoResponse struct {
-	FullName 	string `json:"fullname"`
-	Department 	string `json:"department"`
-	Institution string `json:"institution"`
-	ErrorCode 	string `json:"errorcode,omitempty"`
-}
-
 const (
 	InvalidTokenCode = "invalidtoken"
 	InvalidLoginCode = "invalidlogin"
@@ -109,6 +102,12 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 		return 0, err
 	}
 	return id.UserId, nil
+}
+
+type UserInfoResponse struct {
+	FullName 	string `json:"fullname"`
+	Department 	string `json:"department"`
+	Institution string `json:"institution"`
 }
 
 func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, error) {
