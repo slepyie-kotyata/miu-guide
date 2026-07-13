@@ -50,6 +50,7 @@ func main() {
 	access := e.Group("/access", service.ExtractTokenMiddleware)
 
 	routes.InitScheduleRoutes(e, scheduleHandler)
+	routes.InitSeatchRoutes(e, scheduleHandler)
 	routes.InitAuthRoutes(e, userHandler)
 	routes.InitUserRoutes(access, userHandler)
 
