@@ -19,7 +19,7 @@ export class AssistantVisibilityService {
   }
 
   private checkVisibility(currentUrl: string): void {
-    const hasSeen = localStorage.getItem('hasSeenOnboarding');
+    const hasSeen = localStorage.getItem('hasSeenOnboarding') === 'true';
     if (!hasSeen) {
       this.isVisible.set(true);
     } else {

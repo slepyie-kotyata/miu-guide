@@ -1,11 +1,11 @@
-import { Component, computed, ViewChild, ElementRef, effect, inject } from '@angular/core';
-import { AssistantEmotionService } from '../../services/assistant/assistant-emotion.service';
-import { AssistantDialogService } from '../../services/assistant/assistant-dialog.service';
-import { AssistantChatService } from '../../services/assistant/assistant-chat.service';
-import { AssistantVisibilityService } from '../../services/assistant/assistant-visibility.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {Component, computed, effect, ElementRef, inject, ViewChild} from '@angular/core';
+import {AssistantEmotionService} from '../../services/assistant/assistant-emotion.service';
+import {AssistantDialogService} from '../../services/assistant/assistant-dialog.service';
+import {AssistantChatService} from '../../services/assistant/assistant-chat.service';
+import {AssistantVisibilityService} from '../../services/assistant/assistant-visibility.service';
+import {NavigationEnd, Router} from '@angular/router';
+import {filter, map} from 'rxjs/operators';
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-assistant-cat',
@@ -15,19 +15,19 @@ import { toSignal } from '@angular/core/rxjs-interop';
   styleUrls: ['./assistant-cat.component.scss'],
 })
 export class AssistantCatComponent {
-  @ViewChild('chatScroll') private chatScrollContainer!: ElementRef;
-
   public visibilityService = inject(AssistantVisibilityService);
   public dialogService = inject(AssistantDialogService);
   public chatService = inject(AssistantChatService);
   public emotionService = inject(AssistantEmotionService);
+  @ViewChild('chatScroll') private chatScrollContainer!: ElementRef;
   private router = inject(Router);
   private currentUrl = toSignal(this.router.events.pipe(
-  filter(event => event instanceof NavigationEnd),
-  map(event => (event as NavigationEnd).urlAfterRedirects)
-), { initialValue: this.router.url });
+    filter(event => event instanceof NavigationEnd),
+    map(event => (event as NavigationEnd).urlAfterRedirects)
+  ), {initialValue: this.router.url});
 
-readonly isSchedulePage = computed(() => this.currentUrl().includes('/schedule'));
+  readonly isSchedulePage = computed(() => this.currentUrl().includes('/schedule'));
+
   constructor() {
     effect(() => {
       const conversation = this.chatService.conversation();
@@ -36,9 +36,7 @@ readonly isSchedulePage = computed(() => this.currentUrl().includes('/schedule')
       }
     });
   }
-
   
-
   onSendMessage(text: string) {
     if (!text.trim()) return;
 

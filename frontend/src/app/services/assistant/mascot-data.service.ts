@@ -5,7 +5,7 @@ import mascotPhrasesData from '../../../assets/mascot/mascot-phrases.json';
 import mascotQuestionsData from '../../../assets/mascot/mascot-questions.json';
 import {UserService} from "../user.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class MascotDataService {
   private readonly phrases = mascotPhrasesData as MascotPhrase[];
   private readonly questions = mascotQuestionsData as MascotQuestion[];
@@ -35,13 +35,13 @@ export class MascotDataService {
 
     const studentName = this.getStudentName();
     const text = this.interpolate(phrase.text, studentName);
-    return { text, emotion: phrase.emotion };
+    return {text, emotion: phrase.emotion};
   }
 
   getSuggestedQuestions(): string[] {
     return this.questions
-      .filter((q) => q.keywords.length > 0 && q.standard_question && q.id < 10)
-      .map((q) => q.standard_question);
+      .filter((q) => q.keywords.length > 0 && q.standard_question === true)
+      .map((q) => q.question);
   }
 
   getAnswerByIntent(intent: string): { text: string; emotion: string } | null {
@@ -51,7 +51,7 @@ export class MascotDataService {
     const studentName = this.getStudentName();
     const text = this.interpolate(question.answer, studentName);
     const emotion = this.pickEmotionForIntent(intent);
-    return { text, emotion };
+    return {text, emotion};
   }
 
   getFallback(): MascotQuestion {
@@ -65,8 +65,8 @@ export class MascotDataService {
     const candidates = this.phrases.filter((p) => this.errorPhraseIds.includes(p.id));
     const phrase = candidates.length > 0
       ? candidates[Math.floor(Math.random() * candidates.length)]
-      : { text: 'Ой, что-то пошло не так. Попробуй ещё раз.', emotion: 'sad-eclosed-mclosed' };
-    return { text: phrase.text, emotion: 'sad-eclosed-mclosed' };
+      : {text: 'Ой, что-то пошло не так. Попробуй ещё раз.', emotion: 'sad-eclosed-mclosed'};
+    return {text: phrase.text, emotion: 'sad-eclosed-mclosed'};
   }
 
   private pickEmotionForIntent(intent: string): string {

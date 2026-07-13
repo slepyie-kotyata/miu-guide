@@ -25,6 +25,9 @@ export class AssistantDialogService {
   readonly selectedDirection = signal<string>('');
   readonly isLoaded = signal<boolean>(false);
   readonly highlightId = signal<string | null>(null);
+  readonly hasSeenOnboarding = signal<boolean>(
+    localStorage.getItem('hasSeenOnboarding') === 'true'
+  );
   readonly directions = signal<string[]>([]);
   private router = inject(Router);
   private http = inject(HttpClient);
@@ -33,8 +36,7 @@ export class AssistantDialogService {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   readonly currentMessage = computed<OnboardingStep | null>(() => {
-    const isCompleted = localStorage.getItem('hasSeenOnboarding') === 'true';
-    if (isCompleted) return null;
+    if (this.hasSeenOnboarding()) return null;
 
     const allSteps = this.steps();
     if (allSteps.length === 0) return null;
@@ -87,49 +89,65 @@ export class AssistantDialogService {
     });
   }
 
-  startOnboarding(forcedStepId: number = 0): void {
-    const hasSeen = localStorage.getItem('hasSeenOnboarding') === 'true';
+  restartFromStep(stepId: number): void {
+    localStorage.setItem('hasSeenOnboarding', 'false');
+    this.hasSeenOnboarding.set(false);
+    this.currentStepId.set(stepId);
+    localStorage.setItem('onboardingStepId', stepId.toString());
+    this.visibilityService.setVisible(true);
 
-    if (!hasSeen) {
-      this.visibilityService.setVisible(true);
+    const step = this.steps().find(s => s.id === stepId);
+    const highlight = step?.highlight ?? null;
+    this.highlightId.set(highlight);
 
-      this.http.get<OnboardingStep[]>('/assets/mascot/mascot-script-firstday.json').subscribe({
-        next: (data) => {
-          this.steps.set(data);
-          this.isLoaded.set(true);
-
-          if (forcedStepId > 0) {
-            this.currentStepId.set(forcedStepId);
-            localStorage.setItem('onboardingStepId', forcedStepId.toString());
-          } else {
-            const savedStep = localStorage.getItem('onboardingStepId');
-            if (savedStep) {
-              this.currentStepId.set(parseInt(savedStep, 10));
-            } else {
-              this.currentStepId.set(1);
-            }
-          }
-
-          const savedDir = localStorage.getItem('onboardingDirection');
-          if (savedDir) {
-            this.selectedDirection.set(savedDir);
-          }
-
-          const currentStep = data.find(s => s.id === this.currentStepId());
-          const highlight = currentStep?.highlight ?? null;
-          this.highlightId.set(highlight);
-
-          if (highlight && !this.router.url.includes('/tabs/map')) {
-            this.router.navigate(['/tabs/map']);
-          }
-
-          this.updateEmotion();
-        },
-        error: (err) => {
-          console.error('Ошибка загрузки сценария:', err);
-        }
-      });
+    if (highlight && !this.router.url.includes('/tabs/map')) {
+      this.router.navigate(['/tabs/map']);
     }
+
+    this.updateEmotion();
+  }
+
+  startOnboarding(forcedStepId: number = 0): void {
+    if (this.hasSeenOnboarding()) return;
+
+    this.visibilityService.setVisible(true);
+
+    this.http.get<OnboardingStep[]>('/assets/mascot/mascot-script-firstday.json').subscribe({
+      next: (data) => {
+        this.steps.set(data);
+        this.isLoaded.set(true);
+
+        if (forcedStepId > 0) {
+          this.currentStepId.set(forcedStepId);
+          localStorage.setItem('onboardingStepId', forcedStepId.toString());
+        } else {
+          const savedStep = localStorage.getItem('onboardingStepId');
+          if (savedStep) {
+            this.currentStepId.set(parseInt(savedStep, 10));
+          } else {
+            this.currentStepId.set(1);
+          }
+        }
+
+        const savedDir = localStorage.getItem('onboardingDirection');
+        if (savedDir) {
+          this.selectedDirection.set(savedDir);
+        }
+
+        const currentStep = data.find(s => s.id === this.currentStepId());
+        const highlight = currentStep?.highlight ?? null;
+        this.highlightId.set(highlight);
+
+        if (highlight && !this.router.url.includes('/tabs/map')) {
+          this.router.navigate(['/tabs/map']);
+        }
+
+        this.updateEmotion();
+      },
+      error: (err) => {
+        console.error('Ошибка загрузки сценария:', err);
+      }
+    });
   }
 
   goToNext(): void {
@@ -170,13 +188,14 @@ export class AssistantDialogService {
 
   finishOnboarding(): void {
     localStorage.setItem('hasSeenOnboarding', 'true');
+    this.hasSeenOnboarding.set(true);
     localStorage.removeItem('onboardingStepId');
     localStorage.removeItem('onboardingDirection');
 
     this.currentStepId.set(0);
     this.highlightId.set(null);
 
-    if (!this.authService.isAuthenticated) {
+    if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
     }
   }
@@ -202,15 +221,6 @@ export class AssistantDialogService {
     if (currentId === 2) return true;
     if (currentId === 3 && !this.selectedDirection()) return true;
     return false;
-  }
-
-  completeOnboarding(): void {
-    localStorage.setItem('hasSeenOnboarding', 'true');
-    localStorage.removeItem('onboardingStepId');
-    localStorage.removeItem('onboardingDirection');
-    this.currentStepId.set(0);
-    this.highlightId.set(null);
-    this.visibilityService.recheckVisibility();
   }
 
   private updateEmotion(): void {

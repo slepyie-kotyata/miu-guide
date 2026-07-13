@@ -16,8 +16,6 @@ export class AppComponent implements OnInit {
   private keyboardService = inject(KeyboardService);
 
   ngOnInit() {
-    localStorage.removeItem('hasSeenOnboarding');
-
     this.statusBarService.setup();
     this.keyboardService.setup();
     this.assistantDialogService.startOnboarding();

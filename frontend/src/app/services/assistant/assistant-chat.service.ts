@@ -1,26 +1,24 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { AssistantDialogService } from './assistant-dialog.service';
-import { ChatMatchingService } from './chat-matching.service';
-import { ChatNavigationService } from './chat-navigation.service';
-import { MascotDataService } from './mascot-data.service';
-import { AssistantEmotionService } from './assistant-emotion.service';
-import { TeacherSearchService } from './teacher-search.service';
-import { ChatMessage, ChatMode } from './assistant.models';
+import {inject, Injectable, signal} from '@angular/core';
+import {AssistantDialogService} from './assistant-dialog.service';
+import {ChatMatchingService} from './chat-matching.service';
+import {ChatNavigationService} from './chat-navigation.service';
+import {MascotDataService} from './mascot-data.service';
+import {AssistantEmotionService} from './assistant-emotion.service';
+import {TeacherSearchService} from './teacher-search.service';
+import {ChatMessage, ChatMode} from './assistant.models';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AssistantChatService {
+  readonly isChatOpen = signal<boolean>(false);
+  readonly conversation = signal<ChatMessage[]>([]);
+  readonly suggestedQuestions = signal<string[]>([]);
+  readonly isTyping = signal<boolean>(false);
   private dialogService = inject(AssistantDialogService);
   private matchingService = inject(ChatMatchingService);
   private navigationService = inject(ChatNavigationService);
   private mascotData = inject(MascotDataService);
   private emotionService = inject(AssistantEmotionService);
   private teacherSearch = inject(TeacherSearchService);
-
-  readonly isChatOpen = signal<boolean>(false);
-  readonly conversation = signal<ChatMessage[]>([]);
-  readonly suggestedQuestions = signal<string[]>([]);
-  readonly isTyping = signal<boolean>(false);
-
   private mode: ChatMode = 'default';
 
   private readonly minDelay = 800;
@@ -43,7 +41,7 @@ export class AssistantChatService {
     const greeting = this.mascotData.getGreeting();
     this.emotionService.setEmotion(greeting.emotion);
     this.conversation.set([
-      { text: greeting.text, sender: 'cat', emotion: greeting.emotion, showSuggestions: true },
+      {text: greeting.text, sender: 'cat', emotion: greeting.emotion, showSuggestions: true},
     ]);
     this.suggestedQuestions.set(this.mascotData.getSuggestedQuestions());
   }
@@ -69,7 +67,7 @@ export class AssistantChatService {
     this.suggestedQuestions.set([]);
     this.conversation.update((msgs) => [
       ...msgs,
-      { text: trimmed, sender: 'user' },
+      {text: trimmed, sender: 'user'},
     ]);
 
     if (this.mode === 'awaiting_teacher_input') {
@@ -95,11 +93,17 @@ export class AssistantChatService {
         this.emotionService.setEmotion(responseEmotion);
         this.conversation.update((msgs) => [
           ...msgs,
-          { text: responseText, sender: 'cat', emotion: responseEmotion },
+          {text: responseText, sender: 'cat', emotion: responseEmotion},
         ]);
 
         if (matched.intent === 'find_teacher') {
           this.mode = 'awaiting_teacher_input';
+          return;
+        }
+
+        if (matched.intent === 'repeat_rules') {
+          this.dialogService.restartFromStep(9);
+          this.closeChat();
           return;
         }
 
@@ -126,7 +130,7 @@ export class AssistantChatService {
           this.emotionService.setEmotion('paw-eopen-mopen');
           this.conversation.update((msgs) => [
             ...msgs,
-            { text: result, sender: 'cat', emotion: 'paw-eopen-mopen' },
+            {text: result, sender: 'cat', emotion: 'paw-eopen-mopen'},
           ]);
         }, delay);
       },
@@ -153,7 +157,7 @@ export class AssistantChatService {
     this.emotionService.setEmotion(error.emotion);
     this.conversation.update((msgs) => [
       ...msgs,
-      { text: error.text, sender: 'cat', emotion: error.emotion, isError: true },
+      {text: error.text, sender: 'cat', emotion: error.emotion, isError: true},
     ]);
   }
 
@@ -163,7 +167,7 @@ export class AssistantChatService {
     this.emotionService.setEmotion(error.emotion);
     this.conversation.update((msgs) => [
       ...msgs,
-      { text: error.text, sender: 'cat', emotion: error.emotion, isError: true },
+      {text: error.text, sender: 'cat', emotion: error.emotion, isError: true},
     ]);
   }
 
