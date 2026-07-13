@@ -35,8 +35,8 @@
 }
 
 .speech-bubble {
-  position: absolute;
-  bottom: 170px;
+  position: relative;
+  bottom: 5vw;
   left: 20px;
   width: 80vw;
   background: #FFFFFF;
@@ -173,7 +173,7 @@
 
 .suggested-question-card {
   background: #fff8e1;
-  border: 1px solid #fca311;
+  border: 1px solid #ffd600;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 13px;
@@ -224,7 +224,7 @@
 }
 
 .chat-input:focus {
-  border-color: #fca311;
+  border-color: #ffd600;
 }
 
 .send-btn {
@@ -248,4 +248,123 @@
   height: auto;
   pointer-events: auto;
   cursor: pointer;
+}
+
+/* =========================================
+   ЭЛЕМЕНТЫ ОНБОРДИНГА (Выпадающий список и навигация)
+   ========================================= */
+
+// Контейнер для селекта
+.dropdown-container {
+  margin: 12px 0;
+  width: 100%;
+}
+
+// Сам выпадающий список
+.direction-select {
+  width: 100%;
+  padding: 12px 36px 12px 16px; // Отступ справа больше, чтобы текст не залезал на стрелку
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #333;
+  background-color: #f9f9f9;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Убираем страшную дефолтную стрелку и ставим аккуратную кастомную */
+  appearance: none; 
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="%23333" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+
+  // Эффект при наведении и клике (используем ваш брендовый желтый #fca311)
+  &:focus, &:hover {
+    border-color: #ffd600;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(252, 163, 17, 0.1);
+  }
+}
+
+// Контейнер с кнопками < и >
+.navigation-controls {
+  display: flex;
+  justify-content: space-between; // Разносим стрелки по краям диалога
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0; // Легкая линия для отделения навигации от текста
+}
+
+// Кнопки-стрелки
+.nav-arrow-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background: #f4f4f4;
+  border: none;
+  border-radius: 50%; // Делаем кнопки идеально круглыми
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  // Состояние, когда нажимать нельзя (например, на первом шаге)
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: #f9f9f9;
+    color: #ccc;
+  }
+}
+
+.skip-screen-btn {
+  position: fixed; 
+  top: 24px;
+  right: 24px;
+  z-index: 999999; 
+  pointer-events: auto; /* Жизненно важно для кликабельности */
+
+  background: none;
+  border: none;
+  outline: none;
+  padding: 8px;
+  
+  color: #ffd600;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #ffd600;
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: #333333;
+  }
+}
+
+:host ::ng-deep {
+  [id$="_place"] {
+    pointer-events: none; 
+    transition: fill 0.3s ease;
+  }
+
+[id$="_place"].place-active,
+  [id$="_place"].place-active * {
+    fill: #fbc02d !important; 
+  }
 }

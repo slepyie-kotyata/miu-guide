@@ -17,8 +17,16 @@ export interface DialogMessage {
   text: string;
   emotion: string;
   buttons?: DialogButton[];
+  // Управление навигацией
+  showNav?: boolean;         
+  hasPrev?: boolean;         
+  onNext?: () => void;       
+  onPrev?: () => void;       
+  // Управление выпадающим списком
+  showDropdown?: boolean;    
+  dropdownOptions?: string[];
+  onDropdownSelect?: (value: string) => void;
 }
-
 export interface MascotPhrase {
   id: number;
   emotion: string;
