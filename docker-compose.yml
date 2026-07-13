@@ -3,11 +3,12 @@ services:
         build: ./backend
         env_file: .env
         depends_on:
-            - redis
+            redis:
+                condition: service_healthy
         volumes:
             - sqlite_data:/root/data
         environment:
-            - REDIS_CONNECTION_URL=redis:6379/0
+            - REDIS_CONNECTION_URL=redis://redis:6379
             - SQLITE_PATH=/root/data/my_database.db
 
     redis:
@@ -15,6 +16,11 @@ services:
         restart: unless-stopped
         volumes:
             - redis_data:/root/cashe
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 3s
+            retries: 5
 volumes:
     sqlite_data:
         driver: local
