@@ -8,4 +8,5 @@ var (
 	ErrUnavaliableAPI	= errors.New("unavaliable api error")
 	ErrInternal			= errors.New("internal error")
 	ErrExternalFailure	= errors.New("failure in api error")
+	ErrNotFound			= errors.New("not found error")
 )

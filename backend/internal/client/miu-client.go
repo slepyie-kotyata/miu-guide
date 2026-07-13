@@ -2,7 +2,7 @@ package client
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
@@ -59,19 +59,17 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return "", ErrUnavaliableAPI
+		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
 	}
 	defer apiResp.Body.Close()
 
 	var result TokenResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return "", ErrInternal
+		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
 	}
 
 	if result.ErrorCode == InvalidLoginCode {
-		return "", ErrInvalidLogin
+		return "", fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidLogin, result.ErrorCode)
 	}
 
 	return result.Token, nil
@@ -88,19 +86,17 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
-		log.Printf("error: %s", err.Error())
-		return 0, ErrUnavaliableAPI
+		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
 	}
 	defer apiResp.Body.Close()
 
 	var result UserIdResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return 0, ErrInternal
+		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
 	}
 
 	if result.ErrorCode == InvalidTokenCode {
-		return 0, ErrExternalFailure
+		return 0, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, result.ErrorCode)
 	}
 
 	return result.UserId, nil
@@ -119,19 +115,17 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return nil, ErrUnavaliableAPI
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
 	}
 	defer apiResp.Body.Close()
 
 	var result []UserInfoResponse
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return nil, ErrInvalidToken
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, "this token is invalid")
 	}
 
 	if len(result) == 0 {
-		return nil, ErrInternal
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any info about user %d", userId))
 	}
 
 	return &result[0], nil
@@ -149,19 +143,17 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 
 	apiResp, err := m.httpClient.Do(apiReq)
 	if err != nil {
-		log.Printf("error: %s\n", err.Error())
-		return nil, ErrUnavaliableAPI
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
 	}
 	defer apiResp.Body.Close()
 
 	var result []models.Subjects
 	if err := json.NewDecoder(apiResp.Body).Decode(&result); err != nil {
-		log.Printf("cannot decode: %s\n", err.Error())
-		return nil, ErrInvalidToken
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, "this token is invalid")
 	}
 
 	if len(result) == 0 {
-		return nil, ErrInternal
+		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any user's %d subjects", userId))
 	}
 
 	return result, nil

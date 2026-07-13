@@ -2,6 +2,24 @@ services:
     backend:
         build: ./backend
         ports:
-            - "8080":"8080"
+            - "8080:8080"
         env_file: .env
+        depends_on:
+            - redis
+        volumes:
+            - sqlite_data:/root/data
+        environment:
+            - REDIS_HOST=redis:6379
+            - SQLITE_PATH=/root/data/my_database.db
+
+    redis:
+        image: redis:alpine
+        restart: unless-stopped
+        ports:
+            - "127.0.0.1:6379:6379"
+        volumes:
+            - redis_data:/data
+volumes:
+    sqlite_data:
+    redis_data:
         

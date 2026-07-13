@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"miu-guide/internal/env"
+	"miu-guide/internal/models"
 	"net/http"
 	"time"
 )
@@ -56,4 +57,23 @@ func (s *ScheduleAPIClient) GetGroupId(groupName string) (int, error) {
 	_ = json.NewDecoder(apiResp.Body).Decode(&result)
 
 	return result[0].GroupId, nil
+}
+
+func (s *ScheduleAPIClient) GetLecturers(lastName string) ([]models.Lecturer, error) {
+	apiReq, _ := http.NewRequest("GET", s.BaseURL + fmt.Sprintf("/search?term=%s&type=lecturer", lastName), nil)
+	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
+	apiResp, err := s.httpClient.Do(apiReq)
+	if err != nil {
+		return nil, ErrUnavaliableAPI
+	}
+	defer apiResp.Body.Close()
+
+	var result []models.Lecturer
+
+	_ = json.NewDecoder(apiResp.Body).Decode(&result)
+	if len(result) == 0 {
+		return nil, ErrNotFound
+	}
+
+	return result, nil
 }

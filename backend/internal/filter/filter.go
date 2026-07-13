@@ -157,3 +157,17 @@ func MergeDuplicateSubjects(subjects []string) []string {
 	}
 	return mergedSubjects
 }
+
+func GetUniqueLabels(lecturers []models.Lecturer) []string {
+    seen := make(map[string]struct{})
+
+    var unique []string
+
+    for _, lecturer := range lecturers {
+        if _, exists := seen[lecturer.Label]; !exists {
+            seen[lecturer.Label] = struct{}{}
+            unique = append(unique, lecturer.Label)
+        }
+    }
+    return unique
+}

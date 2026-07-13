@@ -33,7 +33,7 @@ func (u *UserHandler) Authorize(c *echo.Context) error {
         if errors.Is(err, client.ErrInvalidLogin) {
             return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 1 })
         }
-        return u.handleAPIError(c, err, SourceMIU)
+        return handleAPIError(c, err, SourceMIU)
     }
 
     // получаем UserID
@@ -42,7 +42,7 @@ func (u *UserHandler) Authorize(c *echo.Context) error {
         if errors.Is(err, client.ErrExternalFailure) {
             return c.JSON(http.StatusBadGateway, map[string]any{ "code": 1 })
         }
-        return u.handleAPIError(c, err, SourceMIU)
+        return handleAPIError(c, err, SourceMIU)
     }
 
     return c.JSON(http.StatusOK, models.AuthResponse{
