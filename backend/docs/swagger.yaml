@@ -217,9 +217,33 @@ paths:
       summary: Авторизация пользователя
       tags:
       - auth
+  /events:
+    get:
+      description: Возвращает расписание на 1 сентября учитывая направление (моковые
+        данные)
+      parameters:
+      - description: Название направления
+        in: query
+        name: major
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+      summary: Расписание на 1 сентября
+      tags:
+      - mock
   /majors:
     get:
-      description: Возвращает список направлений
+      description: Возвращает список направлений (моковые значения)
       produces:
       - application/json
       responses:
@@ -233,7 +257,7 @@ paths:
             type: array
       summary: Список направлений
       tags:
-      - major
+      - mock
   /schedule/{group}:
     get:
       description: Возвращает расписание для указанной группы на выбранный день.

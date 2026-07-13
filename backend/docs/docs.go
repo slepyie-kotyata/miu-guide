@@ -239,14 +239,49 @@ const docTemplate = `{
                 }
             }
         },
-        "/majors": {
+        "/events": {
             "get": {
-                "description": "Возвращает список направлений",
+                "description": "Возвращает расписание на 1 сентября учитывая направление (моковые данные)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "major"
+                    "mock"
+                ],
+                "summary": "Расписание на 1 сентября",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название направления",
+                        "name": "major",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/majors": {
+            "get": {
+                "description": "Возвращает список направлений (моковые значения)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mock"
                 ],
                 "summary": "Список направлений",
                 "responses": {
