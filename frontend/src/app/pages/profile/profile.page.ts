@@ -6,6 +6,7 @@ import {UserService} from "../../services/user.service";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user.model";
 import {firstValueFrom} from "rxjs";
+import {AlertController, ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'app-page-profile',
@@ -18,6 +19,8 @@ export class ProfilePage implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private navCtrl = inject(NavController);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
 
   private readonly emptyUser: User = {
     full_name: "",
@@ -57,8 +60,35 @@ export class ProfilePage implements OnInit {
     return match ? match[1] : '';
   }
 
-  openMajorDetails() {
-    console.log("Открытие деталей специальности:", this.user().major);
+  async openMajorDetails() {
+    const major = this.user().major;
+
+    const alert = await this.alertController.create({
+      header: 'Направление подготовки',
+      message: major,
+      buttons: [
+        {
+          text: 'Копировать',
+          handler: async () => {
+            await navigator.clipboard.writeText(major);
+
+            const toast = await this.toastController.create({
+              message: 'Скопировано в буфер обмена',
+              duration: 1500,
+              position: 'bottom'
+            });
+
+            await toast.present();
+          }
+        },
+        {
+          text: 'Закрыть',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   openSubjectsList() {
