@@ -1,16 +1,17 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {IonContent, IonIcon, IonSpinner, NavController} from '@ionic/angular/standalone';
+import {IonContent, IonIcon, IonSkeletonText, NavController} from '@ionic/angular/standalone';
 import {addIcons} from 'ionicons';
 import {chevronForwardOutline} from 'ionicons/icons';
 import {UserService} from "../../services/user.service";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user.model";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-page-profile',
   templateUrl: 'profile.page.html',
   styleUrls: ['profile.page.scss'],
-  imports: [IonContent, IonIcon, IonSpinner],
+  imports: [IonContent, IonIcon, IonSkeletonText],
 })
 export class ProfilePage implements OnInit {
   isLoading = signal<boolean>(true);
@@ -31,32 +32,22 @@ export class ProfilePage implements OnInit {
   user = computed<User>(() => this.userService.userSignal() ?? this.emptyUser);
 
   constructor() {
-    addIcons({ chevronForwardOutline });
+    addIcons({chevronForwardOutline});
   }
 
-  ngOnInit(): void {
-    this.userService.loadUser().subscribe({
-      next: (u) => {
-        if (!u) {
-          this.authService.logout();
-          this.userService.clearUser();
-          this.navCtrl.navigateRoot('/login');
-        }
-      },
-      error: () => {
-        this.logout();
-      },
-    });
+  async ngOnInit() {
+    this.isLoading.set(true);
+    const u = await firstValueFrom(this.userService.loadUser());
+    if (!u) {
+      this.authService.logout();
+      this.userService.clearUser();
+      await this.navCtrl.navigateRoot('/login');
+      return;
+    }
 
-    this.userService.loadUserSubjects().subscribe({
-        next: () => {
-          this.isLoading.set(false);
-        },
-        error: () => {
-          this.logout();
-        }
-      }
-    )
+    await firstValueFrom(this.userService.loadUserSubjects());
+
+    this.isLoading.set(false);
   }
 
   getMajorCode(): string {
@@ -70,15 +61,15 @@ export class ProfilePage implements OnInit {
     console.log("Открытие деталей специальности:", this.user().major);
   }
 
-  openSubjectsList(){
+  openSubjectsList() {
     this.navCtrl.navigateRoot('/subjects');
   }
 
-  openMoodleWebsite(){
+  openMoodleWebsite() {
     window.open('https://elearn.mmu.ru/', '_blank');
   }
 
-  logout(){
+  logout() {
     this.authService.logout();
     this.userService.clearUser();
     this.navCtrl.navigateRoot('/tabs/map');

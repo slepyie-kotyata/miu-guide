@@ -1,21 +1,23 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  @if(isLoading()) {
-    <div class="loader-wrapper">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
-  }
-  @else {
-
   <div class="profile-content">
     <h1 class="page-title">Профиль</h1>
 
     <div class="user-card">
       <div class="avatar-wrapper">
-        <img src="/assets/icons/profile_student_icon.svg" />
+        <img src="/assets/icons/profile_student_icon.svg"/>
       </div>
       <div class="user-info">
-        <h2>{{ user().full_name }}</h2>
-        <p>Группа: {{ user().group_name }}</p>
+        @if (isLoading()) {
+          <h2>
+            <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+          </h2>
+          <p>Группа:
+            <ion-skeleton-text style="width: 4rem; display: inline-block" [animated]="true"></ion-skeleton-text>
+          </p>
+        } @else {
+          <h2>{{ user().full_name }}</h2>
+          <p>Группа: {{ user().group_name }}</p>
+        }
       </div>
     </div>
 
@@ -23,82 +25,95 @@
 
       <div class="menu-item hide-chevron">
         <div class="icon-wrapper">
-          <img src="/assets/icons/profile_icon_2.svg" />
+          <img src="/assets/icons/profile_icon_2.svg"/>
         </div>
         <div class="menu-text">
           <div class="menu-title">Курс</div>
-          <div class="menu-subtitle">{{ user().course }} курс</div>
+          <div class="menu-subtitle">
+            @if (isLoading()) {
+              <ion-skeleton-text style="width: 0.5rem; display: inline-block" [animated]="true"></ion-skeleton-text>
+            } @else {
+              {{ user().course }}
+            }
+            курс
+          </div>
         </div>
       </div>
 
-  <button (click)="openMajorDetails()" class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/doc_icon.svg" />
-    </div>
-    <div class="menu-text">
-      <div class="menu-title">Направление подготовки</div>
-      <div class="menu-subtitle">{{getMajorCode()}}</div>
-    </div>
-    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
-  </button>
+      <button (click)="openMajorDetails()" class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/doc_icon.svg"/>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">Направление подготовки</div>
+          <div class="menu-subtitle">
+            @if (isLoading()) {
+              <ion-skeleton-text style="display: inline-block" [animated]="true"></ion-skeleton-text>
+            } @else {
+              {{ getMajorCode() }}
+            }
+          </div>
+        </div>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
 
-  <button (click)="openSubjectsList()" class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/books_icon.svg" />
-    </div>
-    <div class="menu-text">
-      <div class="menu-title">Дисциплины текущего семестра</div>
-      <div class="menu-subtitle">Нажмите чтобы узнать</div>
-    </div>
-    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
-  </button>
+      <button (click)="openSubjectsList()" [disabled]="isLoading()" class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/books_icon.svg"/>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">Дисциплины текущего семестра</div>
+          <div class="menu-subtitle">Нажмите чтобы узнать</div>
+        </div>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
 
-  <button (click)="openMoodleWebsite()" class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/id_card_icon.svg" />
-    </div>
-    <div class="menu-text">
-      <div class="menu-title">Открыть ЛК в браузере</div>
-      <div class="menu-subtitle">Нажмите чтобы перейти в браузер</div>
-    </div>
-  </button>
+      <button (click)="openMoodleWebsite()" class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/id_card_icon.svg"/>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">Открыть ЛК в браузере</div>
+          <div class="menu-subtitle">Нажмите чтобы перейти в браузер</div>
+        </div>
+      </button>
 
-  <button (click)="logout()" class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/logout_icon.svg" />
-    </div>
-    <div class="menu-text">
-      <div class="menu-title">Выход</div>
-    </div>
-  </button>
+      <button (click)="logout()" [disabled]="isLoading()" class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/logout_icon.svg"/>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">Выход</div>
+        </div>
+      </button>
 
-</div>
-
-<div class="section-title">Информация</div>
-
-<div class="menu-block">
-
-  <button class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/notification_icon.svg" />
     </div>
-    <div class="menu-text">
-      <div class="menu-title">Помощь и поддержка</div>
-    </div>
-    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
-  </button>
 
-  <button class="menu-item" type="button">
-    <div class="icon-wrapper">
-      <img alt="icon" src="/assets/icons/heart_icon.svg" />
-    </div>
-    <div class="menu-text">
-      <div class="menu-title">О приложении</div>
-    </div>
-    <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
-  </button>
+    <div class="section-title">Информация</div>
 
-</div>
-</div>
-  }
+    <div class="menu-block">
+
+      <button class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/notification_icon.svg"/>
+        </div>
+
+        <div class="menu-text">
+          <div class="menu-title">Помощь и поддержка</div>
+        </div>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+      <button class="menu-item" type="button">
+        <div class="icon-wrapper">
+          <img alt="icon" src="/assets/icons/heart_icon.svg"/>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">О приложении</div>
+        </div>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+
+    </div>
+  </div>
 </ion-content>
