@@ -9,7 +9,7 @@ services:
         volumes:
             - sqlite_data:/root/data
         environment:
-            - REDIS_HOST=redis:6379
+            - REDIS_CONNECTION_URL=redis:6379/0
             - SQLITE_PATH=/root/data/my_database.db
 
     redis:
@@ -18,8 +18,9 @@ services:
         ports:
             - "127.0.0.1:6379:6379"
         volumes:
-            - redis_data:/data
+            - redis_data:/root/cashe
 volumes:
     sqlite_data:
+        driver: local
     redis_data:
         
