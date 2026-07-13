@@ -356,15 +356,3 @@
     color: #333333;
   }
 }
-
-:host ::ng-deep {
-  [id$="_place"] {
-    pointer-events: none; 
-    transition: fill 0.3s ease;
-  }
-
-[id$="_place"].place-active,
-  [id$="_place"].place-active * {
-    fill: #fbc02d !important; 
-  }
-}

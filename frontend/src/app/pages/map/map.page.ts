@@ -3,6 +3,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonContent } from '@ionic/angular/standalone';
 import { AssistantCatComponent } from '../../components/assistant-cat/assistant-cat.component';
+import { AssistantDialogService } from '../../services/assistant/assistant-dialog.service';
 import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
 import { ROOMS_DATA } from 'src/app/data/map-data';
@@ -33,6 +34,7 @@ export class MapPage {
   private el = inject(ElementRef);
   private haptics = inject(HapticsService);
   private sanitizer = inject(DomSanitizer);
+  private dialogService = inject(AssistantDialogService);
 
   readonly roomData = computed(() => {
     const id = this.selectedRoomId();
@@ -82,6 +84,39 @@ effect(() => {
         }
       }
     }); 
+  });
+
+  effect(() => {
+    const highlightId = this.dialogService.highlightId();
+    const svg = this.svgContent();
+
+    if (highlightId) {
+      if (this.currentMode() !== 'ГК') {
+        this.currentMode.set('ГК');
+      }
+      if (this.currentFloor() !== 1) {
+        this.currentFloor.set(1);
+      }
+    }
+
+    setTimeout(() => {
+      const svgEl = this.el.nativeElement.querySelector('.map-container svg');
+      if (!svgEl) return;
+
+      svgEl.querySelectorAll('.place-active').forEach((el: Element) => {
+        el.classList.remove('place-active');
+      });
+
+      if (highlightId) {
+        const target = svgEl.querySelector(`#${highlightId}_place`);
+        if (target) {
+          target.classList.add('place-active');
+          console.log(`Подсветка онбординга применена к: ${highlightId}_place`);
+        } else {
+          console.error(`Элемент с ID ${highlightId}_place не найден в SVG!`);
+        }
+      }
+    });
   });
   }
 
