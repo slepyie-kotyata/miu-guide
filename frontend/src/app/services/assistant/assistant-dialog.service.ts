@@ -5,6 +5,7 @@ import {AssistantVisibilityService} from './assistant-visibility.service';
 import {HttpClient} from '@angular/common/http';
 import {AuthService} from '../auth.service';
 import {SearchService} from "../search.service";
+import {UserService} from "../user.service";
 
 export interface OnboardingStep {
   id: number;
@@ -25,32 +26,6 @@ export class AssistantDialogService {
   readonly isLoaded = signal<boolean>(false);
   readonly highlightId = signal<string | null>(null);
   readonly directions = signal<string[]>([]);
-  readonly currentMessage = computed<OnboardingStep | null>(() => {
-    const isCompleted = localStorage.getItem('hasSeenOnboarding') === 'true';
-    if (isCompleted) return null;
-
-    const allSteps = this.steps();
-    if (allSteps.length === 0) return null;
-
-    const step = allSteps.find(s => s.id === this.currentStepId());
-    if (!step) return null;
-
-    let processedText = step.text;
-    if (step.id === 4) {
-      processedText = processedText.replace('&value', this.selectedDirection().split(' ').slice(1).join(' ') || 'выбранное направление');
-    }
-
-    return {
-      id: step.id,
-      emotion: step.emotion,
-      text: processedText,
-      buttons: step.buttons,
-      canSkip: step.canSkip,
-      comment: step.comment,
-      highlight: step.highlight,
-      mapFloor: step.mapFloor,
-    };
-  });
   readonly currentFloor = computed<number>(() => {
     const msg = this.currentMessage();
     return msg?.mapFloor ?? 1;
@@ -66,6 +41,37 @@ export class AssistantDialogService {
   private emotionService = inject(AssistantEmotionService);
   private visibilityService = inject(AssistantVisibilityService);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
+  readonly currentMessage = computed<OnboardingStep | null>(() => {
+    const isCompleted = localStorage.getItem('hasSeenOnboarding') === 'true';
+    if (isCompleted) return null;
+
+    const allSteps = this.steps();
+    if (allSteps.length === 0) return null;
+
+    const step = allSteps.find(s => s.id === this.currentStepId());
+    if (!step) return null;
+
+    let processedText = step.text;
+    if (step.id === 4) {
+      processedText = processedText.replace('&value', this.selectedDirection().split(' ').slice(1).join(' ') || 'выбранное направление');
+    }
+
+    if (step.id === 7) {
+      processedText = processedText.replace('&value', this.userService.userSignal()?.full_name.split(' ')[1] || 'студент');
+    }
+
+    return {
+      id: step.id,
+      emotion: step.emotion,
+      text: processedText,
+      buttons: step.buttons,
+      canSkip: step.canSkip,
+      comment: step.comment,
+      highlight: step.highlight,
+      mapFloor: step.mapFloor,
+    };
+  });
   private searchService = inject(SearchService);
 
   constructor() {
