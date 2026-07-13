@@ -1,34 +1,18 @@
-import { Component, signal, ElementRef, computed, inject, effect} from '@angular/core';
+import { Component, signal, ElementRef, computed, inject, effect } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { 
-  IonContent, 
-  IonModal, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonButtons, 
-  IonButton 
-} from '@ionic/angular/standalone';
+import { IonContent } from '@ionic/angular/standalone';
 import { AssistantCatComponent } from '../../components/assistant-cat/assistant-cat.component';
 import { HapticsService } from '../../services/capacitor/haptics.service';
 import { ImpactStyle } from '@capacitor/haptics';
 import { ROOMS_DATA } from 'src/app/data/map-data';
-
 
 @Component({
   selector: 'app-page-map',
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss'],
   standalone: true,
-  imports: [IonContent, 
-    AssistantCatComponent,
-    IonModal, 
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
-    IonButtons, 
-    IonButton],
+  imports: [IonContent, AssistantCatComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MapPage {
@@ -39,14 +23,21 @@ export class MapPage {
   svgContent = signal<SafeHtml | null>(null);
   selectedRoomId = signal<string | null>(null);
   isModalOpen = signal<boolean>(false);
-
   activeRoomId = signal<string | null>(null);
-  private el = inject(ElementRef);
+
+  tooltipTop = signal<number>(0);
+  tooltipLeft = signal<number>(0);
+  tooltipWidth = signal<string>('280px'); 
+  arrowLeft = signal<string>('50%'); 
   
+  private el = inject(ElementRef);
+  private haptics = inject(HapticsService);
+  private sanitizer = inject(DomSanitizer);
+
   readonly roomData = computed(() => {
-  const id = this.selectedRoomId();
-  return id ? ROOMS_DATA[id] : null;
-});
+    const id = this.selectedRoomId();
+    return id ? ROOMS_DATA[id] : null;
+  });
 
   readonly currentFloors = computed(() =>
     this.currentMode() === 'ГК' ? [6, 5, 4, 3, 2, 1] : [4, 3, 2, 1],
@@ -61,34 +52,37 @@ export class MapPage {
     return `/assets/maps/${subFolder}/map_${this.currentFloor()}.svg`;
   });
 
-  private haptics = inject(HapticsService);
-  private sanitizer = inject(DomSanitizer);
-
   constructor() {
     effect(() => {
       this.loadSvg(this.mapImage());
     });
 
-    effect(() => {
-      const activeId = this.activeRoomId();
+effect(() => {
+    const activeId = this.activeRoomId(); 
+    
+    setTimeout(() => {
+      const svgElement = document.querySelector('.map-container svg');
       
-      setTimeout(() => {
-        const svgElement = this.el.nativeElement.querySelector('.map-container svg');
-        
-        if (svgElement) {
-          svgElement.querySelectorAll('[id$="_place"]').forEach((el: Element) => {
-            el.classList.remove('place-active');
-          });
-          
-          if (activeId) {
-            const targetPlace = svgElement.querySelector(`#${activeId}_place`);
-            if (targetPlace) {
-              targetPlace.classList.add('place-active');
-            }
-          }
+      if (!svgElement) {
+        console.warn('SVG не найден в DOM');
+        return;
+      }
+
+      svgElement.querySelectorAll('.place-active').forEach((el) => {
+        el.classList.remove('place-active');
+      });
+
+      if (activeId) {
+        const target = svgElement.querySelector(`#${activeId}_place`);
+        if (target) {
+          target.classList.add('place-active');
+          console.log(`Подсветка применена к: ${activeId}_place`);
+        } else {
+          console.error(`Элемент с ID ${activeId}_place не найден в SVG!`);
         }
-      }, 50); 
-    });
+      }
+    }); 
+  });
   }
 
   async loadSvg(url: string) {
@@ -108,8 +102,21 @@ onMapClick(event: MouseEvent) {
   if (clickedPoint) {
     const cleanId = clickedPoint.id.replace('_point', '');
     
+    const wrapper = target.closest('.map-wrapper') as HTMLElement;
+    if (wrapper) {
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const pointRect = clickedPoint.getBoundingClientRect();
+
+      const scale = wrapperRect.width / wrapper.offsetWidth;
+
+      const localTop = (pointRect.top - wrapperRect.top) / scale;
+      const localLeft = (pointRect.left - wrapperRect.left + (pointRect.width / 2)) / scale;
+
+      this.tooltipTop.set(localTop);
+      this.tooltipLeft.set(localLeft);
+    }
+
     this.activeRoomId.set(cleanId);
-    
     this.selectedRoomId.set(cleanId);
     this.isModalOpen.set(true);
     
@@ -117,11 +124,14 @@ onMapClick(event: MouseEvent) {
   }
 }
 
-closeRoomModal() {
-  this.isModalOpen.set(false);
-  this.activeRoomId.set(null); 
-  setTimeout(() => this.selectedRoomId.set(null), 300);
-}
+ionViewWillLeave() {
+    this.closeRoomModal();
+  }
+  closeRoomModal() {
+    this.isModalOpen.set(false);
+    this.activeRoomId.set(null); 
+    setTimeout(() => this.selectedRoomId.set(null), 300);
+  }
 
   showInfo() {
     console.log('Открыто инфо на карте');
@@ -131,6 +141,7 @@ closeRoomModal() {
     this.haptics.selection();
     this.currentFloor.set(floor);
     this.triggerMapReset();
+    this.closeRoomModal();
   }
 
   toggleMode() {
@@ -138,6 +149,7 @@ closeRoomModal() {
     this.currentMode.update((mode) => (mode === 'ГК' ? 'ЗП' : 'ГК'));
     this.currentFloor.set(1);
     this.triggerMapReset();
+    this.closeRoomModal();
   }
 
   triggerMapReset() {
@@ -146,4 +158,6 @@ closeRoomModal() {
       this.showMap.set(true);
     }, 10);
   }
+
+  
 }
