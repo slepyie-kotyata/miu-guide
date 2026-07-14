@@ -37,3 +37,17 @@ export interface MascotQuestion {
   answer: string;
   comment?: string;
 }
+
+export const ONBOARDING_STEPS = {
+  AUTH_CHOICE: 2,
+  DIRECTION_CHOICE: 3,
+  DIRECTION_CONFIRM: 4,
+  AUTH_REDIRECT: 5,
+  NAME_GREETING: 7,
+  POST_AUTH: 9,
+} as const;
+
+export const ONBOARDING_DARK_BACKDROP = {
+  MIN: 19,
+  MAX: 55,
+} as const;

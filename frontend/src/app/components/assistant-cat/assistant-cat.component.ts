@@ -5,6 +5,7 @@ import {
   AssistantEmotionService,
   AssistantVisibilityService
 } from '../../services/assistant';
+import {ONBOARDING_DARK_BACKDROP} from '../../services/assistant/assistant.models';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter, map} from 'rxjs/operators';
 import {toSignal} from '@angular/core/rxjs-interop';
@@ -29,6 +30,8 @@ export class AssistantCatComponent {
   ), {initialValue: this.router.url});
 
   readonly isSchedulePage = computed(() => this.currentUrl().includes('/schedule'));
+  readonly darkBackdropMin = ONBOARDING_DARK_BACKDROP.MIN;
+  readonly darkBackdropMax = ONBOARDING_DARK_BACKDROP.MAX;
 
   constructor() {
     effect(() => {

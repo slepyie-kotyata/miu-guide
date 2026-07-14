@@ -8,7 +8,7 @@
   @if (dialogService.currentMessage(); as message) {
     <div
       class="backdrop"
-      [class.dark-overlay]="message.id < 19 || message.id > 55">
+      [class.dark-overlay]="message.id < darkBackdropMin || message.id > darkBackdropMax">
     </div>
   }
   <div class="cat-wrapper" [class.lifted]="isSchedulePage()">
