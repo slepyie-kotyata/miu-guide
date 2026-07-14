@@ -6,9 +6,11 @@ import (
 	"miu-guide/internal/apperror"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
+	"net/http"
 	"net/url"
 	"strconv"
 	"time"
+
 	"github.com/imroc/req/v3"
 )
 
@@ -21,11 +23,13 @@ type MIUClient struct {
 func NewMIUClient() *MIUClient {
 	client := req.C().
 		SetTimeout(3 * time.Second).
-		SetTLSFingerprintChrome().
-		SetCommonHeaders(map[string]string{
-			"User-Agent":   "MoodleMobile",
-			"Content-Type": "application/x-www-form-urlencoded",
-		})
+		ImpersonateChrome()
+	client.Headers = make(http.Header) 
+	client.SetCommonHeaders(map[string]string{
+		"User-Agent":   "MoodleMobile",
+		"Content-Type": "application/x-www-form-urlencoded",
+	})
+
 	return &MIUClient{
 		httpClient:       client,
 		MIUApiLoginUrl:   env.GetEnv(env.MIUApiLoginUrl),
@@ -42,9 +46,15 @@ type MIUApiErrorResponse struct {
 	Exception 	string 	`json:"exception"`
     Errorcode 	string	`json:"errorcode"`
     Message 	string	`json:"message"`
+	Error     	string `json:"error"`
 }
 
 func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
+	msg := errorMessage.Message
+	if msg == "" {
+		msg = errorMessage.Error
+	}
+	
 	if errorMessage.Errorcode == InvalidTokenCode || errorMessage.Errorcode == InvalidLoginCode {
 		return apperror.Wrap(apperror.ErrInvalidCredentials, apperror.SourceMIU, errorMessage.Message)
 	}
@@ -52,7 +62,6 @@ func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
 }
 
 func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any) error {
-	data.Set("service", "moodle_mobile_app")
 	data.Set("moodlewsrestformat", "json")
 
 	resp, err := m.httpClient.R().
@@ -75,8 +84,7 @@ func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any
 			apperror.ErrInternal, 
 			apperror.SourceMIU, 
 			fmt.Sprintf("failed to parse JSON, body: %s, err: %v", string(respBody), 
-			err,
-			),
+			err),
 		)
 	}
 	return nil
@@ -86,6 +94,7 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	data := url.Values{}
 	data.Set("username", authReq.Login)
 	data.Set("password", authReq.Password)
+	data.Set("service", "moodle_mobile_app")
 
 	var token struct{Token string}
 	if err := m.doAccountRequest(m.MIUApiLoginUrl, data, &token); err != nil {
@@ -100,7 +109,10 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	data.Set("wstoken", token)
 	data.Set("wsfunction", "core_webservice_get_site_info")
 
-	var id struct{ UserId int }
+	var id struct {
+		UserId int `json:"userid"`
+	}
+
 	if err := m.doAccountRequest(m.MIUApiAccountUrl, data, &id); err != nil {
 		return 0, err
 	}
