@@ -49,6 +49,8 @@ func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
 }
 
 func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any) error {
+	data.Set("service", "moodle_mobile_app")
+	data.Set("moodlewsrestformat", "json")
 	apiReq, _ := http.NewRequest(http.MethodPost, baseUrl, strings.NewReader(data.Encode()))
 	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	apiResp, err := m.httpClient.Do(apiReq)
@@ -78,7 +80,6 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	data := url.Values{}
 	data.Set("username", authReq.Login)
 	data.Set("password", authReq.Password)
-	data.Set("service", "moodle_mobile_app")
 
 	var token struct{Token string}
 	if err := m.doAccountRequest(m.MIUApiLoginUrl, data, &token); err != nil {
@@ -92,7 +93,6 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	data := url.Values{}
 	data.Set("wstoken", token)
 	data.Set("wsfunction", "core_webservice_get_site_info")
-	data.Set("moodlewsrestformat", "json")
 
 	var id struct{ UserId int }
 	if err := m.doAccountRequest(m.MIUApiAccountUrl, data, &id); err != nil {
@@ -111,7 +111,6 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 	data := url.Values{}
 	data.Set("wstoken", token)
 	data.Set("wsfunction", "core_user_get_users_by_field")
-	data.Set("moodlewsrestformat", "json")
 	data.Set("field", "id")
 	data.Set("values[0]", strconv.Itoa(userId))
 
@@ -135,7 +134,6 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 	data := url.Values{}
 	data.Set("wstoken", token)
 	data.Set("wsfunction", "core_enrol_get_users_courses")
-	data.Set("moodlewsrestformat", "json")
 	data.Set("userid", strconv.Itoa(userId))
 
 	var subjectsList []models.Subjects
