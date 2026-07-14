@@ -53,7 +53,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "{\"code\": 1} - Пустой токен в Bearer",
+                        "description": "{\"code\": 1} - Пустой токен в Bearer/неправильный userId",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -62,7 +62,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "{\"code\": 1} - Неправильные данные пользователя, {\"code\": 2} - Невалидный токен(истек срок)",
+                        "description": "{\"code\": 2} - Невалидный токен(истек срок)",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -80,7 +80,7 @@ const docTemplate = `{
                         }
                     },
                     "503": {
-                        "description": "{\"code\": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1",
+                        "description": "{\"code\": 3} - Недоступность API ЛК ММУ, {\"code\": 1} - Недоступность API Расписания",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -126,7 +126,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2",
+                        "description": "{\"code\": 1} - Пустой токен в Bearer/неправильный userId",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -201,7 +201,7 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Неверный логин или пароль (code: 1)",
+                        "description": "{\"code\": 1} - Неверный логин или пароль",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -210,7 +210,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера (code: 1)",
+                        "description": "{\"code\": 1} - Внутренняя ошибка сервера",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -219,7 +219,7 @@ const docTemplate = `{
                         }
                     },
                     "502": {
-                        "description": "Ошибка MIUApi (code: 1)",
+                        "description": "{\"code\": 1} - Ошибка MIUApi",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -228,7 +228,7 @@ const docTemplate = `{
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 3 - недоступность\\таймаут MIUApi)",
+                        "description": "{\"code\": 3} - Недоступность\\таймаут MIUApi",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -268,6 +268,15 @@ const docTemplate = `{
                                 "items": {
                                     "type": "string"
                                 }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"code\": 1} - Не найдено расписание",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
                             }
                         }
                     }
@@ -339,19 +348,28 @@ const docTemplate = `{
                     "400": {
                         "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "500": {
                         "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "503": {
                         "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }
@@ -389,19 +407,28 @@ const docTemplate = `{
                     "400": {
                         "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "500": {
                         "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "503": {
                         "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     }
                 }
@@ -440,9 +467,12 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "{\"code\": 2} - Пустой параметр lecturer",
+                        "description": "{\"code\": 1} - Пустой параметр lecturer",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ErrorResponse"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
                         }
                     },
                     "404": {
@@ -468,15 +498,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
         "models.AuthResponse": {
             "type": "object",
             "properties": {
