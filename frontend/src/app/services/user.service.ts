@@ -96,6 +96,10 @@ export class UserService {
     this.userSubjects.set([]);
   }
 
+  getMajor(): string {
+    return this.user()?.major || localStorage.getItem('major') || '';
+  }
+
   private readFromStorage(): User | null {
     const raw = localStorage.getItem(this.STORAGE_KEY);
     if (!raw) return null;
