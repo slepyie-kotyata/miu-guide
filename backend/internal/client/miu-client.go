@@ -22,6 +22,7 @@ func NewMIUClient() *MIUClient {
 	client := req.C().
 		SetTimeout(3 * time.Second).
 		SetTLSFingerprintChrome().
+		EnableForceHTTP1().
 		SetCommonHeaders(map[string]string{
 			"User-Agent":   "MoodleMobile",
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -64,14 +65,20 @@ func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any
 	}
 
 	respBody := resp.Bytes()
-	
+
 	var errorMessage MIUApiErrorResponse
 	if err := json.Unmarshal(respBody, &errorMessage); err == nil && errorMessage.Errorcode != "" {
 		return parseErrorMessage(errorMessage)
 	}
 
 	if err := json.Unmarshal(respBody, target); err != nil {
-		return apperror.Wrap(apperror.ErrInternal, apperror.SourceMIU, err.Error())
+		return apperror.Wrap(
+			apperror.ErrInternal, 
+			apperror.SourceMIU, 
+			fmt.Sprintf("failed to parse JSON, body: %s, err: %v", string(respBody), 
+			err,
+			),
+		)
 	}
 	return nil
 }
