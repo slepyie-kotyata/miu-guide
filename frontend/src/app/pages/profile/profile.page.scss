@@ -4,7 +4,7 @@ ion-content {
 }
 
 .profile-content {
-  padding-bottom: 20px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
 
   padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
@@ -156,6 +156,7 @@ ion-icon {
   flex-direction: column;
   gap: 16px;
   padding-top: 8px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
 }
 
 .major-display-card {
