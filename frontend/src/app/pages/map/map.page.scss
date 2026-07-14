@@ -16,7 +16,7 @@ ion-content {
   font-weight: 800;
   color: var(--miu-text-dark);
   margin: 0;
-  padding: calc(env(safe-area-inset-top, 0px) + 16px) 24px 0 24px;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 64px 0 24px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -55,7 +55,7 @@ ion-content {
 
 .mode-toggle-btn {
   position: absolute;
-  bottom: 80px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
   right: 12px;
   background: var(--miu-text-dark);
   color: var(--miu-bg-white);
@@ -224,7 +224,7 @@ ion-content {
 .modern-timeline {
   display: flex;
   flex-direction: column;
-  padding: 8px 4px 32px 4px;
+  padding: 8px 4px calc(env(safe-area-inset-bottom, 0px) + 32px) 4px;
 }
 
 .timeline-row {

@@ -5,6 +5,10 @@
   margin: 20px 24px;
 }
 
+ion-content {
+  --padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+}
+
 .subject-item {
   background-color: var(--miu-yellow-card);
   margin: 0 24px 16px;
