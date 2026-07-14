@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
+	"miu-guide/internal/service"
 	"net/http"
 	"strconv"
 	"time"
@@ -16,24 +18,6 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/redis/go-redis/v9"
 )
-
-var layout = "2006.01.02"
-
-func validateDate(date string) bool {
-	_, err := time.Parse(layout, date)
-	return err == nil
-}
-
-func getDate() string {
-	loc, err := time.LoadLocation("Europe/Moscow")
-	if err != nil {
-		fmt.Println("error loading location:", err)
-		return time.Now().Format(layout)
-	}
-
-	moscowTime := time.Now().In(loc)
-	return moscowTime.Format(layout)
-}
 
 type ScheduleHandler struct {
     apiClient 	*client.ScheduleAPIClient
@@ -61,22 +45,16 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 
 	if !errors.Is(err, redis.Nil) {
         if errors.Is(err, context.DeadlineExceeded) {
-            return c.JSON(http.StatusServiceUnavailable, map[string]any{
-				"code": 2,
-			})
+            return c.JSON(http.StatusServiceUnavailable, map[string]any{ "code": 2 })
         }
-        return c.JSON(http.StatusInternalServerError, map[string]any{
-			"code": 2,
-		})
+        return c.JSON(http.StatusInternalServerError, map[string]any{ "code": 2 })
     }
 
 	//2. если нет запрашиваем у api и кэшируем
-	apiResp, err := s.apiClient.FetchData(groupId, scheduleDay)
+	apiResp, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
 	if err != nil {
 		fmt.Printf("API fetch error: %v\n", err)
-		return c.JSON(http.StatusServiceUnavailable, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusServiceUnavailable, map[string]any{ "code": 1 })
 	}
 
 	var schedule []models.RawSchedule
@@ -85,9 +63,7 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 
 	body, _ := io.ReadAll(apiResp.Body)
 	if err := json.Unmarshal(body, &schedule); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]any{
-			"code": 1,
-		})
+		return c.JSON(http.StatusInternalServerError, map[string]any{ "code": 1 })
 	}
 
 	result := filter.FilterSchedule(schedule)
@@ -110,20 +86,19 @@ func (s *ScheduleHandler) getSchedule(c *echo.Context, groupId string, scheduleD
 // @Tags schedule
 // @Produce json
 // @Param group path int true "ID Группы (число)"
-// @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
-// @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
-// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
-// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Success 200 {array} 	models.Schedule "Успешный ответ"
+// @Failure 400 {object} 	ErrorResponse 	"{"code": 1} - Невалидный ID группы"
+// @Failure 500 {object} 	ErrorResponse 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
+// @Failure 503 {object} 	ErrorResponse 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
 // @Router /schedule/{group}/today [get]
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code": 1,
-		})
+		log.Printf("err: %s", err)
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
 	}
 
-	return s.getSchedule(c, groupId, getDate())
+	return s.getSchedule(c, groupId, service.GetDate())
 }
 
 // @Summary Расписание на конкретный день
@@ -132,18 +107,40 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 // @Produce json
 // @Param group path int true "ID Группы (число)"
 // @Param day query string true "Дата расписания (формат: YYYY.MM.DD)"
-// @Success 200 {array} models.Schedule "Успешный ответ (данные из кэша или API)"
-// @Failure 400 {object} ErrorResponse "Невалидный ID группы (code: 1)"
-// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)"
-// @Failure 503 {object} ErrorResponse "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\таймаут Redis)"
+// @Success 200 {array} 	models.Schedule "Успешный ответ"
+// @Failure 400 {object} 	ErrorResponse 	"{"code": 1} - Невалидный ID группы"
+// @Failure 500 {object} 	ErrorResponse 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
+// @Failure 503 {object} 	ErrorResponse 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
 // @Router /schedule/{group} [get]
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
-	if _, err := strconv.Atoi(groupId); err != nil || !validateDate(scheduleDay) {
-		return c.JSON(http.StatusBadRequest, map[string]any{
-			"code": 1,
-		})
+	if _, err := strconv.Atoi(groupId); err != nil || !service.ValidateDate(scheduleDay) {
+		log.Printf("err: %s", err)
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
 	}
 
 	return s.getSchedule(c, groupId, scheduleDay)
+}
+
+// @Summary Имена преподавателей
+// @Description Возвращает найденные ФИО преподавателей
+// @Tags search
+// @Produce json
+// @Param lecturer query string true "Фамилия преподавателя"
+// @Success 200 {array} 	[]string 		"Успешный ответ"
+// @Failure 400 {object}  	ErrorResponse   "{"code": 2} - Пустой параметр lecturer"
+// @Failure 404 {object}  	map[string]int  "{"code": 1} - Не найдены ФИО преподавателей"
+// @Failure 503 {object}  	map[string]int  "{"code": 1} - Недоступность API Расписания"
+// @Router /search [get]
+func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
+	lecturerName := c.QueryParam("lecturer")
+	if lecturerName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 2 })
+	}
+	apiResp, err := s.apiClient.GetLecturers(lecturerName)
+	if err != nil {
+		handleAPIError(c, err, SourceSchedule)
+	}
+
+	return c.JSON(http.StatusOK, filter.GetUniqueLabels(apiResp))
 }

@@ -3,10 +3,14 @@ definitions:
   handlers.ErrorResponse:
     properties:
       code:
-        enum:
-        - 1
-        - 2
         example: 1
+        type: integer
+    type: object
+  models.AuthResponse:
+    properties:
+      token:
+        type: string
+      user_id:
         type: integer
     type: object
   models.LecturerInfo:
@@ -37,6 +41,26 @@ definitions:
           $ref: '#/definitions/models.LecturerInfo'
         type: array
     type: object
+  models.UserInfo:
+    properties:
+      course:
+        type: integer
+      full_name:
+        type: string
+      group_id:
+        type: integer
+      group_name:
+        type: string
+      institution:
+        description: формат учебы (очный/заочный и т.п.)
+        type: string
+      major:
+        description: направление
+        type: string
+      specialization:
+        description: профиль
+        type: string
+    type: object
 info:
   contact:
     name: Команда "Слепые Котята"
@@ -47,6 +71,193 @@ info:
   title: MIU-Guide API
   version: "1.0"
 paths:
+  /access/users/{id}:
+    get:
+      description: Получение данных о студенте
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            $ref: '#/definitions/models.UserInfo'
+        "400":
+          description: '{"code": 1} - Пустой токен в Bearer'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "401":
+          description: '{"code": 1} - Неправильные данные пользователя, {"code": 2}
+            - Невалидный токен(истек срок)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "404":
+          description: '{"code": 1} - Не найден пользователь'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: '{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность
+            API Расписания - code: 1'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение информации о пользователе
+      tags:
+      - users
+  /access/users/{id}/subjects:
+    get:
+      description: Получение списка предметов на текущий семестр
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: 'Неверный формат ID - code: 1, Пустой токен в Bearer - code:
+            2'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "401":
+          description: '{"code": 2} - Невалидный токен(истек срок)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "404":
+          description: '{"code": 1} - Не найден список предметов'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: '{"code": 3} - Недоступность API ЛК ММУ - code: 3'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получение списка предметов
+      tags:
+      - users
+  /auth:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Проксирует запрос в MIU API, проверяет логин/пароль и возвращает
+        токен и ID пользователя
+      parameters:
+      - description: Логин пользователя (имя пользователя)
+        in: formData
+        name: login
+        required: true
+        type: string
+      - description: Пароль пользователя
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "401":
+          description: 'Неверный логин или пароль (code: 1)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "500":
+          description: 'Внутренняя ошибка сервера (code: 1)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "502":
+          description: 'Ошибка MIUApi (code: 1)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "503":
+          description: 'Сервис недоступен (code: 3 - недоступность\таймаут MIUApi)'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Авторизация пользователя
+      tags:
+      - auth
+  /events:
+    get:
+      description: Возвращает расписание на 1 сентября учитывая направление (моковые
+        данные)
+      parameters:
+      - description: Название направления
+        in: query
+        name: major
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+      summary: Расписание на 1 сентября
+      tags:
+      - mock
+  /majors:
+    get:
+      description: Возвращает список направлений (моковые значения)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+      summary: Список направлений
+      tags:
+      - mock
   /schedule/{group}:
     get:
       description: Возвращает расписание для указанной группы на выбранный день.
@@ -65,23 +276,23 @@ paths:
       - application/json
       responses:
         "200":
-          description: Успешный ответ (данные из кэша или API)
+          description: Успешный ответ
           schema:
             items:
               $ref: '#/definitions/models.Schedule'
             type: array
         "400":
-          description: 'Невалидный ID группы (code: 1)'
+          description: '{"code": 1} - Невалидный ID группы'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "500":
-          description: 'Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа
-            API, code: 2 - ошибка Redis)'
+          description: '{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка
+            Redis'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "503":
-          description: 'Сервис недоступен (code: 1 - недоступность API расписания,
-            code: 2 - недоступность\таймаут Redis)'
+          description: '{"code": 1} - Недоступность API Расписания, {"code": 2} -
+            недоступность\таймаут Redis'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Расписание на конкретный день
@@ -100,41 +311,71 @@ paths:
       - application/json
       responses:
         "200":
-          description: Успешный ответ (данные из кэша или API)
+          description: Успешный ответ
           schema:
             items:
               $ref: '#/definitions/models.Schedule'
             type: array
         "400":
-          description: 'Невалидный ID группы (code: 1)'
+          description: '{"code": 1} - Невалидный ID группы'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "500":
-          description: 'Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа
-            API, code: 2 - ошибка Redis)'
+          description: '{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка
+            Redis'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "503":
-          description: 'Сервис недоступен (code: 1 - недоступность API расписания,
-            code: 2 - недоступность\таймаут Redis)'
+          description: '{"code": 1} - Недоступность API Расписания, {"code": 2} -
+            недоступность\таймаут Redis'
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
       summary: Расписание на сегодня
       tags:
       - schedule
-  /test:
+  /search:
     get:
-      description: Возвращает успешное сообщение для проверки работоспособности API
+      description: Возвращает найденные ФИО преподавателей
+      parameters:
+      - description: Фамилия преподавателя
+        in: query
+        name: lecturer
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Успешное выполнение
+          description: Успешный ответ
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+        "400":
+          description: '{"code": 2} - Пустой параметр lecturer'
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: '{"code": 1} - Не найдены ФИО преподавателей'
           schema:
             additionalProperties:
-              type: string
+              type: integer
             type: object
-      summary: Тестовый эндпоинт
+        "503":
+          description: '{"code": 1} - Недоступность API Расписания'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+      summary: Имена преподавателей
       tags:
-      - test
+      - search
+securityDefinitions:
+  BearerAuth:
+    description: 'Вставьте токен в формате: Bearer {ваш_токен}'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

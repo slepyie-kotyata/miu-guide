@@ -14,6 +14,285 @@
     },
     "basePath": "/",
     "paths": {
+        "/access/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение данных о студенте",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получение информации о пользователе",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "{\"code\": 1} - Пустой токен в Bearer",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"code\": 1} - Неправильные данные пользователя, {\"code\": 2} - Невалидный токен(истек срок)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"code\": 1} - Не найден пользователь",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "{\"code\": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/access/users/{id}/subjects": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Получение списка предметов на текущий семестр",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получение списка предметов",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "{\"code\": 2} - Невалидный токен(истек срок)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "{\"code\": 1} - Не найден список предметов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "{\"code\": 3} - Недоступность API ЛК ММУ - code: 3",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth": {
+            "post": {
+                "description": "Проксирует запрос в MIU API, проверяет логин/пароль и возвращает токен и ID пользователя",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Логин пользователя (имя пользователя)",
+                        "name": "login",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Пароль пользователя",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверный логин или пароль (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Ошибка MIUApi (code: 1)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Сервис недоступен (code: 3 - недоступность\\таймаут MIUApi)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/events": {
+            "get": {
+                "description": "Возвращает расписание на 1 сентября учитывая направление (моковые данные)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mock"
+                ],
+                "summary": "Расписание на 1 сентября",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название направления",
+                        "name": "major",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/majors": {
+            "get": {
+                "description": "Возвращает список направлений (моковые значения)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mock"
+                ],
+                "summary": "Список направлений",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/schedule/{group}": {
             "get": {
                 "description": "Возвращает расписание для указанной группы на выбранный день.",
@@ -42,7 +321,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ (данные из кэша или API)",
+                        "description": "Успешный ответ",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -51,19 +330,19 @@
                         }
                     },
                     "400": {
-                        "description": "Невалидный ID группы (code: 1)",
+                        "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                        "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -92,7 +371,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Успешный ответ (данные из кэша или API)",
+                        "description": "Успешный ответ",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -101,19 +380,19 @@
                         }
                     },
                     "400": {
-                        "description": "Невалидный ID группы (code: 1)",
+                        "description": "{\"code\": 1} - Невалидный ID группы",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера (code: 1 - ошибка парсинга ответа API, code: 2 - ошибка Redis)",
+                        "description": "{\"code\": 1} - ошибка парсинга ответа API, {\"code\": 2} - ошибка Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "503": {
-                        "description": "Сервис недоступен (code: 1 - недоступность API расписания, code: 2 - недоступность\\таймаут Redis)",
+                        "description": "{\"code\": 1} - Недоступность API Расписания, {\"code\": 2} - недоступность\\таймаут Redis",
                         "schema": {
                             "$ref": "#/definitions/handlers.ErrorResponse"
                         }
@@ -121,23 +400,59 @@
                 }
             }
         },
-        "/test": {
+        "/search": {
             "get": {
-                "description": "Возвращает успешное сообщение для проверки работоспособности API",
+                "description": "Возвращает найденные ФИО преподавателей",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "test"
+                    "search"
                 ],
-                "summary": "Тестовый эндпоинт",
+                "summary": "Имена преподавателей",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фамилия преподавателя",
+                        "name": "lecturer",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Успешное выполнение",
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "{\"code\": 2} - Пустой параметр lecturer",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "{\"code\": 1} - Не найдены ФИО преподавателей",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
-                                "type": "string"
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "{\"code\": 1} - Недоступность API Расписания",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
                             }
                         }
                     }
@@ -151,11 +466,18 @@
             "properties": {
                 "code": {
                     "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ],
                     "example": 1
+                }
+            }
+        },
+        "models.AuthResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -201,6 +523,43 @@
                     }
                 }
             }
+        },
+        "models.UserInfo": {
+            "type": "object",
+            "properties": {
+                "course": {
+                    "type": "integer"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "group_id": {
+                    "type": "integer"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "institution": {
+                    "description": "формат учебы (очный/заочный и т.п.)",
+                    "type": "string"
+                },
+                "major": {
+                    "description": "направление",
+                    "type": "string"
+                },
+                "specialization": {
+                    "description": "профиль",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Вставьте токен в формате: Bearer {ваш_токен}",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

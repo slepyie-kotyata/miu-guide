@@ -32,3 +32,13 @@ type LecturerInfo struct {
 	Lecturer   string `json:"lecturer"`
 	Auditorium string `json:"auditorium"`
 }
+
+type Subjects struct {
+	Id			int		`json:"id"`
+	FullName	string	`json:"fullname"`
+	ShortName	string	`json:"shortname"`
+}
+
+type Lecturer struct {
+    Label string `json:"label"`
+}
