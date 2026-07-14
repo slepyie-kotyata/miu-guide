@@ -5,13 +5,15 @@ ion-content {
 .schedule-content {
   display: flex;
   flex-direction: column;
-  min-height: 100%; 
+  min-height: 100%;
   padding-bottom: 20px;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .header-container {
   text-align: center;
-  margin: 16px 0; 
+  margin: 16px 0;
 
   .main-title {
     font-size: 24px;
@@ -22,23 +24,24 @@ ion-content {
 
   .date-subtitle {
     font-size: 16px;
-    font-weight: normal; 
-    color: #707070;   
+    font-weight: normal;
+    color: #707070;
     margin: 4px 0 0 0;
   }
 }
+
 .schedule-block {
   background-color: #ffffff;
   margin: 0 24px 24px;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   padding: 16px 0;
   min-height: 200px;
-  
+
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: flex-start;
-  align-items: stretch; 
+  align-items: stretch;
 }
 
 .empty-state-wrapper {
@@ -49,7 +52,7 @@ ion-content {
   width: 100%;
   color: #a0a0a0;
   font-size: 16px;
-  padding: 20px; 
+  padding: 20px;
   text-align: center;
 }
 
@@ -65,7 +68,7 @@ ion-content {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 2px; 
+  padding-top: 2px;
 }
 
 .lesson-number {
@@ -116,26 +119,26 @@ ion-content {
 .nav-arrow-btn {
   background: transparent;
   border: none;
-  padding: 4px 8px; 
+  padding: 4px 8px;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 8px; 
+  border-radius: 8px;
 }
 
 .nav-arrow-btn:active {
-  background-color: rgba(0, 0, 0, 0.06); 
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 .nav-arrow {
   font-size: 28px;
-  color: #d1d1d6; 
+  color: #d1d1d6;
 }
 
 .days-group {
   display: flex;
-  gap: 6px; 
+  gap: 6px;
   flex: 1;
   margin: 0 10px;
   justify-content: center;
@@ -143,8 +146,8 @@ ion-content {
 
 .day-btn {
   flex: 1;
-  aspect-ratio: 1 / 1; 
-  max-width: 40px; 
+  aspect-ratio: 1 / 1;
+  max-width: 40px;
   border-radius: 8px;
   border: none;
   background-color: #e5e5ea;
@@ -165,25 +168,25 @@ ion-content {
 }
 
 .day-btn.active {
-  background-color: #d1d1d6; 
+  background-color: #d1d1d6;
 }
 
 .loader-wrapper {
   display: flex;
-  justify-content: center; 
-  align-items: center;     
-  height: 150px;           
-  width: 100%;            
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 100%;
   background: transparent;
 
   ion-spinner {
     width: 40px;
     height: 40px;
-    color: #a0a0a0;     
+    color: #a0a0a0;
   }
 }
 
 ion-footer {
   --border-width: 0;
-    box-shadow: none;
+  box-shadow: none;
 }

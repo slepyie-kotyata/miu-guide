@@ -1,4 +1,4 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type {CapacitorConfig} from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'ru.enjine.miu',
@@ -6,12 +6,12 @@ const config: CapacitorConfig = {
   webDir: 'www',
   plugins: {
     StatusBar: {
-      style: 'DARK',
+      style: 'LIGHT',
       backgroundColor: '#ffffff',
       overlaysWebView: false,
     },
     Keyboard: {
-      resize: 'native',
+      resize: 'ionic',
       resizeOnFullScreen: true,
     },
   },

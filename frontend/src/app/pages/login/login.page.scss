@@ -4,6 +4,8 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .yellow-card {
@@ -14,10 +16,10 @@
   margin: auto;
   margin-top: 50%;
   border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
   h1 {
-    font-size: 6vw; 
+    font-size: 6vw;
     font-weight: 800;
     line-height: 1.2;
     margin: 0 0 8% 0;
@@ -32,14 +34,14 @@
   align-items: center;
   padding: 4% 5%;
   margin-bottom: 4%;
-  
+
   input {
     border: none;
     outline: none;
-    width: 100%; 
+    width: 100%;
     font-size: 4vw;
     background: transparent;
-    color: #000; 
+    color: #000;
   }
 }
 
@@ -57,7 +59,7 @@
 }
 
 .error-text {
-  color: #d32f2f; 
+  color: #d32f2f;
   font-size: 3.5vw;
   text-align: center;
   margin-top: 10px;

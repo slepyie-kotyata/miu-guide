@@ -56,7 +56,7 @@ export class ProfilePage implements OnInit {
     if (!u) {
       this.authService.logout();
       this.userService.clearUser();
-      await this.navCtrl.navigateRoot('/login');
+      await this.navCtrl.navigateForward('/login');
       return;
     }
 
@@ -111,7 +111,7 @@ export class ProfilePage implements OnInit {
   }
 
   openSubjectsList() {
-    this.navCtrl.navigateRoot('/subjects');
+    this.navCtrl.navigateForward('/subjects');
   }
 
   openMoodleWebsite() {

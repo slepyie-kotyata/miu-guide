@@ -4,6 +4,8 @@ ion-content {
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .page-title {
