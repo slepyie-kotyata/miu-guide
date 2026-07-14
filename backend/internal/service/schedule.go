@@ -46,6 +46,7 @@ func (s *ScheduleService) GetScheduleTest(ctx context.Context, groupId, schedule
 					slog.String("error", err.Error()),
 				)
 			}
+			slog.Info("schedule successfully cashed", slog.String("source", string(apperror.SourceRedis)))
 		}(scheduleBytes)
 		return schedule, nil
 	}
@@ -71,7 +72,8 @@ func (s *ScheduleService) GetScheduleTest(ctx context.Context, groupId, schedule
 			redisErr.Error(),
 		)
 	}
-
+	slog.Info("found schedule in cashe", slog.String("source", string(apperror.SourceRedis)))
+	
 	var schedule []models.Schedule
 	if err := json.Unmarshal([]byte(thisSchedule), &schedule); err != nil {
 		return nil, apperror.Wrap(
