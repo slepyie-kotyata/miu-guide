@@ -57,8 +57,10 @@ export class MapSvgRenderService {
           }
 
           const scale = 2;
-          const translateX = -(originX - 50) * scale;
-          const translateY = -(originY - 50) * scale;
+          const targetX = 50;
+          const targetY = 40;
+          const translateX = -(originX - targetX) * scale;
+          const translateY = -(originY - targetY) * scale;
 
           svgEl.style.transition = 'transform 0.8s ease-in-out';
           svgEl.style.transformOrigin = '50% 50%';
