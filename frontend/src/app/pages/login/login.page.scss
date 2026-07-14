@@ -41,6 +41,15 @@
     font-size: clamp(0.9rem, 4vw, 1.1rem);
     background: transparent;
     color: var(--miu-text-dark);
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover, 
+    &:-webkit-autofill:focus, 
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px var(--miu-bg-white) inset !important;
+      -webkit-text-fill-color: var(--miu-text-dark) !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   }
 }
 
