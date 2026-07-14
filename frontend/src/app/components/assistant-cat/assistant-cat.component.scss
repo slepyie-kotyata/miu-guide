@@ -27,13 +27,14 @@ $z-skip-btn: 9999;
 
 .cat-wrapper {
   position: fixed;
-  bottom: -20px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
   left: -5px;
   width: 140px;
   z-index: $z-cat-wrapper;
   pointer-events: none;
+
   &.lifted {
-    bottom: 30px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);;
   }
 }
 
