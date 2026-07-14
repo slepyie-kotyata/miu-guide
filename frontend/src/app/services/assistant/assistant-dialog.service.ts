@@ -19,6 +19,8 @@ export class AssistantDialogService {
   readonly hasSeenOnboarding = computed(() => this.persistence.hasSeenOnboarding());
   readonly directions = signal<string[]>([]);
 
+  private endStepId: number | null = null;
+
   readonly currentMessage = computed<OnboardingStep | null>(() => {
     if (this.hasSeenOnboarding()) return null;
 
@@ -108,9 +110,10 @@ export class AssistantDialogService {
     });
   }
 
-  restartFromStep(stepId: number): void {
+  restartFromStep(stepId: number, endStepId?: number): void {
     this.persistence.setSeenOnboarding(false);
     this.visibilityService.setVisible(true);
+    this.endStepId = endStepId ?? null;
 
     if (this.steps().length === 0) {
       this.startOnboarding(stepId);
@@ -121,6 +124,12 @@ export class AssistantDialogService {
 
   goToNext(): void {
     const currentId = this.currentStepId();
+
+    if (this.endStepId !== null && currentId === this.endStepId) {
+      this.endStepId = null;
+      this.finishOnboarding();
+      return;
+    }
 
     if (currentId === ONBOARDING_STEPS.AUTH_REDIRECT) {
       this.moveToStep(ONBOARDING_STEPS.POST_AUTH);
@@ -158,6 +167,7 @@ export class AssistantDialogService {
     this.persistence.clearStepId();
     this.currentStepId.set(0);
     this.highlightId.set(null);
+    this.endStepId = null;
   }
 
   handleStep2Choice(choice: string): void {

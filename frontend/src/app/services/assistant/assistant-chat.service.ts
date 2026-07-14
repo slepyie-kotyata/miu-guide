@@ -5,7 +5,7 @@ import {ChatNavigationService} from './chat-navigation.service';
 import {MascotDataService} from './mascot-data.service';
 import {AssistantEmotionService} from './assistant-emotion.service';
 import {TeacherSearchService} from './teacher-search.service';
-import {ChatMessage, ChatMode, EMOTION} from './assistant.models';
+import {ChatMessage, ChatMode, EMOTION, ONBOARDING_STEPS} from './assistant.models';
 
 @Injectable({providedIn: 'root'})
 export class AssistantChatService {
@@ -102,7 +102,13 @@ export class AssistantChatService {
         }
 
         if (matched.intent === 'repeat_rules') {
-          this.dialogService.restartFromStep(9);
+          this.dialogService.restartFromStep(ONBOARDING_STEPS.POST_AUTH, ONBOARDING_STEPS.RULES_END);
+          this.closeChat();
+          return;
+        }
+
+        if (matched.intent === 'repeat_excursion') {
+          this.dialogService.restartFromStep(ONBOARDING_STEPS.EXCURSION_START, ONBOARDING_STEPS.EXCURSION_END);
           this.closeChat();
           return;
         }
