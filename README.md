@@ -47,7 +47,7 @@
 | Слой | Технологии |
 |------|-----------|
 | **Frontend** | Ionic 8, Angular 20, TypeScript 5.9, Capacitor 8, pinch-zoom-element,Signals, Standalone Components |
-| **Backend** | Go 1.26, Echo v5, Redis (go-redis v9), Swagger (echo-swagger v2), godotenv, imroc/req v3 (Chrome impersonation) |
+| **Backend** | Go 1.26, Echo v5, Redis, Swagger |
 | **Mobile** | Capacitor 8, Android (Gradle, Java 21, Android SDK 35), @capacitor/assets |
 | **Infra** | Docker (multi-stage, scratch), GitHub Actions, Node 24 |
 
@@ -136,25 +136,25 @@
 ### Backend
 
 #### Аутентификация
-- `POST /auth` — проксирование логина/пароля к Moodle Mobile API (Chrome impersonation через `imroc/req v3`)
+- `POST /auth` — проксирование логина/пароля к Moodle Mobile API
 - Возвращает `{token, user_id}`; Moodle `wstoken` используется для последующих запросов
 
 #### Информация о пользователе
 - `GET /access/users/:id` — enriched-данные: ФИО, группа, `group_id`, направление, специализация, курс (вычисляется из названия группы), институт
-- `GET /access/users/:id/subjects` — дисциплины текущего семестра: фильтрация по `весна`/`осень` + merge дубликатов с объединением преподавателей
+- `GET /access/users/:id/subjects` — дисциплины текущего семестра: фильтрация по `весна`/`осень`
 - Bearer-token middleware на группе `/access/*`
 
 #### Расписание
 - `GET /schedule/:group?day=YYYY.MM.DD` — расписание группы на конкретный день
 - `GET /schedule/:group/today` — расписание на сегодня (московское время)
-- Redis-кэширование: cache-first, TTL 24 часа, асинхронная запись в фон (500 мс context)
-- Фильтрация и группировка: объединение преподавников по аудиториям, сортировка по номеру пары
+- Redis-кэширование: TTL 24 часа, асинхронная запись в фон (500 мс context)
+- Фильтрация и группировка: объединение преподавателей по аудиториям, сортировка по номеру пары
 
 #### Поиск
-- `GET /search?lecturer=...` — поиск преподавателей по фамилии во внешнем API расписания
+- `GET /search?lecturer=...` — поиск преподавателей по любой части ФИО во внешнем API расписания
 
 #### Mock-данные
-- `GET /majors` — список уникальных направлений подготовки (17 групп-кодов → 13 направлений)
+- `GET /majors` — список уникальных направлений подготовки
 - `GET /events?major=...` — расписание мероприятий Дня знаний для направления
 
 #### Инфраструктура
@@ -271,14 +271,14 @@ cp .env.example .env
 | `GET` | `/access/users/:id/subjects` | Bearer | Дисциплины текущего семестра (отфильтрованные, без дубликатов) |
 | `GET` | `/schedule/:group?day=YYYY.MM.DD` | — | Расписание группы на конкретный день |
 | `GET` | `/schedule/:group/today` | — | Расписание группы на сегодня (московское время) |
-| `GET` | `/search?lecturer=...` | — | Поиск преподавателей по фамилии |
+| `GET` | `/search?lecturer=...` | — | Поиск преподавателей по любой части ФИО |
 | `GET` | `/majors` | — | Список направлений подготовки |
 | `GET` | `/events?major=...` | — | Расписание мероприятий Дня знаний для направления |
 | `GET` | `/swagger/*` | — | Swagger UI |
 
-Расписание кэшируется в Redis на 24 часа. При запросе сначала проверяется кэш;
-при промахе данные запрашиваются у внешнего API расписания ММУ, фильтруются и
-сохраняются в кэш.
+Расписание кэшируется в Redis на 24 часа. При запросе сначала данные запрашиваются у внешнего API и сохраняются в кэш;
+при промахе данные достаются из кэша.
+
 
 ---
 
@@ -290,18 +290,18 @@ miu-guide/
 │   ├── cmd/server/main.go                 # Точка входа
 │   ├── internal/
 │   │   ├── apperror/                      # Кастомные ошибки + HTTP-маппинг
-│   │   ├── client/                        # HTTP-клиенты (miu.go, schedule.go)
+│   │   ├── client/                        # HTTP-клиенты
 │   │   ├── connection/                    # Подключение к Redis
 │   │   ├── env/                           # Чтение переменных окружения
 │   │   ├── filter/                        # Фильтрация расписания и дисциплин
 │   │   ├── handlers/                      # HTTP-обработчики + middleware
-│   │   ├── logger/                        # Структурированный логгер (slog)
+│   │   ├── logger/                        # Структурированный логгер
 │   │   ├── models/                        # Модели данных (user, schedule, major, events)
 │   │   ├── routes/                        # Регистрация маршрутов (auth, schedule, search, user, mock)
-│   │   ├── service/                       # Бизнес-логика (schedule + Redis-кэш)
-│   │   └── utils/                         # Утилиты (дата, московское время)
+│   │   ├── service/                       # Интеграция с API расписания и логика кэширования (Redis)
+│   │   └── utils/                         # Утилиты (дата)
 │   ├── docs/                              # Сгенерированная Swagger-документация
-│   ├── Dockerfile                         # Multi-stage build (golang:alpine → scratch)
+│   ├── Dockerfile                         # Multi-stage build
 │   ├── Makefile                           # make run, make swag
 │   └── go.mod / go.sum
 ├── frontend/                              # Ionic + Angular приложение
