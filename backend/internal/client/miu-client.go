@@ -3,29 +3,29 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"miu-guide/internal/apperror"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
-	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
+	"github.com/imroc/req/v3"
 )
 
 type MIUClient struct {
-	httpClient 			*http.Client
+	httpClient 			*req.Client
 	MIUApiLoginUrl		string
 	MIUApiAccountUrl	string
 }
 
 func NewMIUClient() *MIUClient {
+	client := req.C().
+		SetTimeout(3 * time.Second).
+		ImpersonateChrome()
+
 	return &MIUClient{
-		httpClient: &http.Client{
-			Timeout: 3 * time.Second,
-		},
-		MIUApiLoginUrl: env.GetEnv(env.MIUApiLoginUrl),
+		httpClient:       client,
+		MIUApiLoginUrl:   env.GetEnv(env.MIUApiLoginUrl),
 		MIUApiAccountUrl: env.GetEnv(env.MIUApiAccountUrl),
 	}
 }
@@ -51,29 +51,26 @@ func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
 func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any) error {
 	data.Set("service", "moodle_mobile_app")
 	data.Set("moodlewsrestformat", "json")
-	apiReq, _ := http.NewRequest(http.MethodPost, baseUrl, strings.NewReader(data.Encode()))
-	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	apiResp, err := m.httpClient.Do(apiReq)
+
+	resp, err := m.httpClient.R().
+		SetHeader("User-Agent", "MoodleMobile").
+		SetFormDataFromValues(data).
+		Post(baseUrl)
 
 	if err != nil {
 		return apperror.Wrap(apperror.ErrUnavailableAPI, apperror.SourceMIU, err.Error())
 	}
-	defer apiResp.Body.Close()
 
-	respBody, err := io.ReadAll(apiResp.Body)
-    if err != nil {
-		return apperror.Wrap(apperror.ErrInternal, apperror.SourceMIU, err.Error())
-    }
-
+	respBody := resp.Bytes()
 	var errorMessage MIUApiErrorResponse
-    if err := json.Unmarshal(respBody, &errorMessage); err == nil && errorMessage.Errorcode != "" {
-        return parseErrorMessage(errorMessage)
-    }
+	if err := json.Unmarshal(respBody, &errorMessage); err == nil && errorMessage.Errorcode != "" {
+		return parseErrorMessage(errorMessage)
+	}
 
-    if err := json.Unmarshal(respBody, target); err != nil {
+	if err := json.Unmarshal(respBody, target); err != nil {
 		return apperror.Wrap(apperror.ErrInternal, apperror.SourceMIU, err.Error())
-    }
-    return nil
+	}
+	return nil
 }
 
 func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
