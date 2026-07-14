@@ -71,36 +71,6 @@
   font-style: italic;
   line-height: 1.4;
   margin-top: 10px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--miu-bg-light);
   padding-top: 10px;
-}
-
-.action-copy-btn {
-  width: 100%;
-  background: var(--miu-yellow-card);
-  color: var(--miu-text-dark);
-  border: none;
-  border-radius: 14px;
-  padding: 14px;
-  font-size: 1rem;
-  font-weight: 700;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  box-shadow: var(--miu-card-shadow-yellow);
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  cursor: pointer;
-
-  ion-icon {
-    font-size: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    color: var(--miu-text-dark);
-    flex-shrink: 0;
-  }
 }

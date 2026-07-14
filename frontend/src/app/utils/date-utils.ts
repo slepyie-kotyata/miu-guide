@@ -8,6 +8,13 @@ export function formatDateStr(date: Date): string {
   return `${day}.${month}`;
 }
 
+export function formatApiDate(date: Date): string {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${year}.${month}.${day}`;
+}
+
 export function generateWeekDays(baseDate: Date): WeekDay[] {
   const dateCopy = new Date(baseDate.getTime());
   const day = dateCopy.getDay();

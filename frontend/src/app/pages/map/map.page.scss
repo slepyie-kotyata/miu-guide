@@ -4,21 +4,27 @@ ion-content {
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
-
-  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .page-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
   font-size: 26px;
   font-weight: 800;
-  color: var(--miu-text-color);
-  margin: 20px 24px;
+  color: var(--miu-text-dark);
+  margin: 0;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 24px 0 24px;
   overflow: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+  pointer-events: none;
 }
 
 .map-zoom-container {
-  display: block !important;
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
 }
@@ -33,8 +39,8 @@ ion-content {
   z-index: 100;
 
   .floor-btn {
-    background: #333333;
-    color: white;
+    background: var(--miu-text-dark);
+    color: var(--miu-bg-white);
     border: none;
     padding: 12px 14px;
     font-weight: bold;
@@ -42,7 +48,7 @@ ion-content {
 
     &.active {
       background: var(--miu-yellow);
-      color: black;
+      color: var(--miu-text-dark);
     }
   }
 }
@@ -51,8 +57,8 @@ ion-content {
   position: absolute;
   bottom: 80px;
   right: 12px;
-  background: #333333;
-  color: white;
+  background: var(--miu-text-dark);
+  color: var(--miu-bg-white);
   padding: 15px 25px;
   border-radius: 30px;
   font-weight: bold;
@@ -62,14 +68,12 @@ ion-content {
 
 .top-info-icon {
   position: absolute;
-  top: 20px;
+  top: calc(env(safe-area-inset-top, 0px) + 20px);
   right: 20px;
   width: 32px;
   height: 32px;
-  z-index: 1000;
+  z-index: 1002;
   cursor: pointer;
-
-  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .map-container {
@@ -82,26 +86,16 @@ ion-content {
   z-index: 1;
 }
 
-.backdrop-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.08);
-  z-index: 2000;
-}
-
 .map-tooltip-card {
   position: absolute;
   z-index: 2001;
   width: 250px;
   background: var(--miu-bg-white);
-  border-radius: 16px;
+  border-radius: var(--miu-border-radius);
   padding: 16px;
   transform: translate(-50%, calc(-100% - 12px));
   box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--miu-card-shadow);
   cursor: default;
 
   &::after {
@@ -161,55 +155,7 @@ ion-content {
 
   [id$="_place"].place-active,
   [id$="_place"].place-active * {
-    fill: var(--miu-yellow-light) !important;
-  }
-}
-
-.room-info-card {
-  position: absolute;
-  z-index: 10;
-
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 280px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  color: var(--miu-text-dark);
-
-  .close-btn {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    font-size: 24px;
-    line-height: 1;
-    color: var(--miu-text-gray-light);
-    cursor: pointer;
-    padding: 4px;
-
-    &:active {
-      color: var(--miu-text-dark);
-    }
-  }
-
-  .card-content {
-    margin-top: 8px;
-
-    h3 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      font-weight: 700;
-      padding-right: 20px;
-    }
-
-    p {
-      margin: 4px 0;
-      font-size: 14px;
-      line-height: 1.4;
-    }
+    fill: var(--miu-yellow-light);
   }
 }
 
@@ -222,7 +168,6 @@ ion-content {
   align-items: center;
 }
 
-// модалка расписания первого дня
 .custom-schedule-modal {
   --background: var(--miu-bg-white);
   --border-radius: 24px 24px 0 0;
@@ -324,7 +269,7 @@ ion-content {
 
   .event-time-badge {
     align-self: flex-start;
-    background: rgba(251, 192, 45, 0.15);
+    background: var(--miu-card-shadow-yellow-color);
     color: var(--miu-yellow-light);
     padding: 4px 10px;
     border-radius: 6px;
@@ -339,7 +284,7 @@ ion-content {
     padding: 16px;
     box-sizing: border-box;
     box-shadow: var(--miu-card-shadow);
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--miu-card-shadow-color);
 
     .event-title {
       margin: 0;
@@ -350,4 +295,3 @@ ion-content {
     }
   }
 }
-

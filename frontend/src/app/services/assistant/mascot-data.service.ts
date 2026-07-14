@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {MascotPhrase, MascotQuestion} from './assistant.models';
+import {EMOTION, MascotPhrase, MascotQuestion} from './assistant.models';
 
 import mascotPhrasesData from '../../../assets/mascot/mascot-phrases.json';
 import mascotQuestionsData from '../../../assets/mascot/mascot-questions.json';
@@ -15,16 +15,8 @@ export class MascotDataService {
 
   private userService = inject(UserService);
 
-  getPhrases(): MascotPhrase[] {
-    return this.phrases;
-  }
-
   getQuestions(): MascotQuestion[] {
     return this.questions;
-  }
-
-  getPhraseById(id: number): MascotPhrase | undefined {
-    return this.phrases.find((p) => p.id === id);
   }
 
   getGreeting(): { text: string; emotion: string } {
@@ -65,18 +57,18 @@ export class MascotDataService {
     const candidates = this.phrases.filter((p) => this.errorPhraseIds.includes(p.id));
     const phrase = candidates.length > 0
       ? candidates[Math.floor(Math.random() * candidates.length)]
-      : {text: 'Ой, что-то пошло не так. Попробуй ещё раз.', emotion: 'sad-eclosed-mclosed'};
-    return {text: phrase.text, emotion: 'sad-eclosed-mclosed'};
+      : {text: 'Ой, что-то пошло не так. Попробуй ещё раз.', emotion: EMOTION.SAD_ECLOSED_MCLOSED};
+    return {text: phrase.text, emotion: phrase.emotion};
   }
 
   private pickEmotionForIntent(intent: string): string {
     if (intent.startsWith('rofl') || intent.startsWith('rof')) {
-      return 'paw-eclosed-mopen';
+      return EMOTION.PAW_ECLOSED_MOPEN;
     }
     if (intent.startsWith('schedule') || intent === 'next_class_location') {
-      return 'sit-eopen-mopen';
+      return EMOTION.SIT_EOPEN_MOPEN;
     }
-    return 'paw-eopen-mopen';
+    return EMOTION.PAW_EOPEN_MOPEN;
   }
 
   private getStudentName(): string {

@@ -8,24 +8,6 @@ export interface ChatMessage {
   showSuggestions?: boolean;
 }
 
-export interface DialogButton {
-  text: string;
-  action: () => void;
-}
-
-export interface DialogMessage {
-  text: string;
-  emotion: string;
-  buttons?: DialogButton[];
-  showNav?: boolean;
-  hasPrev?: boolean;
-  onNext?: () => void;
-  onPrev?: () => void;
-  showDropdown?: boolean;
-  dropdownOptions?: string[];
-  onDropdownSelect?: (value: string) => void;
-}
-
 export interface OnboardingStep {
   id: number;
   emotion: string;
@@ -56,11 +38,30 @@ export interface MascotQuestion {
   comment?: string;
 }
 
-export type ChatActionType = 'navigate' | 'answer';
+export const ONBOARDING_STEPS = {
+  AUTH_CHOICE: 2,
+  DIRECTION_CHOICE: 3,
+  DIRECTION_CONFIRM: 4,
+  AUTH_REDIRECT: 5,
+  NAME_GREETING: 7,
+  POST_AUTH: 9,
+  RULES_END: 15,
+  EXCURSION_START: 16,
+  EXCURSION_END: 53,
+} as const;
 
-export interface ChatAction {
-  type: ChatActionType;
-  route?: string;
-  queryParams?: Record<string, string>;
-  intent?: string;
-}
+export const ONBOARDING_DARK_BACKDROP = {
+  MIN: 19,
+  MAX: 55,
+} as const;
+
+export const EMOTION = {
+  SIT_EOPEN_MOPEN: 'sit-eopen-mopen',
+  SIT_EOPEN_MCLOSED: 'sit-eopen-mclosed',
+  SIT_ECLOSED_MCLOSED: 'sit-eclosed-mclosed',
+  SIT_ECLOSED_MOPEN: 'sit-eclosed-mopen',
+  PAW_EOPEN_MOPEN: 'paw-eopen-mopen',
+  PAW_ECLOSED_MOPEN: 'paw-eclosed-mopen',
+  PAW_EOPEN_MCLOSED: 'paw-eopen-mclosed',
+  SAD_ECLOSED_MCLOSED: 'sad-eclosed-mclosed',
+} as const;

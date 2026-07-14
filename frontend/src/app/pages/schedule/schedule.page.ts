@@ -9,21 +9,22 @@ import {HapticsService} from '../../services/capacitor/haptics.service';
 import {ImpactStyle} from '@capacitor/haptics';
 import {
   formatDateStr,
+  formatApiDate,
   generateWeekDays,
   getMondayFromWeek,
   getSundayFromWeek,
   getWeekNumber
 } from '../../utils/date-utils';
-import {AssistantCatComponent} from "src/app/components/assistant-cat/assistant-cat.component";
 import {ChatNavigationService, ScheduleTargetDay} from '../../services/assistant/chat-navigation.service';
 import {AssistantEmotionService} from '../../services/assistant/assistant-emotion.service';
-import {UserService} from "../../services/user.service";
+import {EMOTION} from '../../services/assistant/assistant.models';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-page-schedule',
   templateUrl: 'schedule.page.html',
   styleUrls: ['schedule.page.scss'],
-  imports: [IonContent, IonIcon, IonSpinner, IonFooter, AssistantCatComponent],
+  imports: [IonContent, IonIcon, IonSpinner, IonFooter],
 })
 export class SchedulePage implements OnInit {
   lessons = signal<Lesson[]>([]);
@@ -102,7 +103,7 @@ export class SchedulePage implements OnInit {
     this.errorMessage.set(null);
 
     const targetDate = this.weekDays()[index].date;
-    const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');
+    const dateString = formatApiDate(targetDate);
 
     this.scheduleService.getDaySchedule(this.userService.userSignal()!.group_id, dateString).subscribe({
       next: (data) => {
@@ -114,7 +115,7 @@ export class SchedulePage implements OnInit {
         this.errorMessage.set('Ошибка сервера. Попробуйте обновить страницу.');
         this.lessons.set([]);
         this.isLoading.set(false);
-        this.emotionService.setEmotion('sad-eclosed-mclosed');
+        this.emotionService.setEmotion(EMOTION.SAD_ECLOSED_MCLOSED);
       },
     });
   }

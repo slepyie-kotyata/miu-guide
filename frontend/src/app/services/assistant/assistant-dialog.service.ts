@@ -2,27 +2,25 @@ import {computed, effect, inject, Injectable, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {AssistantEmotionService} from './assistant-emotion.service';
 import {AssistantVisibilityService} from './assistant-visibility.service';
-import {HttpClient} from '@angular/common/http';
-import {SearchService} from "../search.service";
-import {UserService} from "../user.service";
-import {OnboardingStep} from "./assistant.models";
+import {UserService} from '../user.service';
+import {ONBOARDING_DARK_BACKDROP, ONBOARDING_STEPS, OnboardingStep} from './assistant.models';
+import {OnboardingLoaderService} from './onboarding-loader.service';
+import {OnboardingPersistenceService} from './onboarding-persistence.service';
+
+const DEFAULT_STEP_ID = 1;
 
 @Injectable({providedIn: 'root'})
 export class AssistantDialogService {
   readonly steps = signal<OnboardingStep[]>([]);
-  readonly currentStepId = signal<number>(1);
+  readonly currentStepId = signal<number>(DEFAULT_STEP_ID);
   readonly selectedDirection = signal<string>('');
   readonly isLoaded = signal<boolean>(false);
   readonly highlightId = signal<string | null>(null);
-  readonly hasSeenOnboarding = signal<boolean>(
-    localStorage.getItem('hasSeenOnboarding') === 'true'
-  );
+  readonly hasSeenOnboarding = computed(() => this.persistence.hasSeenOnboarding());
   readonly directions = signal<string[]>([]);
-  private router = inject(Router);
-  private http = inject(HttpClient);
-  private emotionService = inject(AssistantEmotionService);
-  private visibilityService = inject(AssistantVisibilityService);
-  private userService = inject(UserService);
+
+  private endStepId: number | null = null;
+
   readonly currentMessage = computed<OnboardingStep | null>(() => {
     if (this.hasSeenOnboarding()) return null;
 
@@ -33,11 +31,11 @@ export class AssistantDialogService {
     if (!step) return null;
 
     let processedText = step.text;
-    if (step.id === 4) {
+    if (step.id === ONBOARDING_STEPS.DIRECTION_CONFIRM) {
       processedText = processedText.replace('&value', this.selectedDirection().split(' ').slice(1).join(' ') || 'выбранное направление');
     }
 
-    if (step.id === 7) {
+    if (step.id === ONBOARDING_STEPS.NAME_GREETING) {
       processedText = processedText.replace('&value', this.userService.userSignal()?.full_name.split(' ')[1] || 'студент');
     }
 
@@ -52,97 +50,89 @@ export class AssistantDialogService {
       mapFloor: step.mapFloor,
     };
   });
+
   readonly currentFloor = computed<number>(() => {
     const msg = this.currentMessage();
     return msg?.mapFloor ?? 1;
   });
+
   readonly isDarkBackdrop = computed(() => {
     const msg = this.currentMessage();
     if (!msg) return false;
-
-    return msg.id < 19 || msg.id > 55;
+    return msg.id < ONBOARDING_DARK_BACKDROP.MIN || msg.id > ONBOARDING_DARK_BACKDROP.MAX;
   });
-  private searchService = inject(SearchService);
+
+  private readonly router = inject(Router);
+  private readonly emotionService = inject(AssistantEmotionService);
+  private readonly visibilityService = inject(AssistantVisibilityService);
+  private readonly userService = inject(UserService);
+  private readonly loader = inject(OnboardingLoaderService);
+  private readonly persistence = inject(OnboardingPersistenceService);
 
   constructor() {
-    this.searchService.getMajors().subscribe(majors => {
-      this.directions.set(majors);
-    })
+    this.loader.loadDirections().subscribe({
+      next: (majors) => this.directions.set(majors),
+      error: (err) => console.error('Ошибка загрузки направлений:', err),
+    });
 
     effect(() => {
       const step = this.currentMessage();
-      if (step && step.emotion) {
+      this.visibilityService.setOverlayActive(step !== null);
+      if (step?.emotion) {
         this.emotionService.setEmotion(step.emotion);
       }
     });
   }
 
-  restartFromStep(stepId: number): void {
-    localStorage.setItem('hasSeenOnboarding', 'false');
-    this.hasSeenOnboarding.set(false);
-    this.currentStepId.set(stepId);
-    localStorage.setItem('onboardingStepId', stepId.toString());
-    this.visibilityService.setVisible(true);
-
-    const step = this.steps().find(s => s.id === stepId);
-    const highlight = step?.highlight ?? null;
-    this.highlightId.set(highlight);
-
-    if (highlight && !this.router.url.includes('/tabs/map')) {
-      this.router.navigate(['/tabs/map']);
-    }
-
-    this.updateEmotion();
-  }
-
   startOnboarding(forcedStepId: number = 0): void {
-    if (this.hasSeenOnboarding()) return;
+    if (this.persistence.hasSeenOnboarding()) return;
 
     this.visibilityService.setVisible(true);
 
-    this.http.get<OnboardingStep[]>('/assets/mascot/mascot-script-firstday.json').subscribe({
+    this.loader.loadScript().subscribe({
       next: (data) => {
         this.steps.set(data);
         this.isLoaded.set(true);
 
         if (forcedStepId > 0) {
-          this.currentStepId.set(forcedStepId);
-          localStorage.setItem('onboardingStepId', forcedStepId.toString());
+          this.applyStep(forcedStepId);
         } else {
-          const savedStep = localStorage.getItem('onboardingStepId');
-          if (savedStep) {
-            this.currentStepId.set(parseInt(savedStep, 10));
-          } else {
-            this.currentStepId.set(1);
-          }
+          const savedStep = this.persistence.getSavedStepId();
+          this.applyStep(savedStep ?? DEFAULT_STEP_ID);
         }
 
-        const savedDir = localStorage.getItem('major');
+        const savedDir = this.persistence.getSavedDirection();
         if (savedDir) {
           this.selectedDirection.set(savedDir);
         }
-
-        const currentStep = data.find(s => s.id === this.currentStepId());
-        const highlight = currentStep?.highlight ?? null;
-        this.highlightId.set(highlight);
-
-        if (highlight && !this.router.url.includes('/tabs/map')) {
-          this.router.navigate(['/tabs/map']);
-        }
-
-        this.updateEmotion();
       },
-      error: (err) => {
-        console.error('Ошибка загрузки сценария:', err);
-      }
+      error: (err) => console.error('Ошибка загрузки сценария:', err),
     });
+  }
+
+  restartFromStep(stepId: number, endStepId?: number): void {
+    this.persistence.setSeenOnboarding(false);
+    this.visibilityService.setVisible(true);
+    this.endStepId = endStepId ?? null;
+
+    if (this.steps().length === 0) {
+      this.startOnboarding(stepId);
+    } else {
+      this.applyStep(stepId);
+    }
   }
 
   goToNext(): void {
     const currentId = this.currentStepId();
 
-    if (currentId === 5) {
-      this.moveToStep(9);
+    if (this.endStepId !== null && currentId === this.endStepId) {
+      this.endStepId = null;
+      this.finishOnboarding();
+      return;
+    }
+
+    if (currentId === ONBOARDING_STEPS.AUTH_REDIRECT) {
+      this.moveToStep(ONBOARDING_STEPS.POST_AUTH);
       return;
     }
 
@@ -150,8 +140,7 @@ export class AssistantDialogService {
     const currentIndex = stepsList.findIndex(s => s.id === currentId);
 
     if (currentIndex !== -1 && currentIndex < stepsList.length - 1) {
-      const nextStep = stepsList[currentIndex + 1];
-      this.moveToStep(nextStep.id);
+      this.moveToStep(stepsList[currentIndex + 1].id);
     } else {
       this.finishOnboarding();
     }
@@ -160,8 +149,8 @@ export class AssistantDialogService {
   goToPrev(): void {
     const currentId = this.currentStepId();
 
-    if (currentId === 9) {
-      this.moveToStep(5);
+    if (currentId === ONBOARDING_STEPS.POST_AUTH) {
+      this.moveToStep(ONBOARDING_STEPS.AUTH_REDIRECT);
       return;
     }
 
@@ -169,18 +158,16 @@ export class AssistantDialogService {
     const currentIndex = stepsList.findIndex(s => s.id === currentId);
 
     if (currentIndex > 0) {
-      const prevStep = stepsList[currentIndex - 1];
-      this.moveToStep(prevStep.id);
+      this.moveToStep(stepsList[currentIndex - 1].id);
     }
   }
 
   finishOnboarding(): void {
-    localStorage.setItem('hasSeenOnboarding', 'true');
-    this.hasSeenOnboarding.set(true);
-    localStorage.removeItem('onboardingStepId');
-
+    this.persistence.setSeenOnboarding(true);
+    this.persistence.clearStepId();
     this.currentStepId.set(0);
     this.highlightId.set(null);
+    this.endStepId = null;
   }
 
   handleStep2Choice(choice: string): void {
@@ -188,34 +175,29 @@ export class AssistantDialogService {
       this.router.navigate(['/login']);
     } else if (choice === 'Нет') {
       this.router.navigate(['/profile']);
-      this.currentStepId.set(3);
-      localStorage.setItem('onboardingStepId', '3');
-      this.updateEmotion();
+      this.applyStep(ONBOARDING_STEPS.DIRECTION_CHOICE);
     }
   }
 
   selectDirection(direction: string): void {
     this.selectedDirection.set(direction);
-    localStorage.setItem('major', direction);
+    this.persistence.saveDirection(direction);
   }
 
   isNextDisabled(): boolean {
     const currentId = this.currentStepId();
-    if (currentId === 2) return true;
-    if (currentId === 3 && !this.selectedDirection()) return true;
+    if (currentId === ONBOARDING_STEPS.AUTH_CHOICE) return true;
+    if (currentId === ONBOARDING_STEPS.DIRECTION_CHOICE && !this.selectedDirection()) return true;
     return false;
   }
 
-  private updateEmotion(): void {
-    const msg = this.currentMessage();
-    if (msg) {
-      this.emotionService.setEmotion(msg.emotion);
-    }
+  private moveToStep(id: number): void {
+    this.applyStep(id);
   }
 
-  private moveToStep(id: number): void {
+  private applyStep(id: number): void {
     this.currentStepId.set(id);
-    localStorage.setItem('onboardingStepId', id.toString());
+    this.persistence.saveStepId(id);
 
     const step = this.steps().find(s => s.id === id);
     const highlight = step?.highlight ?? null;

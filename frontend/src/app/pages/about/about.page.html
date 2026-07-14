@@ -6,7 +6,7 @@
     </div>
 
     <div class="about-info">
-      <p>Версия 1.0.0</p>
+      <p>Версия {{ appVersion }}</p>
     </div>
 
     <div class="contact-block">
@@ -22,9 +22,7 @@
     </div>
 
     <div class="about-footer">
-      <button class="action-copy-btn" (click)="openLink('https://mi.university')">
-        САЙТ УНИВЕРСИТЕТА
-      </button>
+      <app-action-button [label]="'САЙТ УНИВЕРСИТЕТА'" (clicked)="openLink(siteUrl)"></app-action-button>
     </div>
   </div>
 </ion-content>

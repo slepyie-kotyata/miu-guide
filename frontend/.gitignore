@@ -22,6 +22,10 @@ log.txt
 /www
 /platforms
 /plugins
+/android
+
+# Auto-generated version file
+/src/environments/version.ts
 
 # Compiled output
 /dist
@@ -68,3 +72,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Release signing
+release.keystore
+keystore.properties

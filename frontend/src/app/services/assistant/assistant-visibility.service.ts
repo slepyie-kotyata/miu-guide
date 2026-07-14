@@ -9,6 +9,7 @@ export class AssistantVisibilityService {
   private allowedPages = ['/tabs/map', '/tabs/schedule'];
 
   readonly isVisible = signal<boolean>(false);
+  readonly isOverlayActive = signal<boolean>(false);
 
   constructor() {
     this.router.events
@@ -16,6 +17,14 @@ export class AssistantVisibilityService {
       .subscribe((event: NavigationEnd) => {
         this.checkVisibility(event.urlAfterRedirects);
       });
+  }
+
+  setVisible(visible: boolean): void {
+    this.isVisible.set(visible);
+  }
+
+  setOverlayActive(active: boolean): void {
+    this.isOverlayActive.set(active);
   }
 
   private checkVisibility(currentUrl: string): void {
@@ -26,13 +35,5 @@ export class AssistantVisibilityService {
       const isAllowed = this.allowedPages.some((page) => currentUrl.includes(page));
       this.isVisible.set(isAllowed);
     }
-  }
-
-  setVisible(visible: boolean): void {
-    this.isVisible.set(visible);
-  }
-
-  recheckVisibility(): void {
-    this.checkVisibility(this.router.url);
   }
 }

@@ -8,24 +8,24 @@ import {
   signal,
   untracked
 } from '@angular/core';
-import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {SafeHtml} from '@angular/platform-browser';
 import {IonButton, IonButtons, IonContent, IonHeader, IonModal, IonToolbar} from '@ionic/angular/standalone';
-import {AssistantCatComponent} from '../../components/assistant-cat/assistant-cat.component';
 import {AssistantDialogService} from '../../services/assistant';
 import {HapticsService} from '../../services/capacitor/haptics.service';
 import {ImpactStyle} from '@capacitor/haptics';
 import {ROOMS_DATA} from 'src/app/data/map-data';
-import {SearchService} from "../../services/search.service";
-import {UserService} from "../../services/user.service";
-import {firstValueFrom} from "rxjs";
-
+import {SearchService} from '../../services/search.service';
+import {UserService} from '../../services/user.service';
+import {firstValueFrom} from 'rxjs';
+import {MapSvgRenderService} from '../../services/map-svg-render.service';
+import {parseEvent} from '../../utils/event-parser';
 
 @Component({
   selector: 'app-page-map',
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss'],
   standalone: true,
-  imports: [IonContent, AssistantCatComponent, IonModal, IonHeader, IonButton, IonButtons, IonToolbar],
+  imports: [IonContent, IonModal, IonHeader, IonButton, IonButtons, IonToolbar],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MapPage {
@@ -40,7 +40,6 @@ export class MapPage {
 
   tooltipTop = signal<number>(0);
   tooltipLeft = signal<number>(0);
-  arrowLeft = signal<string>('50%');
 
   isMajorModalOpen = signal<boolean>(false);
   majorEvents = signal<string[]>([]);
@@ -48,10 +47,12 @@ export class MapPage {
 
   private el = inject(ElementRef);
   private haptics = inject(HapticsService);
-  private sanitizer = inject(DomSanitizer);
   private dialogService = inject(AssistantDialogService);
   private searchService = inject(SearchService);
-  private userService = inject(UserService)
+  private userService = inject(UserService);
+  private svgRender = inject(MapSvgRenderService);
+
+  readonly parseEvent = parseEvent;
 
   readonly roomData = computed(() => {
     const id = this.selectedRoomId();
@@ -85,108 +86,33 @@ export class MapPage {
         }
       });
     });
+
     effect(() => {
-      this.loadSvg(this.mapImage());
+      const url = this.mapImage();
+      this.svgRender.loadSvg(url).then(svg => {
+        this.svgContent.set(svg);
+        this.triggerMapReset();
+      });
     });
 
     effect(() => {
       const activeId = this.activeRoomId();
-
       setTimeout(() => {
-        const svgElement = document.querySelector('.map-container svg');
-
-        if (!svgElement) {
-          console.warn('SVG не найден в DOM');
-          return;
-        }
-
-        svgElement.querySelectorAll('.place-active').forEach((el) => {
-          el.classList.remove('place-active');
-        });
-
-        if (activeId) {
-          const target = svgElement.querySelector(`#${activeId}_place`);
-          if (target) {
-            target.classList.add('place-active');
-          } else {
-            console.error(`Элемент с ID ${activeId}_place не найден в SVG!`);
-          }
-        }
+        this.svgRender.highlightRoom(this.el.nativeElement, activeId);
       });
     });
 
     effect(() => {
       const highlightId = this.dialogService.highlightId();
-      const svg = this.svgContent();
 
-      if (highlightId) {
-        if (this.currentMode() !== 'ГК') {
-          this.currentMode.set('ГК');
-        }
+      if (highlightId && this.currentMode() !== 'ГК') {
+        this.currentMode.set('ГК');
       }
+
       setTimeout(() => {
-        const svgEl = this.el.nativeElement.querySelector('.map-container svg') as SVGSVGElement;
-        if (!svgEl) return;
-
-        svgEl.querySelectorAll('.place-active').forEach((el: Element) => {
-          el.classList.remove('place-active');
-        });
-
-        if (highlightId) {
-          const target = svgEl.querySelector(`#${highlightId}_place`) as SVGGraphicsElement;
-
-          if (target) {
-            target.classList.add('place-active');
-
-            try {
-              const bbox = target.getBBox();
-              const viewBox = svgEl.viewBox.baseVal;
-
-              let originX = 50;
-              let originY = 50;
-
-              if (viewBox && viewBox.width > 0 && viewBox.height > 0) {
-                const centerX = bbox.x + bbox.width / 2;
-                const centerY = bbox.y + bbox.height / 2;
-
-                originX = ((centerX - viewBox.x) / viewBox.width) * 100;
-                originY = ((centerY - viewBox.y) / viewBox.height) * 100;
-              }
-
-              const scale = 2;
-
-              const translateX = -(originX - 50) * scale;
-              const translateY = -(originY - 50) * scale;
-
-              svgEl.style.transition = 'transform 0.8s ease-in-out';
-              svgEl.style.transformOrigin = '50% 50%';
-
-              svgEl.style.transform = `translate(${translateX}%, ${translateY}%) scale(${scale})`;
-
-            } catch (e) {
-              console.warn('Ошибка при попытке зазумить SVG:', e);
-            }
-
-          } else {
-            console.error(`Элемент с ID ${highlightId}_place не найден в SVG!`);
-          }
-        } else {
-          svgEl.style.transition = 'transform 0.8s ease-in-out';
-          svgEl.style.transformOrigin = '50% 50%';
-          svgEl.style.transform = 'translate(0%, 0%) scale(1)';
-        }
+        this.svgRender.zoomToElement(this.el.nativeElement, highlightId);
       }, 150);
     });
-  }
-
-  async loadSvg(url: string) {
-    try {
-      const response = await fetch(url);
-      const svgText = await response.text();
-      this.svgContent.set(this.sanitizer.bypassSecurityTrustHtml(svgText));
-    } catch (error) {
-      console.error('Ошибка при загрузке SVG:', error);
-    }
   }
 
   onMapClick(event: MouseEvent) {
@@ -218,6 +144,10 @@ export class MapPage {
     }
   }
 
+  ionViewWillEnter() {
+    this.triggerMapReset();
+  }
+
   ionViewWillLeave() {
     this.closeRoomModal();
   }
@@ -229,48 +159,17 @@ export class MapPage {
   }
 
   async showInfo() {
-    let userMajor = this.userService.userSignal()?.major;
-    if (!userMajor) {
-      userMajor = localStorage.getItem('major') || '';
-      if (!userMajor) {
-        console.error('Не удалось определить направление подготовки.');
-        return;
-      }
-    }
+    const userMajor = this.userService.getMajor();
+    if (!userMajor) return;
 
     try {
       const events = await firstValueFrom(this.searchService.getMajorEvents(userMajor));
       this.majorEvents.set(events);
       this.userMajorName.set(userMajor);
       this.isMajorModalOpen.set(true);
-    } catch (error) {
-      console.error('Ошибка загрузки расписания:', error);
+    } catch {
     }
   }
-
-  parseEvent(item: string): { time: string; title: string } {
-    if (!item) return {time: '', title: ''};
-
-    const parts = item.split('—');
-
-    if (parts.length > 1) {
-      return {
-        time: parts[0].trim(),
-        title: parts[1].trim()
-      };
-    }
-
-    const fallbackParts = item.split(/\s+-\s+(?![0-9])/);
-    if (fallbackParts.length > 1) {
-      return {
-        time: fallbackParts[0].trim(),
-        title: fallbackParts[1].trim()
-      };
-    }
-
-    return {time: '', title: item};
-  }
-
 
   selectFloor(floor: number) {
     this.haptics.selection();

@@ -1,19 +1,18 @@
-import {Component, EnvironmentInjector, inject} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {IonIcon, IonTabBar, IonTabButton, IonTabs} from '@ionic/angular/standalone';
 import {UserService} from "../../services/user.service";
-import {AssistantDialogService} from 'src/app/services/assistant';
+import {AssistantVisibilityService} from 'src/app/services/assistant';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
+  standalone: true,
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon],
 })
 export class TabsPage {
-  public environmentInjector = inject(EnvironmentInjector);
-
   private userService = inject(UserService);
-  public dialogService = inject(AssistantDialogService);
+  readonly visibilityService = inject(AssistantVisibilityService);
 
   constructor() {
     this.userService.loadUser();

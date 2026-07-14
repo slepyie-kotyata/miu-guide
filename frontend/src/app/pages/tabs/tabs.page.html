@@ -2,18 +2,18 @@
   <ion-tab-bar
     slot="bottom"
     class="custom-tab-bar"
-    [style.pointer-events]="dialogService.currentMessage() ? 'none' : 'auto'"
-    [style.opacity]="dialogService.currentMessage() ? '0.5' : '1'">
+    [style.pointer-events]="visibilityService.isOverlayActive() ? 'none' : 'auto'"
+    [style.opacity]="visibilityService.isOverlayActive() ? '0.5' : '1'">
 
-    <ion-tab-button tab="map">
+    <ion-tab-button tab="map" aria-label="Карта">
       <ion-icon src="/assets/icons/map_icon.svg"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="schedule">
+    <ion-tab-button tab="schedule" aria-label="Расписание">
       <ion-icon src="/assets/icons/schedule_icon.svg"></ion-icon>
     </ion-tab-button>
 
-    <ion-tab-button tab="profile">
+    <ion-tab-button tab="profile" aria-label="Профиль">
       <ion-icon src="/assets/icons/profile_icon.svg"></ion-icon>
     </ion-tab-button>
 

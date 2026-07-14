@@ -24,15 +24,10 @@ export const routes: Routes = [
           import('../profile/profile.page').then((m) => m.ProfilePage),
         canActivate: [authGuard]
       },
-      {
-        path: '',
-        redirectTo: '/tabs/map',
-        pathMatch: 'full',
-      },
     ],
   },
   {
-    path: '',
+    path: '*',
     redirectTo: '/tabs/map',
     pathMatch: 'full',
   },

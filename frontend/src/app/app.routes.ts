@@ -4,7 +4,7 @@ import {authGuard} from "./guards/auth.guard";
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'tabs',
+    redirectTo: 'tabs/map',
     pathMatch: 'full',
   },
   {
@@ -24,5 +24,9 @@ export const routes: Routes = [
     path: 'about',
     loadComponent: () => import('./pages/about/about.page').then(m => m.AboutPage)
   },
-
+  {
+    path: '**',
+    redirectTo: 'tabs/map',
+    pathMatch: 'full',
+  },
 ];

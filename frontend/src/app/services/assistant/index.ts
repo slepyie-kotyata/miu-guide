@@ -6,5 +6,7 @@ export {MascotDataService} from './mascot-data.service';
 export {ChatMatchingService} from './chat-matching.service';
 export {ChatNavigationService} from './chat-navigation.service';
 export {TeacherSearchService} from './teacher-search.service';
+export {OnboardingLoaderService} from './onboarding-loader.service';
+export {OnboardingPersistenceService} from './onboarding-persistence.service';
 export * from './assistant.models';
 
