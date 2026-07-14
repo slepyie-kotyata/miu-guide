@@ -1,25 +1,37 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {IonContent, IonIcon, IonSkeletonText, NavController} from '@ionic/angular/standalone';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonModal,
+  IonSkeletonText,
+  IonTitle,
+  IonToolbar,
+  NavController
+} from '@ionic/angular/standalone';
 import {addIcons} from 'ionicons';
-import {chevronForwardOutline} from 'ionicons/icons';
+import {chevronForwardOutline, copyOutline} from 'ionicons/icons';
 import {UserService} from "../../services/user.service";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user.model";
 import {firstValueFrom} from "rxjs";
-import {AlertController, ToastController} from "@ionic/angular";
+import {ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'app-page-profile',
   templateUrl: 'profile.page.html',
   styleUrls: ['profile.page.scss'],
-  imports: [IonContent, IonIcon, IonSkeletonText],
+  imports: [IonContent, IonIcon, IonSkeletonText, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, IonModal],
 })
 export class ProfilePage implements OnInit {
   isLoading = signal<boolean>(true);
+  isMajorDetailsModalOpen = signal(false);
+
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private navCtrl = inject(NavController);
-  private alertController = inject(AlertController);
   private toastController = inject(ToastController);
 
   private readonly emptyUser: User = {
@@ -35,7 +47,7 @@ export class ProfilePage implements OnInit {
   user = computed<User>(() => this.userService.userSignal() ?? this.emptyUser);
 
   constructor() {
-    addIcons({chevronForwardOutline});
+    addIcons({chevronForwardOutline, copyOutline});
   }
 
   async ngOnInit() {
@@ -54,41 +66,48 @@ export class ProfilePage implements OnInit {
   }
 
   getMajorCode(): string {
-    const major = this.user().major;
-    if (!major) return '';
-    const match = major.match(/^\s*(\S+)/);
-    return match ? match[1] : '';
+    const majorText = this.user()?.major;
+    if (!majorText) return '';
+
+    const firstSpaceIndex = majorText.trim().indexOf(' ');
+    if (firstSpaceIndex !== -1) {
+      return majorText.substring(0, firstSpaceIndex).trim();
+    }
+
+    return '';
+  }
+
+  getMajorName(): string {
+    const majorText = this.user()?.major;
+    if (!majorText) return '';
+
+    const firstSpaceIndex = majorText.trim().indexOf(' ');
+    if (firstSpaceIndex !== -1) {
+      return majorText.substring(firstSpaceIndex + 1).trim();
+    }
+
+    return majorText;
   }
 
   async openMajorDetails() {
-    const major = this.user().major;
+    this.isMajorDetailsModalOpen.set(true);
+  }
 
-    const alert = await this.alertController.create({
-      header: 'Направление подготовки',
-      message: major,
-      buttons: [
-        {
-          text: 'Копировать',
-          handler: async () => {
-            await navigator.clipboard.writeText(major);
+  async copyMajorToClipboard() {
+    const majorText = this.user()?.major;
+    if (!majorText) return;
 
-            const toast = await this.toastController.create({
-              message: 'Скопировано в буфер обмена',
-              duration: 1500,
-              position: 'bottom'
-            });
+    await navigator.clipboard.writeText(majorText);
+    this.isMajorDetailsModalOpen.set(false);
 
-            await toast.present();
-          }
-        },
-        {
-          text: 'Закрыть',
-          role: 'cancel'
-        }
-      ]
+    const toast = await this.toastController.create({
+      message: 'Скопировано в буфер обмена',
+      duration: 1500,
+      position: 'bottom',
+      cssClass: 'custom-toast'
     });
 
-    await alert.present();
+    await toast.present();
   }
 
   openSubjectsList() {
