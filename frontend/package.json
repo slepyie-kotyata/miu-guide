@@ -1,8 +1,8 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "name": "miu-guide",
+  "version": "1.0.0",
+  "author": "slepyie-kotyata",
+  "homepage": "https://enjije.ru/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 8100",
