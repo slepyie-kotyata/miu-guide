@@ -1,23 +1,44 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
-
-// Brand colors
 $miu-yellow: #fbc02d;
 $miu-yellow-light: #ffd600;
 $miu-yellow-card: #f6c80d;
 
-// Backgrounds
 $miu-bg-white: #ffffff;
 $miu-bg-light: #f8f9fa;
 $miu-bg-login: #f4f4f4;
 
-// Text colors
 $miu-text-dark: #1a1a1a;
 $miu-text-gray: #a0a0a0;
 $miu-text-gray-light: #888888;
 
-// UI elements
 $miu-tab-bar-bg: #111111;
-$miu-card-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-$miu-card-shadow-yellow: 0 4px 12px rgba(246, 200, 13, 0.3);
+$miu-card-shadow: 0 4px 15px $miu-card-shadow-color;
+$miu-card-shadow-color: rgba(0, 0, 0, 0.04);
+$miu-card-shadow-yellow: 0 4px 12px $miu-card-shadow-yellow-color;
+$miu-card-shadow-yellow-color: rgba(246, 200, 13, 0.3);
 $miu-border-radius: 16px;
+
+:root {
+  --ion-color-primary: #{$miu-yellow};
+  --ion-color-primary-tint: #{$miu-yellow-light};
+  --ion-background-color: #{$miu-bg-white};
+  --ion-text-color: #{$miu-text-dark};
+
+  --miu-yellow: #{$miu-yellow};
+  --miu-yellow-light: #{$miu-yellow-light};
+  --miu-yellow-card: #{$miu-yellow-card};
+
+  --miu-bg-white: #{$miu-bg-white};
+  --miu-bg-light: #{$miu-bg-light};
+  --miu-bg-login: #{$miu-bg-login};
+
+  --miu-text-dark: #{$miu-text-dark};
+  --miu-text-gray: #{$miu-text-gray};
+  --miu-text-gray-light: #{$miu-text-gray-light};
+
+  --miu-tab-bar-bg: #{$miu-tab-bar-bg};
+  --miu-card-shadow: #{$miu-card-shadow};
+  --miu-card-shadow-color: #{$miu-card-shadow-color};
+  --miu-card-shadow-yellow: #{$miu-card-shadow-yellow};
+  --miu-card-shadow-yellow-color: #{$miu-card-shadow-yellow-color};
+  --miu-border-radius: #{$miu-border-radius};
+}

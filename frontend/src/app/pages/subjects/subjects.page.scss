@@ -1,23 +1,23 @@
 .page-title {
   font-size: 26px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
   margin: 20px 24px;
 }
 
 .subject-item {
-  background-color: #F6C80D;
+  background-color: var(--miu-yellow-card);
   margin: 0 24px 16px;
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(246, 200, 13, 0.3);
+  box-shadow: var(--miu-card-shadow-yellow);
 }
 
 .subject-title {
   font-size: 17px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
   margin: 0;
 }

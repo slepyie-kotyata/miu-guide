@@ -1,5 +1,5 @@
 .login-content {
-  --background: #f4f4f4;
+  --background: var(--miu-bg-login);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,12 +9,11 @@
 }
 
 .yellow-card {
-  background-color: #ffd600;
+  background-color: var(--miu-yellow);
   width: 90%;
   height: auto;
   padding: 8% 5%;
-  margin: auto;
-  margin-top: 50%;
+  margin: 50% auto auto;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
@@ -23,7 +22,7 @@
     font-weight: 800;
     line-height: 1.2;
     margin: 0 0 8% 0;
-    color: #000;
+    color: var(--miu-text-dark);
   }
 }
 
@@ -41,14 +40,14 @@
     width: 100%;
     font-size: 4vw;
     background: transparent;
-    color: #000;
+    color: var(--miu-text-dark);
   }
 }
 
 .login-btn {
   width: 100%;
-  background: #000;
-  color: #fff;
+  background: var(--miu-text-dark);
+  color: var(--miu-bg-white);
   border: none;
   padding: 4% 0;
   border-radius: 50px;
@@ -59,7 +58,7 @@
 }
 
 .error-text {
-  color: #d32f2f;
+  color: var(--ion-color-danger);
   font-size: 3.5vw;
   text-align: center;
   margin-top: 10px;

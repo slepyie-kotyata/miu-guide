@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f8f9fa;
+  --background: var(--miu-bg-light);
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
@@ -16,18 +16,18 @@ ion-content {
 .page-title {
   font-size: 26px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--miu-text-color);
   margin: 20px 24px;
 }
 
 .user-card {
-  background-color: #F6C80D;
+  background-color: var(--miu-yellow-card);
   margin: 0 24px 24px;
   border-radius: 12px;
   padding: 16px 20px;
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(246, 200, 13, 0.3);
+  box-shadow: var(--miu-card-shadow-yellow);
 }
 
 .avatar-wrapper {
@@ -46,7 +46,7 @@ ion-content {
 .user-info h2 {
   font-size: 17px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
   margin: 0 0 4px 0;
 }
 
@@ -57,10 +57,10 @@ ion-content {
 }
 
 .menu-block {
-  background-color: #ffffff;
+  background-color: var(--miu-bg-white);
   margin: 0 24px 24px;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--miu-card-shadow);
   padding: 8px 0;
   overflow: hidden;
 }
@@ -109,13 +109,13 @@ button.menu-item:active {
 .menu-title {
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
   margin-bottom: 3px;
 }
 
 .menu-subtitle {
   font-size: 11px;
-  color: #a0a0a0;
+  color: var(--miu-text-gray-light);
 }
 
 .menu-chevron {
@@ -131,28 +131,28 @@ button.menu-item:active {
 
 .section-title {
   font-size: 13px;
-  color: #888;
+  color: var(--miu-text-gray-light);
   margin: 0 24px 10px;
   font-weight: 500;
 }
 
 ion-icon {
-  color: #888
+  color: var(--miu-text-gray-light);
 }
 
 .custom-details-modal {
-  --background: #ffffff;
+  --background: var(--miu-bg-white);
   --border-radius: 24px 24px 0 0;
 
   &::part(handle) {
-    background: #e0e0e0;
+    background: var(--miu-bg-light);
     width: 44px;
     height: 5px;
   }
 }
 
 .modal-details-content {
-  --background: #fdfdfd;
+  --background: var(--miu-bg-light);
 }
 
 .major-info-wrapper {
@@ -163,10 +163,10 @@ ion-icon {
 }
 
 .major-display-card {
-  background: #ffffff;
+  background: var(--miu-bg-white);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--miu-card-shadow);
   border: 1px solid rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
@@ -174,8 +174,8 @@ ion-icon {
 
   .major-code-tag {
     align-self: flex-start;
-    background: rgba(251, 192, 45, 0.15);
-    color: #d49b04;
+    background: var(--miu-card-shadow-yellow-color);
+    color: var(--miu-yellow-card);
     padding: 4px 10px;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -187,15 +187,15 @@ ion-icon {
     margin: 0;
     font-size: 1.05rem;
     font-weight: 600;
-    color: #2c2c2e;
+    color: var(--miu-text-dark);
     line-height: 1.4;
   }
 }
 
 .action-copy-btn {
   width: 100%;
-  background: #fbc02d;
-  color: #1a1a1a;
+  background: var(--miu-yellow-card);
+  color: var(--miu-text-dark);
   border: none;
   border-radius: 14px;
   padding: 14px;
@@ -207,7 +207,7 @@ ion-icon {
   justify-content: center;
   gap: 8px;
 
-  box-shadow: 0 4px 12px rgba(251, 192, 45, 0.3);
+  box-shadow: var(--miu-card-shadow-yellow);
   transition: background-color 0.2s ease, transform 0.1s ease;
   cursor: pointer;
 
@@ -217,7 +217,7 @@ ion-icon {
     align-items: center;
     justify-content: center;
     margin: 0;
-    color: #1a1a1a;
+    color: var(--miu-text-dark);
     flex-shrink: 0;
   }
 
@@ -227,7 +227,7 @@ ion-icon {
   }
 
   &:active {
-    background: #e2ac25;
+    background: var(--miu-yellow);
     transform: scale(0.98);
   }
 }
