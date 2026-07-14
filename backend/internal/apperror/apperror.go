@@ -72,8 +72,6 @@ func Send(c *echo.Context, err error, respCode ...int) error {
         httpStatus = http.StatusNotFound
     case errors.Is(err, ErrInternal):
 		httpStatus = http.StatusInternalServerError
-	default:
-		httpStatus = http.StatusInternalServerError
     }
 
 	// если ручка дала свой код и это НЕ 503

@@ -31,7 +31,7 @@ func GetFirstDayEventSchedule(c *echo.Context) error {
 	majorName := c.QueryParam("major")
 	eventSchedule, ok := models.FirstDayEventByMajor[majorName]
 	if !ok {
-		apperror.Send(c, apperror.Wrap(
+		return apperror.Send(c, apperror.Wrap(
 			apperror.ErrNotFound, 
 			apperror.SourceMock, 
 			fmt.Sprintf("couldn't schedule for %s", majorName),

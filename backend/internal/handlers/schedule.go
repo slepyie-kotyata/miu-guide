@@ -39,7 +39,7 @@ func NewScheduleHandler(ac *client.ScheduleAPIClient, s *service.ScheduleService
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
-		apperror.Send(c, apperror.Wrap(
+		return apperror.Send(c, apperror.Wrap(
 			apperror.ErrBadRequest, 
 			apperror.SourceSchedule, 
 			"invalid groupId parameter",
