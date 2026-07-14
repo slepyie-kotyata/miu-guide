@@ -110,8 +110,13 @@ export class AssistantDialogService {
 
   restartFromStep(stepId: number): void {
     this.persistence.setSeenOnboarding(false);
-    this.applyStep(stepId);
     this.visibilityService.setVisible(true);
+
+    if (this.steps().length === 0) {
+      this.startOnboarding(stepId);
+    } else {
+      this.applyStep(stepId);
+    }
   }
 
   goToNext(): void {
