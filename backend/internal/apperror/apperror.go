@@ -12,11 +12,12 @@ import (
 type Source string
 
 const (
-    SourceMIU      	Source = "MIU_API"
-    SourceSchedule 	Source = "SCHEDULE_API"
-    SourceRedis    	Source = "REDIS"
-    SourceInit     	Source = "INIT"
-	SourceMock		Source = "MOCK"
+    SourceMIU      	    Source = "MIU_API"
+    SourceSchedule 	    Source = "SCHEDULE_API"
+    SourceRedis    	    Source = "REDIS"
+    SourceInit     	    Source = "INIT"
+	SourceMock		    Source = "MOCK"
+    SourceMiddleWare    Source = "MIDDLEWARE"
 )
 
 // типы всех ошибок

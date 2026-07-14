@@ -1,4 +1,4 @@
-package service
+package handlers
 
 import (
 	"miu-guide/internal/apperror"
@@ -13,7 +13,12 @@ func ExtractTokenMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		
 		if token == "" {
-			return apperror.Send(c, apperror.Wrap(apperror.ErrBadRequest, apperror.Source("MIDDLEWARE"), "empty bearer token"))
+			return apperror.Send(
+				c, 
+				apperror.Wrap(apperror.ErrBadRequest, 
+					apperror.SourceMiddleWare, 
+					"empty bearer token",
+				))
 		}
 
 		c.Set("token", token)

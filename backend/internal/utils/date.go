@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"log"
+	"log/slog"
 	"time"
 )
 
@@ -12,7 +12,7 @@ func init() {
 	var err error
 	mskLoc, err = time.LoadLocation("Europe/Moscow")
 	if err != nil {
-		log.Printf("error loading timezone location, using system time: %v", err)
+		slog.Warn("error loading timezone location, using system time", "err", err.Error())
 		mskLoc = time.Local
 	}
 }
