@@ -1,14 +1,10 @@
 ion-content {
   --background: var(--miu-bg-light);
-  overflow: hidden;
   overscroll-behavior: none;
-  height: 100%;
 }
 
 .profile-content {
   padding-bottom: 20px;
-  height: 100%;
-  overflow: hidden;
 
   padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
