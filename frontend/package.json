@@ -6,10 +6,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 8100",
+    "prebuild": "node scripts/generate-version.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "assets": "capacitor-assets generate"
   },
   "private": true,
   "dependencies": {
@@ -44,6 +46,7 @@
     "@angular/cli": "20.3.28",
     "@angular/compiler-cli": "20.3.25",
     "@angular/language-service": "20.3.25",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "8.4.1",
     "@ionic/angular-toolkit": "^12.0.0",
     "@types/jasmine": "~5.1.0",
