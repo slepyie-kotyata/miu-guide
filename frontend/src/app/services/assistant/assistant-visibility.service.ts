@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs';
+import {inject, Injectable, signal} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {filter} from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AssistantVisibilityService {
   private router = inject(Router);
 

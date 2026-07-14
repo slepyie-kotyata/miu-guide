@@ -52,7 +52,7 @@ export class SchedulePage implements OnInit {
   private emotionService = inject(AssistantEmotionService);
 
   constructor() {
-    addIcons({ caretBack, caretForward });
+    addIcons({caretBack, caretForward});
 
     effect(() => {
       const pendingDay = this.chatNavigation.pendingScheduleDay();

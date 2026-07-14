@@ -1,5 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import {inject, Injectable, signal} from '@angular/core';
+import {Router} from '@angular/router';
 
 export type ScheduleTargetDay = 'today' | 'tomorrow' | 'current';
 
@@ -8,7 +8,7 @@ export interface NavigationRequest {
   queryParams?: Record<string, string>;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ChatNavigationService {
   private router = inject(Router);
 
@@ -17,19 +17,19 @@ export class ChatNavigationService {
   private readonly intentActions: Record<string, NavigationRequest> = {
     schedule_today: {
       route: '/tabs/schedule',
-      queryParams: { day: 'today' },
+      queryParams: {day: 'today'},
     },
     schedule_tomorrow: {
       route: '/tabs/schedule',
-      queryParams: { day: 'tomorrow' },
+      queryParams: {day: 'tomorrow'},
     },
     schedule_week: {
       route: '/tabs/schedule',
-      queryParams: { day: 'current' },
+      queryParams: {day: 'current'},
     },
     next_class_location: {
       route: '/tabs/schedule',
-      queryParams: { day: 'today' },
+      queryParams: {day: 'today'},
     },
   };
 

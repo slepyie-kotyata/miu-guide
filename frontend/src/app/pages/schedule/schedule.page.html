@@ -52,27 +52,27 @@
   </div>
 </ion-content>
 <ion-footer>
-    <app-assistant-cat></app-assistant-cat>
-    <div class="days-nav-wrapper">
-      <button class="nav-arrow-btn" type="button" (click)="prevWeek()">
-        <ion-icon name="caret-back" class="nav-arrow"></ion-icon>
-      </button>
+  <app-assistant-cat></app-assistant-cat>
+  <div class="days-nav-wrapper">
+    <button class="nav-arrow-btn" type="button" (click)="prevWeek()">
+      <ion-icon name="caret-back" class="nav-arrow"></ion-icon>
+    </button>
 
-      <div class="days-group">
-        @for (day of weekDays(); track day.name + day.date.getTime(); let i = $index) {
-          <button
-            class="day-btn"
-            [class.active]="activeDayIndex() === i"
-            (click)="selectDay(i)"
-            type="button">
-            {{ day.name }}
-          </button>
-        }
-      </div>
-
-      <button class="nav-arrow-btn" type="button" (click)="nextWeek()">
-        <ion-icon name="caret-forward" class="nav-arrow"></ion-icon>
-      </button>
+    <div class="days-group">
+      @for (day of weekDays(); track day.name + day.date.getTime(); let i = $index) {
+        <button
+          class="day-btn"
+          [class.active]="activeDayIndex() === i"
+          (click)="selectDay(i)"
+          type="button">
+          {{ day.name }}
+        </button>
+      }
     </div>
 
-  </ion-footer>
+    <button class="nav-arrow-btn" type="button" (click)="nextWeek()">
+      <ion-icon name="caret-forward" class="nav-arrow"></ion-icon>
+    </button>
+  </div>
+
+</ion-footer>

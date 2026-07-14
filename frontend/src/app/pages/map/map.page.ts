@@ -108,7 +108,6 @@ export class MapPage {
           const target = svgElement.querySelector(`#${activeId}_place`);
           if (target) {
             target.classList.add('place-active');
-            console.log(`Подсветка применена к: ${activeId}_place`);
           } else {
             console.error(`Элемент с ID ${activeId}_place не найден в SVG!`);
           }
@@ -125,7 +124,7 @@ export class MapPage {
           this.currentMode.set('ГК');
         }
       }
-setTimeout(() => {
+      setTimeout(() => {
         const svgEl = this.el.nativeElement.querySelector('.map-container svg') as SVGSVGElement;
         if (!svgEl) return;
 
@@ -135,15 +134,14 @@ setTimeout(() => {
 
         if (highlightId) {
           const target = svgEl.querySelector(`#${highlightId}_place`) as SVGGraphicsElement;
-          
+
           if (target) {
             target.classList.add('place-active');
-            console.log(`Подсветка онбординга применена к: ${highlightId}_place`);
 
             try {
               const bbox = target.getBBox();
               const viewBox = svgEl.viewBox.baseVal;
-              
+
               let originX = 50;
               let originY = 50;
 
@@ -155,16 +153,16 @@ setTimeout(() => {
                 originY = ((centerY - viewBox.y) / viewBox.height) * 100;
               }
 
-              const scale = 2; 
+              const scale = 2;
 
               const translateX = -(originX - 50) * scale;
               const translateY = -(originY - 50) * scale;
 
-              svgEl.style.transition = 'transform 0.8s ease-in-out'; 
-              svgEl.style.transformOrigin = '50% 50%'; 
-              
+              svgEl.style.transition = 'transform 0.8s ease-in-out';
+              svgEl.style.transformOrigin = '50% 50%';
+
               svgEl.style.transform = `translate(${translateX}%, ${translateY}%) scale(${scale})`;
-              
+
             } catch (e) {
               console.warn('Ошибка при попытке зазумить SVG:', e);
             }
@@ -253,7 +251,6 @@ setTimeout(() => {
   parseEvent(item: string): { time: string; title: string } {
     if (!item) return {time: '', title: ''};
 
-    // Разделяем строку строго по длинному тире "—"
     const parts = item.split('—');
 
     if (parts.length > 1) {
@@ -295,13 +292,5 @@ setTimeout(() => {
     setTimeout(() => {
       this.showMap.set(true);
     }, 10);
-  }
-
-  private changeFloor(floor: number) {
-    if (this.currentFloor() !== floor) {
-      this.currentFloor.set(floor);
-      this.triggerMapReset();
-      console.log(`[ЭТАЖ] Переключено на этаж: ${floor}`);
-    }
   }
 }

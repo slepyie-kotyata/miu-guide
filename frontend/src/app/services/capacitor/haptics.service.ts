@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import {Injectable} from '@angular/core';
+import {Capacitor} from '@capacitor/core';
+import {Haptics, ImpactStyle, NotificationType} from '@capacitor/haptics';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class HapticsService {
   async impact(style: ImpactStyle = ImpactStyle.Light): Promise<void> {
     if (!Capacitor.isNativePlatform()) return;
 
     try {
-      await Haptics.impact({ style });
+      await Haptics.impact({style});
     } catch (err) {
       console.error('Haptics impact error:', err);
     }
@@ -18,7 +18,7 @@ export class HapticsService {
     if (!Capacitor.isNativePlatform()) return;
 
     try {
-      await Haptics.notification({ type });
+      await Haptics.notification({type});
     } catch (err) {
       console.error('Haptics notification error:', err);
     }

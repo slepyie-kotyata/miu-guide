@@ -47,14 +47,13 @@ export class LoginPage {
         this.dialogService.startOnboarding(7);
       }
 
-
     } catch (error: any) {
       if (error.status == 401) {
         this.error.set('Неверный логин или пароль');
       } else {
         this.error.set('Ошибка соединения с сервером')
       }
-      this.haptics.notification(NotificationType.Error);
+      await this.haptics.notification(NotificationType.Error);
     }
   }
 

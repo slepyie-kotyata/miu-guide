@@ -118,10 +118,12 @@ export class ProfilePage implements OnInit {
   openMoodleWebsite() {
     window.open('https://elearn.mmu.ru/', '_blank');
   }
+
   openHelpAndSupport() {
     window.open('https://mi.university/faq', '_blank');
   }
-    openAbout() {
+
+  openAbout() {
     this.navCtrl.navigateForward('/about');
   }
 
