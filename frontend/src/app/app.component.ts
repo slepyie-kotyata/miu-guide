@@ -3,11 +3,12 @@ import {IonApp, IonRouterOutlet} from '@ionic/angular/standalone';
 import {AssistantDialogService, AssistantVisibilityService} from './services/assistant';
 import {StatusBarService} from './services/capacitor/status-bar.service';
 import {KeyboardService} from './services/capacitor/keyboard.service';
+import {AssistantCatComponent} from './components/assistant-cat/assistant-cat.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet],
+  imports: [IonApp, IonRouterOutlet, AssistantCatComponent],
 })
 export class AppComponent implements OnInit {
   private assistantDialogService = inject(AssistantDialogService);

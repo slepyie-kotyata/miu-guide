@@ -15,16 +15,15 @@ import {
   getSundayFromWeek,
   getWeekNumber
 } from '../../utils/date-utils';
-import {AssistantCatComponent} from "src/app/components/assistant-cat/assistant-cat.component";
 import {ChatNavigationService, ScheduleTargetDay} from '../../services/assistant/chat-navigation.service';
 import {AssistantEmotionService} from '../../services/assistant/assistant-emotion.service';
-import {UserService} from "../../services/user.service";
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-page-schedule',
   templateUrl: 'schedule.page.html',
   styleUrls: ['schedule.page.scss'],
-  imports: [IonContent, IonIcon, IonSpinner, IonFooter, AssistantCatComponent],
+  imports: [IonContent, IonIcon, IonSpinner, IonFooter],
 })
 export class SchedulePage implements OnInit {
   lessons = signal<Lesson[]>([]);

@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import {SafeHtml} from '@angular/platform-browser';
 import {IonButton, IonButtons, IonContent, IonHeader, IonModal, IonToolbar} from '@ionic/angular/standalone';
-import {AssistantCatComponent} from '../../components/assistant-cat/assistant-cat.component';
 import {AssistantDialogService} from '../../services/assistant';
 import {HapticsService} from '../../services/capacitor/haptics.service';
 import {ImpactStyle} from '@capacitor/haptics';
@@ -26,7 +25,7 @@ import {parseEvent} from '../../utils/event-parser';
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss'],
   standalone: true,
-  imports: [IonContent, AssistantCatComponent, IonModal, IonHeader, IonButton, IonButtons, IonToolbar],
+  imports: [IonContent, IonModal, IonHeader, IonButton, IonButtons, IonToolbar],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MapPage {

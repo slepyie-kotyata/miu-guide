@@ -1,11 +1,11 @@
-@if (visibilityService.isVisible()) {
-  @if (dialogService.currentMessage()?.canSkip) {
-    <button class="skip-screen-btn" (click)="dialogService.finishOnboarding()">
+@if (isVisible()) {
+  @if (currentMessage()?.canSkip) {
+    <button class="skip-screen-btn" (click)="onSkip()">
       Пропустить
     </button>
   }
 
-  @if (dialogService.currentMessage(); as message) {
+  @if (currentMessage(); as message) {
     <div
       class="backdrop"
       [class.dark-overlay]="message.id < darkBackdropMin || message.id > darkBackdropMax">
@@ -13,30 +13,30 @@
   }
   <div class="cat-wrapper" [class.lifted]="isSchedulePage()">
 
-    @if (dialogService.currentMessage(); as message) {
+    @if (currentMessage(); as message) {
       <div class="speech-bubble">
         <p class="dialog-text" [innerHTML]="message.text"></p>
 
-        @if (dialogService.currentStepId() === 2) {
+        @if (currentStepId() === stepAuthChoice) {
           <div class="dialog-buttons">
             @for (btnText of message.buttons; track btnText) {
               <button
                 class="dialog-btn"
-                (click)="dialogService.handleStep2Choice(btnText)">
+                (click)="onStep2Choice(btnText)">
                 {{ btnText }}
               </button>
             }
           </div>
         }
 
-        @if (dialogService.currentStepId() === 3) {
+        @if (currentStepId() === stepDirectionChoice) {
           <div class="dropdown-container">
             <select
               class="direction-select"
-              [value]="dialogService.selectedDirection()"
-              (change)="dialogService.selectDirection($any($event.target).value)">
+              [value]="selectedDirection()"
+              (change)="onSelectDirection($any($event.target).value)">
               <option value="" disabled selected>Выберите направление...</option>
-              @for (dir of dialogService.directions(); track dir) {
+              @for (dir of directions(); track dir) {
                 <option [value]="dir">{{ dir }}</option>
               }
             </select>
@@ -46,45 +46,45 @@
         <div class="navigation-controls">
           <button
             class="nav-arrow-btn"
-            [disabled]="dialogService.currentStepId() === 1"
-            (click)="dialogService.goToPrev()">
+            [disabled]="currentStepId() === stepFirst"
+            (click)="onPrev()">
             &lt;
           </button>
 
           <button
             class="nav-arrow-btn"
-            [disabled]="dialogService.isNextDisabled()"
-            (click)="dialogService.goToNext()">
+            [disabled]="isNextDisabled()"
+            (click)="onNext()">
             &gt;
           </button>
         </div>
       </div>
     }
 
-    @if (chatService.isChatOpen()) {
-      <div class="chat-backdrop" (click)="chatService.closeChat()"></div>
+    @if (isChatOpen()) {
+      <div class="chat-backdrop" (click)="onCloseChat()"></div>
     }
 
-    @if (chatService.isChatOpen()) {
+    @if (isChatOpen()) {
       <div class="speech-bubble chat-mode">
-        <button class="close-icon" (click)="chatService.closeChat()">×</button>
+        <button class="close-icon" (click)="onCloseChat()">×</button>
         <div class="chat-history" #chatScroll>
-          @for (msg of chatService.conversation(); track $index) {
+          @for (msg of conversation(); track $index) {
             <div
               [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg') + (msg.isError ? ' error-msg' : '')">
               {{ msg.text }}
             </div>
-            @if (msg.sender === 'cat' && msg.showSuggestions && chatService.suggestedQuestions().length > 0) {
+            @if (msg.sender === 'cat' && msg.showSuggestions && suggestedQuestions().length > 0) {
               <div class="suggested-questions">
-                @for (question of chatService.suggestedQuestions(); track question) {
-                  <button class="suggested-question-card" (click)="chatService.selectSuggestedQuestion(question)">
+                @for (question of suggestedQuestions(); track question) {
+                  <button class="suggested-question-card" (click)="onSuggestedQuestion(question)">
                     {{ question }}
                   </button>
                 }
               </div>
             }
           }
-          @if (chatService.isTyping()) {
+          @if (isTyping()) {
             <div class="message-bubble cat-msg typing-bubble">
               <span class="typing-dot"></span>
               <span class="typing-dot"></span>
@@ -102,9 +102,7 @@
       </div>
     }
 
-    <img [src]="emotionService.currentEmotion()" class="cat-img" alt="Мико" (click)="chatService.handleCatClick()"/>
+    <img [src]="currentEmotion()" class="cat-img" alt="Мико" (click)="onCatClick()"/>
 
   </div>
-
-
 }

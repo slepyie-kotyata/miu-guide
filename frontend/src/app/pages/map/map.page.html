@@ -42,8 +42,6 @@
   <button class="mode-toggle-btn" (click)="toggleMode()">
     {{ currentMode() }}
   </button>
-
-  <app-assistant-cat></app-assistant-cat>
 </ion-content>
 
 <ion-modal [isOpen]="isMajorModalOpen()" (didDismiss)="isMajorModalOpen.set(false)" [breakpoints]="[0, 0.75, 0.95]"
