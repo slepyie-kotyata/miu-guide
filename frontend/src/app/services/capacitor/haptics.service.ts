@@ -29,6 +29,7 @@ export class HapticsService {
 
     try {
       await Haptics.selectionStart();
+      await Haptics.selectionEnd();
     } catch (err) {
       console.error('Haptics selection error:', err);
     }

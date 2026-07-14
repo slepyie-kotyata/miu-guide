@@ -58,7 +58,7 @@ export class MascotDataService {
     const phrase = candidates.length > 0
       ? candidates[Math.floor(Math.random() * candidates.length)]
       : {text: 'Ой, что-то пошло не так. Попробуй ещё раз.', emotion: 'sad-eclosed-mclosed'};
-    return {text: phrase.text, emotion: 'sad-eclosed-mclosed'};
+    return {text: phrase.text, emotion: phrase.emotion};
   }
 
   private pickEmotionForIntent(intent: string): string {

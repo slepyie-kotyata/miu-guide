@@ -9,6 +9,7 @@ import {HapticsService} from '../../services/capacitor/haptics.service';
 import {ImpactStyle} from '@capacitor/haptics';
 import {
   formatDateStr,
+  formatApiDate,
   generateWeekDays,
   getMondayFromWeek,
   getSundayFromWeek,
@@ -102,7 +103,7 @@ export class SchedulePage implements OnInit {
     this.errorMessage.set(null);
 
     const targetDate = this.weekDays()[index].date;
-    const dateString = targetDate.toISOString().split('T')[0].replace(/-/g, '.');
+    const dateString = formatApiDate(targetDate);
 
     this.scheduleService.getDaySchedule(this.userService.userSignal()!.group_id, dateString).subscribe({
       next: (data) => {
