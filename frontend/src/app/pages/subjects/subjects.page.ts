@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {IonContent} from "@ionic/angular/standalone";
+import {IonBackButton, IonButtons, IonContent, IonHeader, IonToolbar} from "@ionic/angular/standalone";
 import {UserService} from "../../services/user.service";
 
 @Component({
@@ -7,7 +7,11 @@ import {UserService} from "../../services/user.service";
   templateUrl: './subjects.page.html',
   styleUrls: ['./subjects.page.scss'],
   imports: [
-    IonContent
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton
   ]
 })
 export class SubjectsPage {
@@ -15,6 +19,7 @@ export class SubjectsPage {
   private userService = inject(UserService);
   protected userSubjects = this.userService.userSubjectsSignal();
 
-  constructor() { }
+  constructor() {
+  }
 
 }

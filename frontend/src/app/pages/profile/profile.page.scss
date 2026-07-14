@@ -9,6 +9,8 @@ ion-content {
   padding-bottom: 20px;
   height: 100%;
   overflow: hidden;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .page-title {
@@ -58,7 +60,7 @@ ion-content {
   background-color: #ffffff;
   margin: 0 24px 24px;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   padding: 8px 0;
   overflow: hidden;
 }
@@ -85,7 +87,6 @@ button.menu-item {
 button.menu-item:active {
   background-color: rgba(0, 0, 0, 0.06);
 }
-
 
 .icon-wrapper {
   margin-right: 16px;
@@ -135,13 +136,99 @@ button.menu-item:active {
   font-weight: 500;
 }
 
-ion-icon{
-  color:#888
+ion-icon {
+  color: #888
 }
 
-.loader-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+.custom-details-modal {
+  --background: #ffffff;
+  --border-radius: 24px 24px 0 0;
+
+  &::part(handle) {
+    background: #e0e0e0;
+    width: 44px;
+    height: 5px;
+  }
 }
+
+.modal-details-content {
+  --background: #fdfdfd;
+}
+
+.major-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.major-display-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .major-code-tag {
+    align-self: flex-start;
+    background: rgba(251, 192, 45, 0.15);
+    color: #d49b04;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .major-full-name {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2c2c2e;
+    line-height: 1.4;
+  }
+}
+
+.action-copy-btn {
+  width: 100%;
+  background: #fbc02d;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  box-shadow: 0 4px 12px rgba(251, 192, 45, 0.3);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: #1a1a1a;
+    flex-shrink: 0;
+  }
+
+  span {
+    display: inline-block;
+    line-height: 1;
+  }
+
+  &:active {
+    background: #e2ac25;
+    transform: scale(0.98);
+  }
+}
+

@@ -11,6 +11,6 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  navCtrl.navigateRoot('/login');
+  navCtrl.navigateForward('/login');
   return false;
 };

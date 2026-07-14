@@ -117,3 +117,33 @@
     </div>
   </div>
 </ion-content>
+
+<ion-modal [isOpen]="isMajorDetailsModalOpen()" (didDismiss)="isMajorDetailsModalOpen.set(false)"
+           [breakpoints]="[0, 0.38]" [initialBreakpoint]="0.38" class="custom-details-modal">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar class="modal-header-toolbar">
+        <ion-title class="modal-title">Направление подготовки</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="isMajorDetailsModalOpen.set(false)" class="close-btn">Закрыть</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding modal-details-content">
+      <div class="major-info-wrapper">
+
+        <div class="major-display-card">
+          <span class="major-code-tag">{{ getMajorCode() }}</span>
+          <p class="major-full-name">{{ getMajorName() }}</p>
+        </div>
+
+        <button (click)="copyMajorToClipboard()" class="action-copy-btn" type="button">
+          <ion-icon name="copy-outline"></ion-icon>
+          <span>Скопировать</span>
+        </button>
+
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
