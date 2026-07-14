@@ -18,4 +18,10 @@ export class SearchService {
   getMajors() {
     return this.http.get<string[]>(`${this.apiUrl}/majors`);
   }
+
+  getMajorEvents(major: string) {
+    return this.http.get<string[]>(`${this.apiUrl}/events`, {
+      params: {major}
+    });
+  }
 }

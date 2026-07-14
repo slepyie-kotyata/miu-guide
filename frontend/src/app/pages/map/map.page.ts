@@ -1,12 +1,23 @@
-import { Component, signal, ElementRef, computed, inject, effect, untracked } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { IonContent } from '@ionic/angular/standalone';
-import { AssistantCatComponent } from '../../components/assistant-cat/assistant-cat.component';
-import { AssistantDialogService } from '../../services/assistant/assistant-dialog.service';
-import { HapticsService } from '../../services/capacitor/haptics.service';
-import { ImpactStyle } from '@capacitor/haptics';
-import { ROOMS_DATA } from 'src/app/data/map-data';
+import {
+  Component,
+  computed,
+  CUSTOM_ELEMENTS_SCHEMA,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  untracked
+} from '@angular/core';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {IonButton, IonButtons, IonContent, IonHeader, IonModal, IonToolbar} from '@ionic/angular/standalone';
+import {AssistantCatComponent} from '../../components/assistant-cat/assistant-cat.component';
+import {AssistantDialogService} from '../../services/assistant';
+import {HapticsService} from '../../services/capacitor/haptics.service';
+import {ImpactStyle} from '@capacitor/haptics';
+import {ROOMS_DATA} from 'src/app/data/map-data';
+import {SearchService} from "../../services/search.service";
+import {UserService} from "../../services/user.service";
+import {firstValueFrom} from "rxjs";
 
 
 @Component({
@@ -14,7 +25,7 @@ import { ROOMS_DATA } from 'src/app/data/map-data';
   templateUrl: 'map.page.html',
   styleUrls: ['map.page.scss'],
   standalone: true,
-  imports: [IonContent, AssistantCatComponent],
+  imports: [IonContent, AssistantCatComponent, IonModal, IonHeader, IonButton, IonButtons, IonToolbar],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MapPage {
@@ -29,14 +40,18 @@ export class MapPage {
 
   tooltipTop = signal<number>(0);
   tooltipLeft = signal<number>(0);
-  tooltipWidth = signal<string>('280px'); 
-  arrowLeft = signal<string>('50%'); 
-  
+  arrowLeft = signal<string>('50%');
+
+  isMajorModalOpen = signal<boolean>(false);
+  majorEvents = signal<string[]>([]);
+  userMajorName = signal<string>('');
+
   private el = inject(ElementRef);
   private haptics = inject(HapticsService);
   private sanitizer = inject(DomSanitizer);
   private dialogService = inject(AssistantDialogService);
-  
+  private searchService = inject(SearchService);
+  private userService = inject(UserService)
 
   readonly roomData = computed(() => {
     const id = this.selectedRoomId();
@@ -56,81 +71,80 @@ export class MapPage {
     return `/assets/maps/${subFolder}/map_${this.currentFloor()}.svg`;
   });
 
-  activeFloor: number = 1;
   constructor() {
     effect(() => {
-    const dialogFloor = this.dialogService.currentFloor();
-    const isDialogActive = this.dialogService.currentMessage() !== null;
+      const dialogFloor = this.dialogService.currentFloor();
+      const isDialogActive = this.dialogService.currentMessage() !== null;
 
-    untracked(() => {
-      if (isDialogActive) {
-        if (this.currentFloor() !== dialogFloor) {
-          this.currentFloor.set(dialogFloor);
-          this.triggerMapReset();
+      untracked(() => {
+        if (isDialogActive) {
+          if (this.currentFloor() !== dialogFloor) {
+            this.currentFloor.set(dialogFloor);
+            this.triggerMapReset();
+          }
         }
-      }
+      });
     });
-  });
     effect(() => {
       this.loadSvg(this.mapImage());
     });
 
-effect(() => {
-    const activeId = this.activeRoomId(); 
-    
-    setTimeout(() => {
-      const svgElement = document.querySelector('.map-container svg');
-      
-      if (!svgElement) {
-        console.warn('SVG не найден в DOM');
-        return;
-      }
+    effect(() => {
+      const activeId = this.activeRoomId();
 
-      svgElement.querySelectorAll('.place-active').forEach((el) => {
-        el.classList.remove('place-active');
-      });
+      setTimeout(() => {
+        const svgElement = document.querySelector('.map-container svg');
 
-      if (activeId) {
-        const target = svgElement.querySelector(`#${activeId}_place`);
-        if (target) {
-          target.classList.add('place-active');
-          console.log(`Подсветка применена к: ${activeId}_place`);
-        } else {
-          console.error(`Элемент с ID ${activeId}_place не найден в SVG!`);
+        if (!svgElement) {
+          console.warn('SVG не найден в DOM');
+          return;
         }
-      }
-    }); 
-  });
 
-effect(() => {
-    const highlightId = this.dialogService.highlightId();
-    const svg = this.svgContent();
+        svgElement.querySelectorAll('.place-active').forEach((el) => {
+          el.classList.remove('place-active');
+        });
 
-    if (highlightId) {
-      if (this.currentMode() !== 'ГК') {
-        this.currentMode.set('ГК');
-      }
-    }
-
-    setTimeout(() => {
-      const svgEl = this.el.nativeElement.querySelector('.map-container svg');
-      if (!svgEl) return;
-
-      svgEl.querySelectorAll('.place-active').forEach((el: Element) => {
-        el.classList.remove('place-active');
+        if (activeId) {
+          const target = svgElement.querySelector(`#${activeId}_place`);
+          if (target) {
+            target.classList.add('place-active');
+            console.log(`Подсветка применена к: ${activeId}_place`);
+          } else {
+            console.error(`Элемент с ID ${activeId}_place не найден в SVG!`);
+          }
+        }
       });
+    });
+
+    effect(() => {
+      const highlightId = this.dialogService.highlightId();
+      const svg = this.svgContent();
 
       if (highlightId) {
-        const target = svgEl.querySelector(`#${highlightId}_place`);
-        if (target) {
-          target.classList.add('place-active');
-          console.log(`Подсветка онбординга применена к: ${highlightId}_place`);
-        } else {
-          console.error(`Элемент с ID ${highlightId}_place не найден в SVG!`);
+        if (this.currentMode() !== 'ГК') {
+          this.currentMode.set('ГК');
         }
       }
+
+      setTimeout(() => {
+        const svgEl = this.el.nativeElement.querySelector('.map-container svg');
+        if (!svgEl) return;
+
+        svgEl.querySelectorAll('.place-active').forEach((el: Element) => {
+          el.classList.remove('place-active');
+        });
+
+        if (highlightId) {
+          const target = svgEl.querySelector(`#${highlightId}_place`);
+          if (target) {
+            target.classList.add('place-active');
+            console.log(`Подсветка онбординга применена к: ${highlightId}_place`);
+          } else {
+            console.error(`Элемент с ID ${highlightId}_place не найден в SVG!`);
+          }
+        }
+      });
     });
-  });
   }
 
   async loadSvg(url: string) {
@@ -143,47 +157,89 @@ effect(() => {
     }
   }
 
-onMapClick(event: MouseEvent) {
-  const target = event.target as Element;
-  const clickedPoint = target.closest('[id$="_point"]');
-  
-  if (clickedPoint) {
-    const cleanId = clickedPoint.id.replace('_point', '');
-    
-    const wrapper = target.closest('.map-wrapper') as HTMLElement;
-    if (wrapper) {
-      const wrapperRect = wrapper.getBoundingClientRect();
-      const pointRect = clickedPoint.getBoundingClientRect();
+  onMapClick(event: MouseEvent) {
+    const target = event.target as Element;
+    const clickedPoint = target.closest('[id$="_point"]');
 
-      const scale = wrapperRect.width / wrapper.offsetWidth;
+    if (clickedPoint) {
+      const cleanId = clickedPoint.id.replace('_point', '');
 
-      const localTop = (pointRect.top - wrapperRect.top) / scale;
-      const localLeft = (pointRect.left - wrapperRect.left + (pointRect.width / 2)) / scale;
+      const wrapper = target.closest('.map-wrapper') as HTMLElement;
+      if (wrapper) {
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const pointRect = clickedPoint.getBoundingClientRect();
 
-      this.tooltipTop.set(localTop);
-      this.tooltipLeft.set(localLeft);
+        const scale = wrapperRect.width / wrapper.offsetWidth;
+
+        const localTop = (pointRect.top - wrapperRect.top) / scale;
+        const localLeft = (pointRect.left - wrapperRect.left + (pointRect.width / 2)) / scale;
+
+        this.tooltipTop.set(localTop);
+        this.tooltipLeft.set(localLeft);
+      }
+
+      this.activeRoomId.set(cleanId);
+      this.selectedRoomId.set(cleanId);
+      this.isModalOpen.set(true);
+
+      this.haptics.impact(ImpactStyle.Light);
     }
-
-    this.activeRoomId.set(cleanId);
-    this.selectedRoomId.set(cleanId);
-    this.isModalOpen.set(true);
-    
-    this.haptics.impact(ImpactStyle.Light);
   }
-}
 
-ionViewWillLeave() {
+  ionViewWillLeave() {
     this.closeRoomModal();
   }
+
   closeRoomModal() {
     this.isModalOpen.set(false);
-    this.activeRoomId.set(null); 
+    this.activeRoomId.set(null);
     setTimeout(() => this.selectedRoomId.set(null), 300);
   }
 
-  showInfo() {
-    console.log('Открыто инфо на карте');
+  async showInfo() {
+    let userMajor = this.userService.userSignal()?.major;
+    if (!userMajor) {
+      userMajor = localStorage.getItem('major') || '';
+      if (!userMajor) {
+        console.error('Не удалось определить направление подготовки.');
+        return;
+      }
+    }
+
+    try {
+      const events = await firstValueFrom(this.searchService.getMajorEvents(userMajor));
+      this.majorEvents.set(events);
+      this.userMajorName.set(userMajor);
+      this.isMajorModalOpen.set(true);
+    } catch (error) {
+      console.error('Ошибка загрузки расписания:', error);
+    }
   }
+
+  parseEvent(item: string): { time: string; title: string } {
+    if (!item) return {time: '', title: ''};
+
+    // Разделяем строку строго по длинному тире "—"
+    const parts = item.split('—');
+
+    if (parts.length > 1) {
+      return {
+        time: parts[0].trim(),
+        title: parts[1].trim()
+      };
+    }
+
+    const fallbackParts = item.split(/\s+-\s+(?![0-9])/);
+    if (fallbackParts.length > 1) {
+      return {
+        time: fallbackParts[0].trim(),
+        title: fallbackParts[1].trim()
+      };
+    }
+
+    return {time: '', title: item};
+  }
+
 
   selectFloor(floor: number) {
     this.haptics.selection();
@@ -207,10 +263,10 @@ ionViewWillLeave() {
     }, 10);
   }
 
-private changeFloor(floor: number) {
+  private changeFloor(floor: number) {
     if (this.currentFloor() !== floor) {
-      this.currentFloor.set(floor); 
-      this.triggerMapReset(); 
+      this.currentFloor.set(floor);
+      this.triggerMapReset();
       console.log(`[ЭТАЖ] Переключено на этаж: ${floor}`);
     }
   }
