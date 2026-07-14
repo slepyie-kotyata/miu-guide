@@ -28,6 +28,11 @@ export class AssistantVisibilityService {
   }
 
   private checkVisibility(currentUrl: string): void {
+    if (currentUrl.includes('/login')) {
+      this.isVisible.set(false);
+      return;
+    }
+
     const hasSeen = localStorage.getItem('hasSeenOnboarding') === 'true';
     if (!hasSeen) {
       this.isVisible.set(true);
