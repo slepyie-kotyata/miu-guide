@@ -57,7 +57,7 @@ func (m *MIUClient) doAccountRequest(data url.Values, target any) error {
 	apiResp, err := m.httpClient.Do(apiReq)
 
 	if err != nil {
-		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavaliableAPI, err)
+		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavailableAPI, err)
 	}
 	defer apiResp.Body.Close()
 
@@ -139,7 +139,7 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 
 	var subjectsList []models.Subjects
 	if err := m.doAccountRequest(data, &subjectsList); err != nil {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, "this token is invalid")
+		return nil, err
 	}
 
 	if len(subjectsList) == 0 {

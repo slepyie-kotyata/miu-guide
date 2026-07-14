@@ -32,9 +32,9 @@ func NewScheduleHandler(ac *client.ScheduleAPIClient, s *service.ScheduleService
 // @Produce json
 // @Param group path int true "ID Группы (число)"
 // @Success 200 {array} 	models.Schedule "Успешный ответ"
-// @Failure 400 {object} 	ErrorResponse 	"{"code": 1} - Невалидный ID группы"
-// @Failure 500 {object} 	ErrorResponse 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
-// @Failure 503 {object} 	ErrorResponse 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
+// @Failure 400 {object} 	map[string]int 	"{"code": 1} - Невалидный ID группы"
+// @Failure 500 {object} 	map[string]int 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
+// @Failure 503 {object} 	map[string]int 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
 // @Router /schedule/{group}/today [get]
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
@@ -60,9 +60,9 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 // @Param group path int true "ID Группы (число)"
 // @Param day query string true "Дата расписания (формат: YYYY.MM.DD)"
 // @Success 200 {array} 	models.Schedule "Успешный ответ"
-// @Failure 400 {object} 	ErrorResponse 	"{"code": 1} - Невалидный ID группы"
-// @Failure 500 {object} 	ErrorResponse 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
-// @Failure 503 {object} 	ErrorResponse 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
+// @Failure 400 {object} 	map[string]int 	"{"code": 1} - Невалидный ID группы"
+// @Failure 500 {object} 	map[string]int 	"{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка Redis"
+// @Failure 503 {object} 	map[string]int 	"{"code": 1} - Недоступность API Расписания, {"code": 2} - недоступность\таймаут Redis"
 // @Router /schedule/{group} [get]
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
@@ -87,7 +87,7 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 // @Produce json
 // @Param lecturer query string true "Фамилия преподавателя"
 // @Success 200 {array} 	[]string 		"Успешный ответ"
-// @Failure 400 {object}  	ErrorResponse   "{"code": 2} - Пустой параметр lecturer"
+// @Failure 400 {object}  	map[string]int  "{"code": 2} - Пустой параметр lecturer"
 // @Failure 404 {object}  	map[string]int  "{"code": 1} - Не найдены ФИО преподавателей"
 // @Failure 503 {object}  	map[string]int  "{"code": 1} - Недоступность API Расписания"
 // @Router /search [get]
@@ -98,7 +98,7 @@ func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
 	}
 	apiResp, err := s.apiClient.GetLecturers(lecturerName)
 	if err != nil {
-		handleAPIError(c, err, SourceSchedule)
+		return handleAPIError(c, err, SourceSchedule)
 	}
 
 	return c.JSON(http.StatusOK, filter.GetUniqueLabels(apiResp))

@@ -39,7 +39,7 @@ func (s *ScheduleAPIClient) doScheduleRequest(queryUrl string, target any) error
 
 	apiResp, err := s.httpClient.Do(apiReq)
 	if err != nil {
-		return ErrUnavaliableAPI
+		return ErrUnavailableAPI
 	}
 	defer apiResp.Body.Close()
 

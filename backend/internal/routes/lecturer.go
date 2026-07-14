@@ -6,6 +6,6 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-func InitSeatchRoutes(e *echo.Echo, sh *handlers.ScheduleHandler) {
+func InitSearchRoutes(e *echo.Echo, sh *handlers.ScheduleHandler) {
 	e.GET("/search", sh.GetLecturers)
 }

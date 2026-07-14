@@ -55,16 +55,16 @@ func determineCourse(groupName string, now time.Time) int {
 // @Security     BearerAuth
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  models.UserInfo "Успешный ответ"
-// @Failure      400  {object}  map[string]int  "{"code": 1} - Пустой токен в Bearer"
+// @Failure      400  {object}  map[string]int  "{"code": 1} - Пустой токен в Bearer/неправильный userId"
 // @Failure      401  {object}  map[string]int  "{"code": 1} - Неправильные данные пользователя, {"code": 2} - Невалидный токен(истек срок)"
 // @Failure      404  {object}  map[string]int  "{"code": 1} - Не найден пользователь"
-// @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность API Расписания - code: 1"
+// @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ, {"code": 1} - Недоступность API Расписания"
 // @Router       /access/users/{id} [get]
 func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))
     if err != nil {
-        return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 1 })
+        return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
     }
 
     // получаем часть данных из API ЛК ММУ
@@ -105,7 +105,7 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
 // @Security     BearerAuth
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  []string "Успешный ответ"
-// @Failure      400  {object}  map[string]int  "Неверный формат ID - code: 1, Пустой токен в Bearer - code: 2"
+// @Failure      400  {object}  map[string]int  "{"code": 1} - Пустой токен в Bearer/неправильный userId"
 // @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
 // @Failure      404  {object}  map[string]int  "{"code": 1} - Не найден список предметов"
 // @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ - code: 3"

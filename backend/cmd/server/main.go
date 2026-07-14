@@ -53,7 +53,7 @@ func main() {
 
 	routes.InitMajorRoutes(e)
 	routes.InitScheduleRoutes(e, scheduleHandler)
-	routes.InitSeatchRoutes(e, scheduleHandler)
+	routes.InitSearchRoutes(e, scheduleHandler)
 	routes.InitAuthRoutes(e, userHandler)
 	routes.InitUserRoutes(access, userHandler)
 

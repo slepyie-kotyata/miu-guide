@@ -26,7 +26,7 @@ var sourceErrorCodes = map[APISource]int{
 func handleAPIError(c *echo.Context, err error, source APISource) error {
     log.Printf("[ERROR] %v", err)
 	switch {
-	case errors.Is(err, client.ErrUnavaliableAPI):
+	case errors.Is(err, client.ErrUnavailableAPI):
         code := sourceErrorCodes[source]
         return c.JSON(http.StatusServiceUnavailable, map[string]any{"code": code})
 	case errors.Is(err, client.ErrInternal):

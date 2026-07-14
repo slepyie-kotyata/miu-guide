@@ -26,5 +26,11 @@ func GetMajors(c *echo.Context) error {
 // @Router /events [get]
 func GetFirstDayEventSchedule(c *echo.Context) error {
 	majorName := c.QueryParam("major")
-	return c.JSON(http.StatusOK, models.FirstDayEventByMajor[majorName])
+	eventSchedule, ok := models.FirstDayEventByMajor[majorName]
+	if !ok {
+		return c.JSON(http.StatusNotFound, map[string]any{
+			"code": 1,
+		})
+	}
+	return c.JSON(http.StatusOK, eventSchedule)
 }
