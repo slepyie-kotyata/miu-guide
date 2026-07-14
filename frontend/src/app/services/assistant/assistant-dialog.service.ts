@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import {AssistantEmotionService} from './assistant-emotion.service';
 import {AssistantVisibilityService} from './assistant-visibility.service';
 import {HttpClient} from '@angular/common/http';
-import {AuthService} from '../auth.service';
 import {SearchService} from "../search.service";
 import {UserService} from "../user.service";
 
@@ -33,7 +32,6 @@ export class AssistantDialogService {
   private http = inject(HttpClient);
   private emotionService = inject(AssistantEmotionService);
   private visibilityService = inject(AssistantVisibilityService);
-  private authService = inject(AuthService);
   private userService = inject(UserService);
   readonly currentMessage = computed<OnboardingStep | null>(() => {
     if (this.hasSeenOnboarding()) return null;
@@ -129,7 +127,7 @@ export class AssistantDialogService {
           }
         }
 
-        const savedDir = localStorage.getItem('onboardingDirection');
+        const savedDir = localStorage.getItem('major');
         if (savedDir) {
           this.selectedDirection.set(savedDir);
         }
@@ -190,14 +188,9 @@ export class AssistantDialogService {
     localStorage.setItem('hasSeenOnboarding', 'true');
     this.hasSeenOnboarding.set(true);
     localStorage.removeItem('onboardingStepId');
-    localStorage.removeItem('onboardingDirection');
 
     this.currentStepId.set(0);
     this.highlightId.set(null);
-
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
-    }
   }
 
   handleStep2Choice(choice: string): void {
@@ -213,7 +206,7 @@ export class AssistantDialogService {
 
   selectDirection(direction: string): void {
     this.selectedDirection.set(direction);
-    localStorage.setItem('onboardingDirection', direction);
+    localStorage.setItem('major', direction);
   }
 
   isNextDisabled(): boolean {

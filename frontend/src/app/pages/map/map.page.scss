@@ -1,6 +1,6 @@
 ion-content {
   --background: #ffffff;
-  position: relative; 
+  position: relative;
   overflow: hidden;
   overscroll-behavior: none;
   height: 100%;
@@ -15,7 +15,7 @@ ion-content {
 }
 
 .map-zoom-container {
-  display: block !important; 
+  display: block !important;
   width: 100%;
   height: 80%;
 }
@@ -28,7 +28,7 @@ ion-content {
   display: flex;
   flex-direction: column;
   z-index: 100;
-  
+
   .floor-btn {
     background: #333333;
     color: white;
@@ -36,7 +36,7 @@ ion-content {
     padding: 12px 14px;
     font-weight: bold;
     min-width: 44px;
-    
+
     &.active {
       background: #ffd600;
       color: black;
@@ -46,7 +46,7 @@ ion-content {
 
 .mode-toggle-btn {
   position: absolute;
-  bottom: 80px; 
+  bottom: 80px;
   right: 12px;
   background: #333333;
   color: white;
@@ -54,7 +54,7 @@ ion-content {
   border-radius: 30px;
   font-weight: bold;
   z-index: 999;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .top-info-icon {
@@ -70,7 +70,7 @@ ion-content {
 .map-container {
   position: relative;
   width: 100%;
-  height: 100%; 
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,12 +83,12 @@ ion-content {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.08); 
+  background: rgba(0, 0, 0, 0.08);
   z-index: 2000;
 }
 
 .map-tooltip-card {
-  position: absolute; 
+  position: absolute;
   z-index: 2001;
   width: 250px;
   background: #ffffff;
@@ -98,12 +98,12 @@ ion-content {
   box-sizing: border-box;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   cursor: default;
-  
+
   &::after {
     content: '';
     position: absolute;
     bottom: -8px;
-    left: 50%; 
+    left: 50%;
     transform: translateX(-50%);
     border-width: 8px 8px 0;
     border-style: solid;
@@ -126,12 +126,13 @@ ion-content {
       color: #000;
     }
   }
+
   .tooltip-title {
     font-size: 18px;
     font-weight: 700;
     color: #1a1a1a;
     margin: 0 0 4px 0;
-    padding-right: 20px; 
+    padding-right: 20px;
   }
 
   .tooltip-category {
@@ -146,26 +147,27 @@ ion-content {
     margin: 0;
   }
 }
+
 :host ::ng-deep {
   [id$="_place"] {
-    pointer-events: none; 
+    pointer-events: none;
     transition: fill 0.3s ease;
   }
 
-[id$="_place"].place-active,
+  [id$="_place"].place-active,
   [id$="_place"].place-active * {
-    fill: #fbc02d !important; 
+    fill: #fbc02d !important;
   }
 }
 
 .room-info-card {
-  position: absolute; 
-  z-index: 10;       
-  
+  position: absolute;
+  z-index: 10;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
+
   width: 280px;
   background: white;
   border-radius: 16px;
@@ -187,14 +189,15 @@ ion-content {
       color: #000;
     }
   }
+
   .card-content {
     margin-top: 8px;
-    
+
     h3 {
       margin: 0 0 8px 0;
       font-size: 18px;
       font-weight: 700;
-      padding-right: 20px; 
+      padding-right: 20px;
     }
 
     p {
@@ -206,11 +209,140 @@ ion-content {
 }
 
 .map-wrapper {
-  position: relative; 
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+// модалка расписания первого дня
+.custom-schedule-modal {
+  --background: #ffffff;
+  --border-radius: 24px 24px 0 0;
+
+  &::part(handle) {
+    background: #e0e0e0;
+    width: 44px;
+    height: 5px;
+  }
+}
+
+.modal-header-toolbar {
+  --background: #ffffff;
+  --padding-top: 16px;
+  --padding-bottom: 8px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  border-bottom: 1px solid #f0f0f0;
+
+  .header-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+  }
+
+  .modal-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #999;
+    line-height: 1.3;
+    max-width: 80%;
+  }
+
+  .close-btn {
+    --color: #fbc02d;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+}
+
+.modal-schedule-content {
+  --background: #fdfdfd;
+}
+
+.modern-timeline {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 4px 32px 4px;
+}
+
+.timeline-row {
+  display: flex;
+  gap: 16px;
+
+  &:last-child .axis-line {
+    display: none;
+  }
+}
+
+.timeline-axis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+
+  .axis-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fbc02d;
+    margin-top: 6px;
+    box-shadow: 0 0 0 4px rgba(251, 192, 45, 0.2);
+    flex-shrink: 0;
+  }
+
+  .axis-line {
+    width: 2px;
+    background: #e5e5ea;
+    flex-grow: 1;
+    margin: 6px 0;
+  }
+}
+
+.timeline-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 24px;
+
+  .event-time-badge {
+    align-self: flex-start;
+    background: rgba(251, 192, 45, 0.15);
+    color: #d49b04;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+
+  .event-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+
+    .event-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2c2c2e;
+      line-height: 1.4;
+    }
+  }
 }
 

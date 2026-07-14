@@ -1,22 +1,22 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info" />
+  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info"/>
   <h1 class="page-title">{{ mapTitle() }}</h1>
 
   @if (showMap()) {
     <pinch-zoom class="map-zoom-container">
       <div class="map-wrapper" (click)="onMapClick($event)">
-        
+
         <div class="map-container" [innerHTML]="svgContent()"></div>
 
         @if (isModalOpen() && roomData()) {
-          <div 
-            class="map-tooltip-card" 
-            [style.top.px]="tooltipTop()" 
+          <div
+            class="map-tooltip-card"
+            [style.top.px]="tooltipTop()"
             [style.left.px]="tooltipLeft()"
             (click)="$event.stopPropagation()"
           >
             <div class="close-btn" (click)="closeRoomModal()">×</div>
-            
+
             <div class="tooltip-content">
               <div class="tooltip-title">{{ roomData()?.name }}</div>
               <div class="tooltip-category">Категория: {{ roomData()?.category }}</div>
@@ -45,3 +45,44 @@
 
   <app-assistant-cat></app-assistant-cat>
 </ion-content>
+
+<ion-modal [isOpen]="isMajorModalOpen()" (didDismiss)="isMajorModalOpen.set(false)" [breakpoints]="[0, 0.75, 0.95]"
+           [initialBreakpoint]="0.75" class="custom-schedule-modal">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar class="modal-header-toolbar">
+        <div class="header-container">
+          <h2 class="modal-title">Расписание мероприятий</h2>
+          <p class="modal-subtitle">{{ userMajorName() }}</p>
+        </div>
+        <ion-buttons slot="end">
+          <ion-button (click)="isMajorModalOpen.set(false)" class="close-btn">Закрыть</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding modal-schedule-content">
+      <div class="modern-timeline">
+        @for (item of majorEvents(); track item) {
+          @let event = parseEvent(item);
+
+          <div class="timeline-row">
+            <div class="timeline-axis">
+              <div class="axis-dot"></div>
+              <div class="axis-line"></div>
+            </div>
+
+            <div class="timeline-block">
+              <span class="event-time-badge">{{ event.time }}</span>
+              <div class="event-card">
+                <p class="event-title">{{ event.title }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+
