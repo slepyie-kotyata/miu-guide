@@ -22,7 +22,6 @@ func NewMIUClient() *MIUClient {
 	client := req.C().
 		SetTimeout(3 * time.Second).
 		SetTLSFingerprintChrome().
-		EnableForceHTTP1().
 		SetCommonHeaders(map[string]string{
 			"User-Agent":   "MoodleMobile",
 			"Content-Type": "application/x-www-form-urlencoded",
