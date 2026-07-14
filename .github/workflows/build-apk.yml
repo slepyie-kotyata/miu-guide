@@ -66,8 +66,11 @@ jobs:
 
       - name: Build debug APK
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon -Pandroid.injected.version.code=${{ github.run_number }} -Pandroid.injected.version.name="1.0.${{ github.run_number }}"
-        
+        run: |
+          ./gradlew assembleDebug --no-daemon \
+            -Pandroid.injected.version.code=${{ github.run_number }} \
+            -Pandroid.injected.version.name="1.0.${{ github.run_number }}"
+            
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
