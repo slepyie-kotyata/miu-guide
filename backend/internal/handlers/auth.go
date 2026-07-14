@@ -22,7 +22,6 @@ import (
 // @Failure      503      {object}  map[string]int  "{"code": 3} - Недоступность\таймаут MIUApi"
 // @Router       /auth [post]
 func (u *UserHandler) Authorize(c *echo.Context) error {
-    //получаем Token
     token, err := u.miuApiClient.GetToken(models.AuthRequest{
         Login:    c.FormValue("login"), 
         Password: c.FormValue("password"),
@@ -31,7 +30,6 @@ func (u *UserHandler) Authorize(c *echo.Context) error {
         return apperror.Send(c, err)
     }
 
-    // получаем UserID
     userId, err := u.miuApiClient.GetUserId(token)
     if err != nil {
         return apperror.Send(c, err)

@@ -20,7 +20,6 @@ const (
     SourceMiddleWare    Source = "MIDDLEWARE"
 )
 
-// типы всех ошибок
 var (
 	ErrInvalidCredentials	= errors.New("invalid credentials")
 	ErrUnavailableAPI  		= errors.New("unavailable api") 
@@ -30,7 +29,6 @@ var (
 	ErrBadRequest			= errors.New("invalid parameters")
 )
 
-// общая структура ошибки
 type AppError struct {
     Source 	Source
     Err    	error
@@ -40,12 +38,10 @@ type AppError struct {
 func (e *AppError) Error() string { return fmt.Sprintf("%v: %s", e.Err, e.Message) }
 func (e *AppError) Unwrap() error { return e.Err }
 
-// для http клиентов и сервисов
 func Wrap(err error, src Source, msg string) *AppError {
     return &AppError{Source: src, Err: err, Message: msg}
 }
 
-// источники
 var sourceUnavailableCodes = map[Source]int{
     SourceMIU:      3,
     SourceRedis:    2,
@@ -75,7 +71,6 @@ func Send(c *echo.Context, err error, respCode ...int) error {
 		httpStatus = http.StatusInternalServerError
     }
 
-	// если ручка дала свой код и это НЕ 503
     if len(respCode) > 0 && httpStatus != http.StatusServiceUnavailable {
         code = respCode[0]
 	}

@@ -15,9 +15,6 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-// get /me -> get /access/users/:id (есть)
-// get /subjects -> get /access/users/:id/subjects
-
 type UserHandler struct {
 	miuApiClient	*client.MIUClient
 	scheduleApiClient *client.ScheduleAPIClient
@@ -40,7 +37,6 @@ func determineCourse(groupName string, now time.Time) int {
 	}
 
 	academicYearEnd := now.Year()
-	// если сейчас 1 семестр, то этот учебный год закончится в следующем календарном
 	if now.Month() >= time.September {
 		academicYearEnd++
 	}
@@ -72,7 +68,6 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
         )
     }
 
-    // получаем часть данных из API ЛК ММУ
     userInfo, err := u.miuApiClient.GetUserInfo(token, userId)
     if err != nil {
         if errors.Is(err, apperror.ErrInvalidCredentials) {
@@ -82,8 +77,6 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
         }
     }
 
-    // получаем айди группы из API расписания ММУ
-    // учитывать здесь NotFound
     groupId, err := u.scheduleApiClient.GetGroupId(userInfo.Department)
     if err != nil {
         return apperror.Send(c, err)
