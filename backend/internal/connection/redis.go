@@ -12,7 +12,7 @@ import (
 )
 
 func GetRedisConnection() (*redis.Client, error) {
-	redisURL := env.GetEnv("REDIS_CONNECTION_URL")
+	redisURL := env.GetEnv(env.RedisUrl)
 	opt, err := redis.ParseURL(redisURL)
 	if err != nil {
 		return nil, apperror.Wrap(fmt.Errorf("error parsing Redis URL (%s)", redisURL), apperror.SourceInit, err.Error())
