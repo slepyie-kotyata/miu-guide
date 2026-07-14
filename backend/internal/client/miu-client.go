@@ -21,8 +21,11 @@ type MIUClient struct {
 func NewMIUClient() *MIUClient {
 	client := req.C().
 		SetTimeout(3 * time.Second).
-		ImpersonateChrome()
-
+		SetTLSFingerprintChrome().
+		SetCommonHeaders(map[string]string{
+			"User-Agent":   "MoodleMobile",
+			"Content-Type": "application/x-www-form-urlencoded",
+		})
 	return &MIUClient{
 		httpClient:       client,
 		MIUApiLoginUrl:   env.GetEnv(env.MIUApiLoginUrl),
@@ -53,8 +56,7 @@ func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any
 	data.Set("moodlewsrestformat", "json")
 
 	resp, err := m.httpClient.R().
-		SetHeader("User-Agent", "MoodleMobile").
-		SetFormDataFromValues(data).
+		SetBodyString(data.Encode()).
 		Post(baseUrl)
 
 	if err != nil {
@@ -62,6 +64,7 @@ func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any
 	}
 
 	respBody := resp.Bytes()
+	
 	var errorMessage MIUApiErrorResponse
 	if err := json.Unmarshal(respBody, &errorMessage); err == nil && errorMessage.Errorcode != "" {
 		return parseErrorMessage(errorMessage)
