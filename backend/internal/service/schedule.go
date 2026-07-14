@@ -26,7 +26,7 @@ func NewScheduleService(ac *client.ScheduleAPIClient, rc *redis.Client) *Schedul
 	}
 }
 
-func (s *ScheduleService) GetScheduleTest(ctx context.Context, groupId, scheduleDay string) ([]models.Schedule, error) {
+func (s *ScheduleService) GetSchedule(ctx context.Context, groupId, scheduleDay string) ([]models.Schedule, error) {
 	key := groupId + ":" + scheduleDay
 
 	rawSchedule, apiErr := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
@@ -73,7 +73,7 @@ func (s *ScheduleService) GetScheduleTest(ctx context.Context, groupId, schedule
 		)
 	}
 	slog.Info("found schedule in cashe", slog.String("source", string(apperror.SourceRedis)))
-	
+
 	var schedule []models.Schedule
 	if err := json.Unmarshal([]byte(thisSchedule), &schedule); err != nil {
 		return nil, apperror.Wrap(
@@ -83,46 +83,4 @@ func (s *ScheduleService) GetScheduleTest(ctx context.Context, groupId, schedule
 		)
 	}
 	return schedule, nil
-}
-
-func (s *ScheduleService) GetSchedule(ctx context.Context, groupId, scheduleDay string) ([]models.Schedule, error) {
-	key := groupId + ":" + scheduleDay
-	thisSchedule, err := s.redisClient.Get(ctx, key).Result()
-	if err == nil {
-		var schedule []models.Schedule
-		_ = json.Unmarshal([]byte(thisSchedule), &schedule)
-        return schedule, nil
-    }
-
-	if !errors.Is(err, redis.Nil) {
-		slog.Warn(
-			"error fetching cache",
-        	slog.String("source", string(apperror.SourceRedis)),
-        	slog.String("error", err.Error()),
-    	)
-    }
-
-	rawSchedule, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
-	if err != nil {
-		return nil, err
-	}
-
-	schedule := filter.FilterSchedule(rawSchedule)
-
-	scheduleBytes, _ := json.Marshal(schedule)
-
-	go func(data []byte) {
-    	cacheCtx, cacheCancel := context.WithTimeout(context.Background(), 500 * time.Millisecond)
-    	defer cacheCancel()
-    
-    	if err := s.redisClient.Set(cacheCtx, key, data, 24 * time.Hour).Err(); err != nil {
-			slog.Warn(
-				"error saving cache",
-        		slog.String("source", string(apperror.SourceRedis)),
-        		slog.String("error", err.Error()),
-    		)
-    	}
-	}(scheduleBytes)
-
-    return schedule, nil
 }

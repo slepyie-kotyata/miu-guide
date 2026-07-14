@@ -71,7 +71,7 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
 	if _, err := strconv.Atoi(groupId); err != nil || !utils.ValidateDate(scheduleDay) {
-		apperror.Send(c, apperror.Wrap(
+		return apperror.Send(c, apperror.Wrap(
 			apperror.ErrBadRequest, 
 			apperror.SourceSchedule, 
 			"invalid groupId or scheduleDay parameter",
@@ -102,7 +102,7 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
 	lecturerName := c.QueryParam("lecturer")
 	if lecturerName == "" {
-		apperror.Send(c, apperror.Wrap(
+		return apperror.Send(c, apperror.Wrap(
 			apperror.ErrBadRequest, 
 			apperror.SourceSchedule, 
 			"invalid lecturer parameter",
