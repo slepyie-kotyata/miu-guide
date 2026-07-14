@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
 	"log"
+	"log/slog"
 	_ "miu-guide/docs"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
 	"miu-guide/internal/env"
@@ -10,12 +13,38 @@ import (
 	"miu-guide/internal/routes"
 	"miu-guide/internal/service"
 	"net/http"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger/v2"
 )
+
+func init() {
+    if err := godotenv.Load(); err != nil {
+        log.Printf("(INIT) .env not found, using system environment\n")
+    }
+
+    logLevel := slog.LevelInfo
+    envLogLevel := env.GetEnv(env.LogLevel) 
+
+    if envLogLevel != "" {
+        var parsedLevel slog.Level
+        err := parsedLevel.UnmarshalText([]byte(envLogLevel))
+        if err == nil {
+            logLevel = parsedLevel
+        } else {
+            log.Printf("(INIT) Invalid log level '%s', defaulting to INFO\n", envLogLevel)
+        }
+    }
+
+    opts := &slog.HandlerOptions{
+        Level: logLevel,
+    }
+    handler := slog.NewJSONHandler(os.Stdout, opts)
+    slog.SetDefault(slog.New(handler))
+}
 
 // @title MIU-Guide API
 // @version 1.0
@@ -29,13 +58,16 @@ import (
 // @name Authorization
 // @description Вставьте токен в формате: Bearer {ваш_токен}
 func main() {
-	if err := godotenv.Load(); err != nil {
-        log.Println(".env not found. using system environment")
-    }
-
 	rdb, err := connection.GetRedisConnection()
     if err != nil {
-        log.Fatalf("error initializing Redis: %v", err)
+		var appErr *apperror.AppError
+		errors.As(err, &appErr)
+
+		slog.Error(
+			"error initializing Redis",
+        	slog.String("source", string(appErr.Source)),
+        	slog.String("error", err.Error()),
+    	)
     }
     defer rdb.Close()
 

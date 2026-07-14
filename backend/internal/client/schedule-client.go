@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
@@ -32,24 +33,23 @@ func NewScheduleAPIClient() *ScheduleAPIClient {
 	}
 }
 
-// разобраться с категоризацией и принятием ошибок ОБОИХ структур хэндлеров
 func (s *ScheduleAPIClient) doScheduleRequest(queryUrl string, target any) error {
 	apiReq, _ := http.NewRequest("GET", s.BaseURL + queryUrl, nil)
 	apiReq.SetBasicAuth(s.APILogin, s.APIPassword)
 
 	apiResp, err := s.httpClient.Do(apiReq)
 	if err != nil {
-		return ErrUnavailableAPI
+		return apperror.Wrap(apperror.ErrUnavailableAPI, apperror.SourceSchedule, err.Error())
 	}
 	defer apiResp.Body.Close()
 
 	respBody, err := io.ReadAll(apiResp.Body)
 	if err != nil {
-		return ErrInternal
+		return apperror.Wrap(apperror.ErrInternal, apperror.SourceSchedule, err.Error())
 	}
 
 	if err := json.Unmarshal(respBody, target); err != nil {
-        return ErrInternal
+		return apperror.Wrap(apperror.ErrInternal, apperror.SourceSchedule, err.Error())
     }
     return nil
 }
@@ -69,7 +69,11 @@ func (s *ScheduleAPIClient) GetGroupId(groupName string) (int, error) {
 	}
 	
 	if len(groupId) == 0 {
-		return 0, ErrNotFound
+		return 0, apperror.Wrap(
+			apperror.ErrNotFound, 
+			apperror.SourceSchedule, 
+			fmt.Sprintf("couldn't find group %s id", groupName),
+		)
 	} else {
 		return groupId[0].GroupId, nil
 	}
@@ -82,7 +86,11 @@ func (s *ScheduleAPIClient) GetLecturers(lastName string) ([]models.Lecturer, er
 	}
 
 	if len(lecturer) == 0 {
-		return nil, ErrNotFound
+		return nil, apperror.Wrap(
+			apperror.ErrNotFound, 
+			apperror.SourceSchedule, 
+			fmt.Sprintf("couldn't find lecturer %s info", lastName),
+		)
 	}
 	return lecturer, nil
 }

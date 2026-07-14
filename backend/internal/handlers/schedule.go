@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"log"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/service"
@@ -39,15 +39,19 @@ func NewScheduleHandler(ac *client.ScheduleAPIClient, s *service.ScheduleService
 func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 	groupId := c.Param("group")
 	if _, err := strconv.Atoi(groupId); err != nil {
-		log.Printf("err: %s", err)
-		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+		apperror.Send(c, apperror.Wrap(
+			apperror.ErrBadRequest, 
+			apperror.SourceSchedule, 
+			"invalid groupId parameter",
+			),
+		)
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 2 * time.Second)
     defer cancel()
 	schedule, err := s.scheduleService.GetSchedule(ctx, groupId, utils.GetDate())
 	if err != nil {
-		return handleAPIError(c, err, SourceSchedule)
+		return apperror.Send(c, err)
 	}
 
 	return c.JSON(http.StatusOK, schedule)
@@ -67,15 +71,19 @@ func (s *ScheduleHandler) GetTodaySchedule(c *echo.Context) error {
 func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 	groupId, scheduleDay := c.Param("group"), c.QueryParam("day")
 	if _, err := strconv.Atoi(groupId); err != nil || !utils.ValidateDate(scheduleDay) {
-		log.Printf("err: %s", err)
-		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+		apperror.Send(c, apperror.Wrap(
+			apperror.ErrBadRequest, 
+			apperror.SourceSchedule, 
+			"invalid groupId or scheduleDay parameter",
+			),
+		)
 	}
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 2 * time.Second)
     defer cancel()
 	schedule, err := s.scheduleService.GetSchedule(ctx, groupId, scheduleDay)
 	if err != nil {
-		return handleAPIError(c, err, SourceSchedule)
+		return apperror.Send(c, err)
 	}
 
 	return c.JSON(http.StatusOK, schedule)
@@ -87,18 +95,23 @@ func (s *ScheduleHandler) GetSpecificSchedule(c *echo.Context) error {
 // @Produce json
 // @Param lecturer query string true "Фамилия преподавателя"
 // @Success 200 {array} 	[]string 		"Успешный ответ"
-// @Failure 400 {object}  	map[string]int  "{"code": 2} - Пустой параметр lecturer"
+// @Failure 400 {object}  	map[string]int  "{"code": 1} - Пустой параметр lecturer"
 // @Failure 404 {object}  	map[string]int  "{"code": 1} - Не найдены ФИО преподавателей"
 // @Failure 503 {object}  	map[string]int  "{"code": 1} - Недоступность API Расписания"
 // @Router /search [get]
 func (s *ScheduleHandler) GetLecturers(c *echo.Context) error {
 	lecturerName := c.QueryParam("lecturer")
 	if lecturerName == "" {
-		return c.JSON(http.StatusBadRequest, map[string]any{ "code": 2 })
+		apperror.Send(c, apperror.Wrap(
+			apperror.ErrBadRequest, 
+			apperror.SourceSchedule, 
+			"invalid lecturer parameter",
+			),
+		)
 	}
 	apiResp, err := s.apiClient.GetLecturers(lecturerName)
 	if err != nil {
-		return handleAPIError(c, err, SourceSchedule)
+		return apperror.Send(c, err)
 	}
 
 	return c.JSON(http.StatusOK, filter.GetUniqueLabels(apiResp))

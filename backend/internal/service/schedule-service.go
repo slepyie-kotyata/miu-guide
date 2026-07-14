@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
+	"log/slog"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
@@ -35,10 +36,12 @@ func (s *ScheduleService) GetSchedule(ctx context.Context, groupId, scheduleDay 
     }
 
 	if !errors.Is(err, redis.Nil) {
-        if errors.Is(err, context.DeadlineExceeded) {
-            return nil, client.ErrUnavailableAPI
-        }
-        return nil, client.ErrInternal
+		// тут просто логи
+		slog.Warn(
+			"error fetching cache",
+        	slog.String("source", string(apperror.SourceRedis)),
+        	slog.String("error", err.Error()),
+    	)
     }
 
 	rawSchedule, err := s.apiClient.FetchScheduleResponse(groupId, scheduleDay)
@@ -55,7 +58,11 @@ func (s *ScheduleService) GetSchedule(ctx context.Context, groupId, scheduleDay 
     	defer cacheCancel()
     
     	if err := s.redisClient.Set(cacheCtx, key, data, 24 * time.Hour).Err(); err != nil {
-        	log.Printf("error saving cache: %s\n", err.Error())
+			slog.Warn(
+				"error saving cache",
+        		slog.String("source", string(apperror.SourceRedis)),
+        		slog.String("error", err.Error()),
+    		)
     	}
 	}(scheduleBytes)
 

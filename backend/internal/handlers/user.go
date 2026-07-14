@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"errors"
-	"log"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/filter"
 	"miu-guide/internal/models"
@@ -56,7 +56,7 @@ func determineCourse(groupName string, now time.Time) int {
 // @Param        id   path      int  true  "ID пользователя"
 // @Success      200  {object}  models.UserInfo "Успешный ответ"
 // @Failure      400  {object}  map[string]int  "{"code": 1} - Пустой токен в Bearer/неправильный userId"
-// @Failure      401  {object}  map[string]int  "{"code": 1} - Неправильные данные пользователя, {"code": 2} - Невалидный токен(истек срок)"
+// @Failure      401  {object}  map[string]int  "{"code": 2} - Невалидный токен(истек срок)"
 // @Failure      404  {object}  map[string]int  "{"code": 1} - Не найден пользователь"
 // @Failure      503  {object}  map[string]int  "{"code": 3} - Недоступность API ЛК ММУ, {"code": 1} - Недоступность API Расписания"
 // @Router       /access/users/{id} [get]
@@ -64,17 +64,21 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))
     if err != nil {
-        return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+        return apperror.Send(c, apperror.Wrap(
+            apperror.ErrBadRequest, 
+            apperror.SourceMIU, 
+            "invalid userId parameter",
+            ),
+        )
     }
 
     // получаем часть данных из API ЛК ММУ
     userInfo, err := u.miuApiClient.GetUserInfo(token, userId)
     if err != nil {
-        if errors.Is(err, client.ErrInvalidToken) {
-            log.Printf("[ERROR] %v", err)
-            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+        if errors.Is(err, apperror.ErrInvalidCredentials) {
+            return apperror.Send(c, err, 2)
         } else {
-            return handleAPIError(c, err, SourceMIU)
+            return apperror.Send(c, err)
         }
     }
 
@@ -82,7 +86,7 @@ func (u *UserHandler) GetUserInfo(c *echo.Context) error {
     // учитывать здесь NotFound
     groupId, err := u.scheduleApiClient.GetGroupId(userInfo.Department)
     if err != nil {
-        return handleAPIError(c, err, SourceSchedule)
+        return apperror.Send(c, err)
     }
 
     groupCode := string([]rune(userInfo.Department)[:3])
@@ -114,16 +118,20 @@ func (u *UserHandler) GetUserSubjects(c *echo.Context) error {
     token, _ := c.Get("token").(string)
     userId, err := strconv.Atoi(c.Param("id"))
     if err != nil {
-        return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+        return apperror.Send(c, apperror.Wrap(
+            apperror.ErrBadRequest, 
+            apperror.SourceMIU, 
+            "invalid userId parameter",
+            ),
+        )
     }
 
     subjectsList, err := u.miuApiClient.GetSubjectsList(token, userId)
     if err != nil {
-        if errors.Is(err, client.ErrInvalidToken) {
-            log.Printf("[ERROR] %v", err)
-            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 2 })
+        if errors.Is(err, apperror.ErrInvalidCredentials) {
+            return apperror.Send(c, err, 2)
         } else {
-            return handleAPIError(c, err, SourceMIU)
+            return apperror.Send(c, err)
         }
     }
 
