@@ -31,8 +31,4 @@ export class AssistantVisibilityService {
   setVisible(visible: boolean): void {
     this.isVisible.set(visible);
   }
-
-  recheckVisibility(): void {
-    this.checkVisibility(this.router.url);
-  }
 }

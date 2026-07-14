@@ -40,7 +40,6 @@ export class MapPage {
 
   tooltipTop = signal<number>(0);
   tooltipLeft = signal<number>(0);
-  arrowLeft = signal<string>('50%');
 
   isMajorModalOpen = signal<boolean>(false);
   majorEvents = signal<string[]>([]);

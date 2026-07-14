@@ -14,7 +14,6 @@ ion-content {
   color: var(--miu-text-color);
   margin: 20px 24px;
   overflow: hidden;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .map-zoom-container {
@@ -68,8 +67,6 @@ ion-content {
   height: 32px;
   z-index: 1000;
   cursor: pointer;
-
-  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .map-container {
@@ -80,16 +77,6 @@ ion-content {
   justify-content: center;
   align-items: center;
   z-index: 1;
-}
-
-.backdrop-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.08);
-  z-index: 2000;
 }
 
 .map-tooltip-card {
@@ -162,54 +149,6 @@ ion-content {
   [id$="_place"].place-active,
   [id$="_place"].place-active * {
     fill: var(--miu-yellow-light) !important;
-  }
-}
-
-.room-info-card {
-  position: absolute;
-  z-index: 10;
-
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  width: 280px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  color: var(--miu-text-dark);
-
-  .close-btn {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    font-size: 24px;
-    line-height: 1;
-    color: var(--miu-text-gray-light);
-    cursor: pointer;
-    padding: 4px;
-
-    &:active {
-      color: var(--miu-text-dark);
-    }
-  }
-
-  .card-content {
-    margin-top: 8px;
-
-    h3 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      font-weight: 700;
-      padding-right: 20px;
-    }
-
-    p {
-      margin: 4px 0;
-      font-size: 14px;
-      line-height: 1.4;
-    }
   }
 }
 

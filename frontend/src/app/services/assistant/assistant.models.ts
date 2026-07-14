@@ -8,24 +8,6 @@ export interface ChatMessage {
   showSuggestions?: boolean;
 }
 
-export interface DialogButton {
-  text: string;
-  action: () => void;
-}
-
-export interface DialogMessage {
-  text: string;
-  emotion: string;
-  buttons?: DialogButton[];
-  showNav?: boolean;
-  hasPrev?: boolean;
-  onNext?: () => void;
-  onPrev?: () => void;
-  showDropdown?: boolean;
-  dropdownOptions?: string[];
-  onDropdownSelect?: (value: string) => void;
-}
-
 export interface OnboardingStep {
   id: number;
   emotion: string;
@@ -54,13 +36,4 @@ export interface MascotQuestion {
   standard_question?: boolean;
   answer: string;
   comment?: string;
-}
-
-export type ChatActionType = 'navigate' | 'answer';
-
-export interface ChatAction {
-  type: ChatActionType;
-  route?: string;
-  queryParams?: Record<string, string>;
-  intent?: string;
 }

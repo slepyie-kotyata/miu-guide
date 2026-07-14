@@ -15,16 +15,8 @@ export class MascotDataService {
 
   private userService = inject(UserService);
 
-  getPhrases(): MascotPhrase[] {
-    return this.phrases;
-  }
-
   getQuestions(): MascotQuestion[] {
     return this.questions;
-  }
-
-  getPhraseById(id: number): MascotPhrase | undefined {
-    return this.phrases.find((p) => p.id === id);
   }
 
   getGreeting(): { text: string; emotion: string } {
