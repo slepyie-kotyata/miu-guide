@@ -14,6 +14,7 @@ ion-content {
   color: #1a1a1a;
   margin: 20px 24px;
   overflow: hidden;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .map-zoom-container {
@@ -67,6 +68,8 @@ ion-content {
   height: 32px;
   z-index: 1000;
   cursor: pointer;
+
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
 }
 
 .map-container {
