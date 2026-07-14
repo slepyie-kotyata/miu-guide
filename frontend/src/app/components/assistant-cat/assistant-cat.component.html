@@ -67,7 +67,7 @@
 
     @if (isChatOpen()) {
       <div class="speech-bubble chat-mode">
-        <button class="close-icon" (click)="onCloseChat()">×</button>
+        <button class="close-icon" (click)="onCloseChat()" aria-label="Закрыть чат">×</button>
         <div class="chat-history" #chatScroll>
           @for (msg of conversation(); track $index) {
             <div
@@ -94,8 +94,9 @@
         </div>
         <div class="input-container">
           <input type="text" placeholder="Спроси меня..." class="chat-input" #chatInput
+                 aria-label="Вопрос коту"
                  (keyup.enter)="onSendMessage(chatInput.value); chatInput.value = ''"/>
-          <button class="send-btn" (click)="onSendMessage(chatInput.value); chatInput.value = ''">
+          <button class="send-btn" (click)="onSendMessage(chatInput.value); chatInput.value = ''" aria-label="Отправить">
             ➤
           </button>
         </div>

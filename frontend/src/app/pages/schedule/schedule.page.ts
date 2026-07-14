@@ -17,6 +17,7 @@ import {
 } from '../../utils/date-utils';
 import {ChatNavigationService, ScheduleTargetDay} from '../../services/assistant/chat-navigation.service';
 import {AssistantEmotionService} from '../../services/assistant/assistant-emotion.service';
+import {EMOTION} from '../../services/assistant/assistant.models';
 import {UserService} from '../../services/user.service';
 
 @Component({
@@ -114,7 +115,7 @@ export class SchedulePage implements OnInit {
         this.errorMessage.set('Ошибка сервера. Попробуйте обновить страницу.');
         this.lessons.set([]);
         this.isLoading.set(false);
-        this.emotionService.setEmotion('sad-eclosed-mclosed');
+        this.emotionService.setEmotion(EMOTION.SAD_ECLOSED_MCLOSED);
       },
     });
   }

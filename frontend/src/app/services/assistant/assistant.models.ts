@@ -51,3 +51,14 @@ export const ONBOARDING_DARK_BACKDROP = {
   MIN: 19,
   MAX: 55,
 } as const;
+
+export const EMOTION = {
+  SIT_EOPEN_MOPEN: 'sit-eopen-mopen',
+  SIT_EOPEN_MCLOSED: 'sit-eopen-mclosed',
+  SIT_ECLOSED_MCLOSED: 'sit-eclosed-mclosed',
+  SIT_ECLOSED_MOPEN: 'sit-eclosed-mopen',
+  PAW_EOPEN_MOPEN: 'paw-eopen-mopen',
+  PAW_ECLOSED_MOPEN: 'paw-eclosed-mopen',
+  PAW_EOPEN_MCLOSED: 'paw-eopen-mclosed',
+  SAD_ECLOSED_MCLOSED: 'sad-eclosed-mclosed',
+} as const;

@@ -18,7 +18,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
   h1 {
-    font-size: 6vw;
+    font-size: clamp(1.5rem, 6vw, 2rem);
     font-weight: 800;
     line-height: 1.2;
     margin: 0 0 8% 0;
@@ -27,7 +27,7 @@
 }
 
 .input-wrapper {
-  background: white;
+  background: var(--miu-bg-white);
   border-radius: 50px;
   display: flex;
   align-items: center;
@@ -38,7 +38,7 @@
     border: none;
     outline: none;
     width: 100%;
-    font-size: 4vw;
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
     background: transparent;
     color: var(--miu-text-dark);
   }
@@ -51,7 +51,7 @@
   border: none;
   padding: 4% 0;
   border-radius: 50px;
-  font-size: 4.5vw;
+  font-size: clamp(1rem, 4.5vw, 1.2rem);
   font-weight: 600;
   margin-top: 2%;
   cursor: pointer;
@@ -59,9 +59,9 @@
 
 .error-text {
   color: var(--ion-color-danger);
-  font-size: 3.5vw;
+  font-size: clamp(0.8rem, 3.5vw, 0.95rem);
   text-align: center;
   margin-top: 10px;
   font-weight: 500;
-  height: 5px;
+  min-height: 1.2em;
 }

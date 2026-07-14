@@ -2,15 +2,21 @@
   <div class="yellow-card">
     <h1>МОСКОВСКИЙ<br>МЕЖДУНАРОДНЫЙ<br>УНИВЕРСИТЕТ</h1>
 
-    <div class="input-wrapper">
-      <input type="text" placeholder="Логин" [ngModel]="username()" (ngModelChange)="username.set($event)">
-    </div>
+    <form (ngSubmit)="login()">
+      <div class="input-wrapper">
+        <input type="text" placeholder="Логин" aria-label="Логин"
+               [ngModel]="username()" (ngModelChange)="username.set($event)"
+               name="username" autocomplete="username">
+      </div>
 
-    <div class="input-wrapper">
-      <input type="password" placeholder="Пароль" [ngModel]="password()" (ngModelChange)="password.set($event)">
-    </div>
+      <div class="input-wrapper">
+        <input type="password" placeholder="Пароль" aria-label="Пароль"
+               [ngModel]="password()" (ngModelChange)="password.set($event)"
+               name="password" autocomplete="current-password">
+      </div>
 
-    <button class="login-btn" (click)="login()">Вход</button>
+      <button class="login-btn" type="submit">Вход</button>
+    </form>
 
     <p class="error-text">{{ error() }}</p>
   </div>

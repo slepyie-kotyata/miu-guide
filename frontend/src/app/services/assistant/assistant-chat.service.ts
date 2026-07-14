@@ -5,7 +5,7 @@ import {ChatNavigationService} from './chat-navigation.service';
 import {MascotDataService} from './mascot-data.service';
 import {AssistantEmotionService} from './assistant-emotion.service';
 import {TeacherSearchService} from './teacher-search.service';
-import {ChatMessage, ChatMode} from './assistant.models';
+import {ChatMessage, ChatMode, EMOTION} from './assistant.models';
 
 @Injectable({providedIn: 'root'})
 export class AssistantChatService {
@@ -87,7 +87,7 @@ export class AssistantChatService {
       const matched = this.matchingService.matchIntent(input);
       const answer = this.mascotData.getAnswerByIntent(matched.intent);
       const responseText = answer?.text ?? matched.answer;
-      const responseEmotion = answer?.emotion ?? 'sit-eopen-mopen';
+      const responseEmotion = answer?.emotion ?? EMOTION.SIT_EOPEN_MOPEN;
 
       this.startTyping(responseText, () => {
         this.emotionService.setEmotion(responseEmotion);
@@ -119,7 +119,7 @@ export class AssistantChatService {
 
   private handleTeacherSearch(query: string): void {
     this.isTyping.set(true);
-    this.emotionService.setEmotion('sit-eopen-mopen');
+    this.emotionService.setEmotion(EMOTION.SIT_EOPEN_MOPEN);
 
     this.teacherSearch.searchTeacher(query).subscribe({
       next: (result) => {
@@ -127,10 +127,10 @@ export class AssistantChatService {
         setTimeout(() => {
           this.isTyping.set(false);
           this.mode = 'default';
-          this.emotionService.setEmotion('paw-eopen-mopen');
+          this.emotionService.setEmotion(EMOTION.PAW_EOPEN_MOPEN);
           this.conversation.update((msgs) => [
             ...msgs,
-            {text: result, sender: 'cat', emotion: 'paw-eopen-mopen'},
+            {text: result, sender: 'cat', emotion: EMOTION.PAW_EOPEN_MOPEN},
           ]);
         }, delay);
       },
@@ -143,7 +143,7 @@ export class AssistantChatService {
 
   private startTyping(responseText: string, onComplete: () => void): void {
     this.isTyping.set(true);
-    this.emotionService.setEmotion('sit-eopen-mopen');
+    this.emotionService.setEmotion(EMOTION.SIT_EOPEN_MOPEN);
 
     const delay = this.computeDelay(responseText);
     setTimeout(() => {

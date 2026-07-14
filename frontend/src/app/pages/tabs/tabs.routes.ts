@@ -27,7 +27,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: '',
+    path: '*',
     redirectTo: '/tabs/map',
     pathMatch: 'full',
   },

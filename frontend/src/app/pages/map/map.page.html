@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" [scrollY]="false">
-  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Info"/>
+  <img src="/assets/icons/i_info.svg" class="top-info-icon" (click)="showInfo()" alt="Информация о мероприятиях"/>
   <h1 class="page-title">{{ mapTitle() }}</h1>
 
   @if (showMap()) {
@@ -15,7 +15,7 @@
             [style.left.px]="tooltipLeft()"
             (click)="$event.stopPropagation()"
           >
-            <div class="close-btn" (click)="closeRoomModal()">×</div>
+            <div class="close-btn" (click)="closeRoomModal()" aria-label="Закрыть">×</div>
 
             <div class="tooltip-content">
               <div class="tooltip-title">{{ roomData()?.name }}</div>

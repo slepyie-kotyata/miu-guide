@@ -18,13 +18,16 @@ import {AuthService} from "../../services/auth.service";
 import {User} from "../../models/user.model";
 import {firstValueFrom} from "rxjs";
 import {ToastController} from "@ionic/angular";
+import {APP_LINKS} from 'src/app/constants/app-links';
+import {ActionButtonComponent} from 'src/app/components/shared/action-button.component';
 
 
 @Component({
   selector: 'app-page-profile',
   templateUrl: 'profile.page.html',
   styleUrls: ['profile.page.scss'],
-  imports: [IonContent, IonIcon, IonSkeletonText, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, IonModal],
+  standalone: true,
+  imports: [IonContent, IonIcon, IonSkeletonText, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, IonModal, ActionButtonComponent],
 })
 export class ProfilePage implements OnInit {
   isLoading = signal<boolean>(true);
@@ -116,11 +119,11 @@ export class ProfilePage implements OnInit {
   }
 
   openMoodleWebsite() {
-    window.open('https://elearn.mmu.ru/', '_blank');
+    window.open(APP_LINKS.MOODLE, '_blank');
   }
 
   openHelpAndSupport() {
-    window.open('https://mi.university/faq', '_blank');
+    window.open(APP_LINKS.FAQ, '_blank');
   }
 
   openAbout() {

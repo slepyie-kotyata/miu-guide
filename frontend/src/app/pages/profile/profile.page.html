@@ -4,7 +4,7 @@
 
     <div class="user-card">
       <div class="avatar-wrapper">
-        <img src="/assets/icons/profile_student_icon.svg"/>
+        <img src="/assets/icons/profile_student_icon.svg" alt="Студент"/>
       </div>
       <div class="user-info">
         @if (isLoading()) {
@@ -25,7 +25,7 @@
 
       <div class="menu-item hide-chevron">
         <div class="icon-wrapper">
-          <img src="/assets/icons/profile_icon_2.svg"/>
+          <img alt="Профиль" src="/assets/icons/profile_icon_2.svg"/>
         </div>
         <div class="menu-text">
           <div class="menu-title">Курс</div>
@@ -138,10 +138,7 @@
           <p class="major-full-name">{{ getMajorName() }}</p>
         </div>
 
-        <button (click)="copyMajorToClipboard()" class="action-copy-btn" type="button">
-          <ion-icon name="copy-outline"></ion-icon>
-          <span>Скопировать</span>
-        </button>
+        <app-action-button [label]="'Скопировать'" [icon]="'copy-outline'" (clicked)="copyMajorToClipboard()"></app-action-button>
 
       </div>
     </ion-content>

@@ -15,7 +15,15 @@ export class AuthService {
     return this._isAuthenticated();
   }
 
-  login(credentials: { login: string, password: string }): Observable<any> {
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  getUserId(): string | null {
+    return localStorage.getItem('user_id');
+  }
+
+  login(credentials: { login: string, password: string }): Observable<{ token: string, user_id: number }> {
     const formData = new FormData();
     formData.append('login', credentials.login);
     formData.append('password', credentials.password);

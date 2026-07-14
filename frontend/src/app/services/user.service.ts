@@ -1,7 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable, of, shareReplay} from "rxjs";
-import {environment} from "../../environments/environment";
+import {environment} from 'src/environments/environment';
 import {User} from "../models/user.model";
 import {AuthService} from "./auth.service";
 import {tap} from "rxjs/operators";
@@ -36,15 +36,12 @@ export class UserService {
       return this.inflight$;
     }
 
-    const userId = localStorage.getItem('user_id');
-    const token = localStorage.getItem('token');
-    if (!userId || !token) {
+    const userId = this.auth.getUserId();
+    if (!userId) {
       return of(null);
     }
 
-    this.inflight$ = this.http.get<User>(`${this.apiUrl}/access/users/${userId}`, {
-      headers: {Authorization: `Bearer ${token}`},
-    }).pipe(
+    this.inflight$ = this.http.get<User>(`${this.apiUrl}/access/users/${userId}`).pipe(
       tap((userInfo) => {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(userInfo));
         this.user.set(userInfo);
@@ -74,15 +71,12 @@ export class UserService {
       return of(this.userSubjects());
     }
 
-    const userId = localStorage.getItem('user_id');
-    const token = localStorage.getItem('token');
-    if (!userId || !token) {
+    const userId = this.auth.getUserId();
+    if (!userId) {
       return of([]);
     }
 
-    return this.http.get<string[]>(`${this.apiUrl}/access/users/${userId}/subjects`, {
-      headers: {Authorization: `Bearer ${token}`},
-    }).pipe(
+    return this.http.get<string[]>(`${this.apiUrl}/access/users/${userId}/subjects`).pipe(
       tap((subjects) => {
         this.userSubjects.set(subjects);
       }),

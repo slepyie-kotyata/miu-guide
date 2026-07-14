@@ -11,13 +11,13 @@ ion-content {
 .page-title {
   font-size: 26px;
   font-weight: 800;
-  color: var(--miu-text-color);
+  color: var(--miu-text-dark);
   margin: 20px 24px;
   overflow: hidden;
 }
 
 .map-zoom-container {
-  display: block !important;
+  display: block;
   width: 100%;
   height: 100%;
 }
@@ -32,8 +32,8 @@ ion-content {
   z-index: 100;
 
   .floor-btn {
-    background: #333333;
-    color: white;
+    background: var(--miu-text-dark);
+    color: var(--miu-bg-white);
     border: none;
     padding: 12px 14px;
     font-weight: bold;
@@ -41,7 +41,7 @@ ion-content {
 
     &.active {
       background: var(--miu-yellow);
-      color: black;
+      color: var(--miu-text-dark);
     }
   }
 }
@@ -50,8 +50,8 @@ ion-content {
   position: absolute;
   bottom: 80px;
   right: 12px;
-  background: #333333;
-  color: white;
+  background: var(--miu-text-dark);
+  color: var(--miu-bg-white);
   padding: 15px 25px;
   border-radius: 30px;
   font-weight: bold;
@@ -84,11 +84,11 @@ ion-content {
   z-index: 2001;
   width: 250px;
   background: var(--miu-bg-white);
-  border-radius: 16px;
+  border-radius: var(--miu-border-radius);
   padding: 16px;
   transform: translate(-50%, calc(-100% - 12px));
   box-sizing: border-box;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--miu-card-shadow);
   cursor: default;
 
   &::after {
@@ -148,7 +148,7 @@ ion-content {
 
   [id$="_place"].place-active,
   [id$="_place"].place-active * {
-    fill: var(--miu-yellow-light) !important;
+    fill: var(--miu-yellow-light);
   }
 }
 
@@ -161,7 +161,6 @@ ion-content {
   align-items: center;
 }
 
-// модалка расписания первого дня
 .custom-schedule-modal {
   --background: var(--miu-bg-white);
   --border-radius: 24px 24px 0 0;
@@ -263,7 +262,7 @@ ion-content {
 
   .event-time-badge {
     align-self: flex-start;
-    background: rgba(251, 192, 45, 0.15);
+    background: var(--miu-card-shadow-yellow-color);
     color: var(--miu-yellow-light);
     padding: 4px 10px;
     border-radius: 6px;
@@ -278,7 +277,7 @@ ion-content {
     padding: 16px;
     box-sizing: border-box;
     box-shadow: var(--miu-card-shadow);
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--miu-card-shadow-color);
 
     .event-title {
       margin: 0;
@@ -289,4 +288,3 @@ ion-content {
     }
   }
 }
-

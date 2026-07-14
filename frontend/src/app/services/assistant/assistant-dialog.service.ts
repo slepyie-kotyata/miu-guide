@@ -75,6 +75,7 @@ export class AssistantDialogService {
 
     effect(() => {
       const step = this.currentMessage();
+      this.visibilityService.setOverlayActive(step !== null);
       if (step?.emotion) {
         this.emotionService.setEmotion(step.emotion);
       }
