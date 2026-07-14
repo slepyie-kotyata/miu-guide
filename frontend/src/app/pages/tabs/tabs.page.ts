@@ -1,7 +1,7 @@
 import {Component, EnvironmentInjector, inject} from '@angular/core';
 import {IonIcon, IonTabBar, IonTabButton, IonTabs} from '@ionic/angular/standalone';
 import {UserService} from "../../services/user.service";
-import { AssistantDialogService } from 'src/app/services/assistant';
+import {AssistantDialogService} from 'src/app/services/assistant';
 
 @Component({
   selector: 'app-tabs',
@@ -13,7 +13,9 @@ export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
 
   private userService = inject(UserService);
-public dialogService = inject(AssistantDialogService);  constructor() {
+  public dialogService = inject(AssistantDialogService);
+
+  constructor() {
     this.userService.loadUser();
   }
 }

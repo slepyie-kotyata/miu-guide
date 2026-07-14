@@ -5,17 +5,7 @@ import {AssistantVisibilityService} from './assistant-visibility.service';
 import {HttpClient} from '@angular/common/http';
 import {SearchService} from "../search.service";
 import {UserService} from "../user.service";
-
-export interface OnboardingStep {
-  id: number;
-  emotion: string;
-  text: string;
-  buttons: string[];
-  canSkip?: boolean;
-  comment?: string;
-  highlight?: string;
-  mapFloor?: number;
-}
+import {OnboardingStep} from "./assistant.models";
 
 @Injectable({providedIn: 'root'})
 export class AssistantDialogService {

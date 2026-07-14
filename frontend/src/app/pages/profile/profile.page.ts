@@ -19,6 +19,7 @@ import {User} from "../../models/user.model";
 import {firstValueFrom} from "rxjs";
 import {ToastController} from "@ionic/angular";
 
+
 @Component({
   selector: 'app-page-profile',
   templateUrl: 'profile.page.html',
@@ -116,6 +117,14 @@ export class ProfilePage implements OnInit {
 
   openMoodleWebsite() {
     window.open('https://elearn.mmu.ru/', '_blank');
+  }
+
+  openHelpAndSupport() {
+    window.open('https://mi.university/faq', '_blank');
+  }
+
+  openAbout() {
+    this.navCtrl.navigateForward('/about');
   }
 
   logout() {

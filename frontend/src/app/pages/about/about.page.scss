@@ -1,0 +1,106 @@
+.about-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.about-header {
+  margin-top: 20px;
+}
+
+.app-main-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--miu-text-dark);
+  margin: 0 0 10px 0;
+}
+
+.app-subtitle {
+  font-size: 16px;
+  color: var(--miu-text-gray);
+  font-weight: 500;
+  margin: 0;
+}
+
+.about-info {
+  color: var(--miu-text-gray-light);
+  font-size: 14px;
+}
+
+.about-footer {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  background: none;
+}
+
+.contact-block {
+  width: 100%;
+  margin: 20px 0;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.contact-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--miu-text-dark);
+  margin-bottom: 12px;
+}
+
+.contact-list {
+  font-size: 14px;
+  color: var(--miu-text-gray);
+  line-height: 1.8;
+  margin-bottom: 15px;
+
+  a {
+    color: var(--miu-yellow-card);
+    text-decoration: none;
+    font-weight: 600;
+  }
+}
+
+.contact-warning {
+  font-size: 12px;
+  color: var(--miu-text-gray-light);
+  font-style: italic;
+  line-height: 1.4;
+  margin-top: 10px;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 10px;
+}
+
+.action-copy-btn {
+  width: 100%;
+  background: var(--miu-yellow-card);
+  color: var(--miu-text-dark);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  box-shadow: var(--miu-card-shadow-yellow);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: var(--miu-text-dark);
+    flex-shrink: 0;
+  }
+}

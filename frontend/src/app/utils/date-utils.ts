@@ -1,4 +1,4 @@
-import { WeekDay } from '../models/schedule.model';
+import {WeekDay} from '../models/schedule.model';
 
 const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -18,7 +18,7 @@ export function generateWeekDays(baseDate: Date): WeekDay[] {
   for (let i = 0; i < 7; i++) {
     const nextDay = new Date(monday.getTime());
     nextDay.setDate(monday.getDate() + i);
-    days.push({ name: DAY_NAMES[i], date: nextDay });
+    days.push({name: DAY_NAMES[i], date: nextDay});
   }
   return days;
 }

@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f8f9fa;
+  --background: var(--miu-bg-light);
 }
 
 .schedule-content {
@@ -19,19 +19,19 @@ ion-content {
     font-size: 24px;
     font-weight: bold;
     margin: 0;
-    color: #000;
+    color: var(--miu-text-dark);
   }
 
   .date-subtitle {
     font-size: 16px;
     font-weight: normal;
-    color: #707070;
+    color: var(--miu-text-gray);
     margin: 4px 0 0 0;
   }
 }
 
 .schedule-block {
-  background-color: #ffffff;
+  background-color: var(--miu-bg-white);
   margin: 0 24px 24px;
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
@@ -50,7 +50,7 @@ ion-content {
   align-items: center;
   min-height: 150px;
   width: 100%;
-  color: #a0a0a0;
+  color: var(--miu-text-gray-light);
   font-size: 16px;
   padding: 20px;
   text-align: center;
@@ -75,13 +75,13 @@ ion-content {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1.5px solid #1a1a1a;
+  border: 1.5px solid var(--miu-tab-bar-bg);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 20px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
 }
 
 .lesson-text {
@@ -90,21 +90,21 @@ ion-content {
 
 .lesson-time {
   font-size: 11px;
-  color: #888888;
+  color: var(--miu-text-gray-light);
   margin-bottom: 2px;
 }
 
 .lesson-title {
   font-size: 13px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--miu-text-dark);
   margin-bottom: 4px;
   line-height: 1.3;
 }
 
 .lesson-subtitle {
   font-size: 11px;
-  color: #a0a0a0;
+  color: var(--miu-text-gray-light);
   line-height: 1.3;
 }
 
@@ -113,7 +113,7 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f8f9fa;
+  background-color: var(--miu-bg-light);
 }
 
 .nav-arrow-btn {
@@ -128,12 +128,12 @@ ion-content {
 }
 
 .nav-arrow-btn:active {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--miu-card-shadow-color);
 }
 
 .nav-arrow {
   font-size: 28px;
-  color: #d1d1d6;
+  color: var(--miu-text-gray);
 }
 
 .days-group {
@@ -150,8 +150,8 @@ ion-content {
   max-width: 40px;
   border-radius: 8px;
   border: none;
-  background-color: #e5e5ea;
-  color: #1a1a1a;
+  background-color: var(--miu-bg-light);
+  color: var(--miu-text-dark);
   font-size: 15px;
   font-weight: 500;
   display: flex;
@@ -164,11 +164,11 @@ ion-content {
 }
 
 .day-btn:active {
-  background-color: #c7c7cc;
+  background-color: var(--miu-text-gray-light);
 }
 
 .day-btn.active {
-  background-color: #d1d1d6;
+  background-color: var(--miu-text-gray-light);
 }
 
 .loader-wrapper {
@@ -182,7 +182,7 @@ ion-content {
   ion-spinner {
     width: 40px;
     height: 40px;
-    color: #a0a0a0;
+    color: var(--miu-text-gray-light);
   }
 }
 

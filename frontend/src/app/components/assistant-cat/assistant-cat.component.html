@@ -6,11 +6,11 @@
   }
 
   @if (dialogService.currentMessage(); as message) {
-        <div
-          class="backdrop"
-          [class.dark-overlay]="message.id < 19 || message.id > 55">
-        </div>
-      }
+    <div
+      class="backdrop"
+      [class.dark-overlay]="message.id < 19 || message.id > 55">
+    </div>
+  }
   <div class="cat-wrapper" [class.lifted]="isSchedulePage()">
 
     @if (dialogService.currentMessage(); as message) {
@@ -70,7 +70,8 @@
         <button class="close-icon" (click)="chatService.closeChat()">×</button>
         <div class="chat-history" #chatScroll>
           @for (msg of chatService.conversation(); track $index) {
-            <div [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg') + (msg.isError ? ' error-msg' : '')">
+            <div
+              [class]="'message-bubble ' + (msg.sender === 'user' ? 'user-msg' : 'cat-msg') + (msg.isError ? ' error-msg' : '')">
               {{ msg.text }}
             </div>
             @if (msg.sender === 'cat' && msg.showSuggestions && chatService.suggestedQuestions().length > 0) {
@@ -93,7 +94,7 @@
         </div>
         <div class="input-container">
           <input type="text" placeholder="Спроси меня..." class="chat-input" #chatInput
-                 (keyup.enter)="onSendMessage(chatInput.value); chatInput.value = ''" />
+                 (keyup.enter)="onSendMessage(chatInput.value); chatInput.value = ''"/>
           <button class="send-btn" (click)="onSendMessage(chatInput.value); chatInput.value = ''">
             ➤
           </button>

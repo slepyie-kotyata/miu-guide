@@ -3,8 +3,7 @@ import {map, Observable, of, throwError} from 'rxjs';
 import {catchError, delay} from 'rxjs/operators';
 import {SearchService} from "../search.service";
 
-
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class TeacherSearchService {
   private searchService = inject(SearchService);
 

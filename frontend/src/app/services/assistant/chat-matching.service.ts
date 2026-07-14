@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { MascotDataService } from './mascot-data.service';
-import { MascotQuestion } from './assistant.models';
+import {inject, Injectable} from '@angular/core';
+import {MascotDataService} from './mascot-data.service';
+import {MascotQuestion} from './assistant.models';
 
 interface IntentDocument {
   question: MascotQuestion;
@@ -8,7 +8,7 @@ interface IntentDocument {
   tfidfVector: Map<string, number>;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ChatMatchingService {
   private mascotData = inject(MascotDataService);
 
@@ -58,7 +58,7 @@ export class ChatMatchingService {
     for (const question of questions) {
       if (question.keywords.length === 0) continue;
       const tokens = this.tokenize(question.keywords.join(' '));
-      allDocs.push({ tokens, question });
+      allDocs.push({tokens, question});
 
       const uniqueTokens = new Set(tokens);
       for (const token of uniqueTokens) {

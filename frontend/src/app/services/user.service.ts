@@ -43,7 +43,7 @@ export class UserService {
     }
 
     this.inflight$ = this.http.get<User>(`${this.apiUrl}/access/users/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {Authorization: `Bearer ${token}`},
     }).pipe(
       tap((userInfo) => {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(userInfo));
@@ -53,7 +53,9 @@ export class UserService {
     );
 
     this.inflight$.subscribe({
-      next: () => { this.inflight$ = null; },
+      next: () => {
+        this.inflight$ = null;
+      },
       error: (err) => {
         console.error('Ошибка при получении информации о пользователе:', err);
         this.inflight$ = null;
@@ -79,7 +81,7 @@ export class UserService {
     }
 
     return this.http.get<string[]>(`${this.apiUrl}/access/users/${userId}/subjects`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {Authorization: `Bearer ${token}`},
     }).pipe(
       tap((subjects) => {
         this.userSubjects.set(subjects);
