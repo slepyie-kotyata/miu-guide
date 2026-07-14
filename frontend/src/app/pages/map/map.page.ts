@@ -89,7 +89,10 @@ export class MapPage {
 
     effect(() => {
       const url = this.mapImage();
-      this.svgRender.loadSvg(url).then(svg => this.svgContent.set(svg));
+      this.svgRender.loadSvg(url).then(svg => {
+        this.svgContent.set(svg);
+        this.triggerMapReset();
+      });
     });
 
     effect(() => {
@@ -139,6 +142,10 @@ export class MapPage {
 
       this.haptics.impact(ImpactStyle.Light);
     }
+  }
+
+  ionViewWillEnter() {
+    this.triggerMapReset();
   }
 
   ionViewWillLeave() {
