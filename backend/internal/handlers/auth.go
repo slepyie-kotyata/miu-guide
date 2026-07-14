@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"errors"
-	"miu-guide/internal/client"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/models"
 	"net/http"
 
@@ -17,32 +16,23 @@ import (
 // @Param        login    formData  string  true  "Логин пользователя (имя пользователя)"
 // @Param        password formData  string  true  "Пароль пользователя"
 // @Success      200      {object}  models.AuthResponse
-// @Failure      401      {object}  map[string]int  "Неверный логин или пароль (code: 1)"
-// @Failure      500      {object}  map[string]int  "Внутренняя ошибка сервера (code: 1)"
-// @Failure      502      {object}  map[string]int  "Ошибка MIUApi (code: 1)"
-// @Failure      503      {object}  map[string]int  "Сервис недоступен (code: 3 - недоступность\таймаут MIUApi)"
+// @Failure      401      {object}  map[string]int  "{"code": 1} - Неверный логин или пароль"
+// @Failure      500      {object}  map[string]int  "{"code": 1} - Внутренняя ошибка сервера"
+// @Failure      502      {object}  map[string]int  "{"code": 1} - Ошибка MIUApi"
+// @Failure      503      {object}  map[string]int  "{"code": 3} - Недоступность\таймаут MIUApi"
 // @Router       /auth [post]
 func (u *UserHandler) Authorize(c *echo.Context) error {
-    //получаем Token
     token, err := u.miuApiClient.GetToken(models.AuthRequest{
         Login:    c.FormValue("login"), 
         Password: c.FormValue("password"),
     })
-    
     if err != nil {
-        if errors.Is(err, client.ErrInvalidLogin) {
-            return c.JSON(http.StatusUnauthorized, map[string]any{ "code": 1 })
-        }
-        return handleAPIError(c, err, SourceMIU)
+        return apperror.Send(c, err)
     }
 
-    // получаем UserID
     userId, err := u.miuApiClient.GetUserId(token)
     if err != nil {
-        if errors.Is(err, client.ErrExternalFailure) {
-            return c.JSON(http.StatusBadGateway, map[string]any{ "code": 1 })
-        }
-        return handleAPIError(c, err, SourceMIU)
+        return apperror.Send(c, err)
     }
 
     return c.JSON(http.StatusOK, models.AuthResponse{

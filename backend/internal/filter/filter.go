@@ -3,7 +3,7 @@ package filter
 import (
 	"fmt"
 	"miu-guide/internal/models"
-	"miu-guide/internal/service"
+	"miu-guide/internal/utils"
 	"regexp"
 	"sort"
 	"strconv"
@@ -113,7 +113,7 @@ func IsCurrentSubject(shortname string, currentTime time.Time) bool {
 func FilterSubjectsBySemester(subjects []models.Subjects) []string {
 	filteredSubjects := make([]string, 0)
 	for _, subject := range subjects {
-		if IsCurrentSubject(subject.ShortName, service.GetTime()) {
+		if IsCurrentSubject(subject.ShortName, utils.GetTime()) {
 			filteredSubjects = append(filteredSubjects, subject.FullName)
 		}
 	}

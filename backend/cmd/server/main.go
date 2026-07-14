@@ -1,17 +1,19 @@
 package main
 
 import (
-	"log"
+	"errors"
+	"log/slog"
 	_ "miu-guide/docs"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
 	"miu-guide/internal/env"
 	"miu-guide/internal/handlers"
+	"miu-guide/internal/logger"
 	"miu-guide/internal/routes"
 	"miu-guide/internal/service"
 	"net/http"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger/v2"
@@ -29,18 +31,23 @@ import (
 // @name Authorization
 // @description Вставьте токен в формате: Bearer {ваш_токен}
 func main() {
-	if err := godotenv.Load(); err != nil {
-        log.Println(".env not found. using system environment")
-    }
-
+	logger.Init()
 	rdb, err := connection.GetRedisConnection()
     if err != nil {
-        log.Fatalf("error initializing Redis: %v", err)
+		var appErr *apperror.AppError
+		errors.As(err, &appErr)
+
+		slog.Error(
+			"error initializing Redis",
+        	slog.String("source", string(appErr.Source)),
+        	slog.String("error", err.Error()),
+    	)
     }
     defer rdb.Close()
 
 	sc, mc := client.NewScheduleAPIClient(), client.NewMIUClient()
-    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, rdb), handlers.NewUserHandler(mc, sc)
+	s := service.NewScheduleService(sc, rdb)
+    scheduleHandler, userHandler := handlers.NewScheduleHandler(sc, s), handlers.NewUserHandler(mc, sc)
 	
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -48,11 +55,11 @@ func main() {
       	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
     	AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete, http.MethodOptions},
   	}))
-	access := e.Group("/access", service.ExtractTokenMiddleware)
+	access := e.Group("/access", handlers.ExtractTokenMiddleware)
 
 	routes.InitMajorRoutes(e)
 	routes.InitScheduleRoutes(e, scheduleHandler)
-	routes.InitSeatchRoutes(e, scheduleHandler)
+	routes.InitSearchRoutes(e, scheduleHandler)
 	routes.InitAuthRoutes(e, userHandler)
 	routes.InitUserRoutes(access, userHandler)
 

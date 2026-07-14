@@ -1,7 +1,7 @@
-package service
+package handlers
 
 import (
-	"net/http"
+	"miu-guide/internal/apperror"
 	"strings"
 
 	"github.com/labstack/echo/v5"
@@ -13,7 +13,12 @@ func ExtractTokenMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		
 		if token == "" {
-			return c.JSON(http.StatusBadRequest, map[string]any{ "code": 1 })
+			return apperror.Send(
+				c, 
+				apperror.Wrap(apperror.ErrBadRequest, 
+					apperror.SourceMiddleWare, 
+					"empty bearer token",
+				))
 		}
 
 		c.Set("token", token)

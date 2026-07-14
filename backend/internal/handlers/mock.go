@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"fmt"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/models"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
 )
 
-// @Summary Список направлений 
+// @Summary Список направлений
 // @Description Возвращает список направлений (моковые значения)
 // @Tags mock
 // @Produce json
@@ -23,8 +25,18 @@ func GetMajors(c *echo.Context) error {
 // @Produce json
 // @Param major query string true "Название направления"
 // @Success 200 {array} []string "Успешный ответ"
+// @Failure 404 {object}  map[string]int "{"code": 1} - Не найдено расписание"
 // @Router /events [get]
 func GetFirstDayEventSchedule(c *echo.Context) error {
 	majorName := c.QueryParam("major")
-	return c.JSON(http.StatusOK, models.FirstDayEventByMajor[majorName])
+	eventSchedule, ok := models.FirstDayEventByMajor[majorName]
+	if !ok {
+		return apperror.Send(c, apperror.Wrap(
+			apperror.ErrNotFound, 
+			apperror.SourceMock, 
+			fmt.Sprintf("couldn't schedule for %s", majorName),
+			),
+		)
+	}
+	return c.JSON(http.StatusOK, eventSchedule)
 }

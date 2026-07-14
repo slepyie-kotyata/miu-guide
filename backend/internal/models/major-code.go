@@ -38,8 +38,6 @@ const (
 	Design 						= "54.03.01 Дизайн"
 )
 
-//может быть вынести это в sqlite
-
 var MajorCodes = map[string]FieldInfo {
 	"ИПС": {Major: ItSystemsAndTechnologies, Specialization: "Проектирование, разработка и сопровождение информационных систем"},
 	"ППК": {Major: Psychology, Specialization: "Психологическое консультирование"},

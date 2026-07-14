@@ -2,7 +2,7 @@ package models
 
 type AuthRequest struct {
 	Login		string	`json:"login"`
-	Password	string	`login:"password"`
+	Password	string	`json:"password"`
 }
 
 type AuthResponse struct {

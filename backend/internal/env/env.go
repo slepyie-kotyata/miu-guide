@@ -15,6 +15,7 @@ const (
 	MIUApiAccountUrl = "MIU_API_ACCOUNT_URL"
 	RedisUrl = "REDIS_CONNECTION_URL"
 	AllowOrigins = "ALLOW_ORIGINS"
+	LogLevel = "LOG_LEVEL"
 )
 
 func GetEnv(key EnvKey) string {

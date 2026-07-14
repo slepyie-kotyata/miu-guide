@@ -13,8 +13,8 @@ type RawSchedule struct {
 	EndLesson         	string        		`json:"endLesson"`
 	KindOfWork        	string       		`json:"kindOfWork"`
 	ListOfLecturers   	[]RawLecturerInfo 	`json:"listOfLecturers"` 
-	DisciplineOid     	int           		`json:"disciplineOid"` // для фильтрации
-	LessonNumberStart 	int           		`json:"lessonNumberStart"` // для фильтрации
+	DisciplineOid     	int           		`json:"disciplineOid"`
+	LessonNumberStart 	int           		`json:"lessonNumberStart"`
 }
 
 type Schedule struct {

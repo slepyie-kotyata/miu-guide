@@ -1,11 +1,5 @@
 basePath: /
 definitions:
-  handlers.ErrorResponse:
-    properties:
-      code:
-        example: 1
-        type: integer
-    type: object
   models.AuthResponse:
     properties:
       token:
@@ -88,14 +82,13 @@ paths:
           schema:
             $ref: '#/definitions/models.UserInfo'
         "400":
-          description: '{"code": 1} - Пустой токен в Bearer'
+          description: '{"code": 1} - Пустой токен в Bearer/неправильный userId'
           schema:
             additionalProperties:
               type: integer
             type: object
         "401":
-          description: '{"code": 1} - Неправильные данные пользователя, {"code": 2}
-            - Невалидный токен(истек срок)'
+          description: '{"code": 2} - Невалидный токен(истек срок)'
           schema:
             additionalProperties:
               type: integer
@@ -107,8 +100,8 @@ paths:
               type: integer
             type: object
         "503":
-          description: '{"code": 3} - Недоступность API ЛК ММУ - code: 3, Недоступность
-            API Расписания - code: 1'
+          description: '{"code": 3} - Недоступность API ЛК ММУ, {"code": 1} - Недоступность
+            API Расписания'
           schema:
             additionalProperties:
               type: integer
@@ -137,8 +130,7 @@ paths:
               type: string
             type: array
         "400":
-          description: 'Неверный формат ID - code: 1, Пустой токен в Bearer - code:
-            2'
+          description: '{"code": 1} - Пустой токен в Bearer/неправильный userId'
           schema:
             additionalProperties:
               type: integer
@@ -191,25 +183,25 @@ paths:
           schema:
             $ref: '#/definitions/models.AuthResponse'
         "401":
-          description: 'Неверный логин или пароль (code: 1)'
+          description: '{"code": 1} - Неверный логин или пароль'
           schema:
             additionalProperties:
               type: integer
             type: object
         "500":
-          description: 'Внутренняя ошибка сервера (code: 1)'
+          description: '{"code": 1} - Внутренняя ошибка сервера'
           schema:
             additionalProperties:
               type: integer
             type: object
         "502":
-          description: 'Ошибка MIUApi (code: 1)'
+          description: '{"code": 1} - Ошибка MIUApi'
           schema:
             additionalProperties:
               type: integer
             type: object
         "503":
-          description: 'Сервис недоступен (code: 3 - недоступность\таймаут MIUApi)'
+          description: '{"code": 3} - Недоступность\таймаут MIUApi'
           schema:
             additionalProperties:
               type: integer
@@ -238,6 +230,12 @@ paths:
                 type: string
               type: array
             type: array
+        "404":
+          description: '{"code": 1} - Не найдено расписание'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
       summary: Расписание на 1 сентября
       tags:
       - mock
@@ -284,17 +282,23 @@ paths:
         "400":
           description: '{"code": 1} - Невалидный ID группы'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
         "500":
           description: '{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка
             Redis'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
         "503":
           description: '{"code": 1} - Недоступность API Расписания, {"code": 2} -
             недоступность\таймаут Redis'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
       summary: Расписание на конкретный день
       tags:
       - schedule
@@ -319,17 +323,23 @@ paths:
         "400":
           description: '{"code": 1} - Невалидный ID группы'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
         "500":
           description: '{"code": 1} - ошибка парсинга ответа API, {"code": 2} - ошибка
             Redis'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
         "503":
           description: '{"code": 1} - Недоступность API Расписания, {"code": 2} -
             недоступность\таймаут Redis'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
       summary: Расписание на сегодня
       tags:
       - schedule
@@ -354,9 +364,11 @@ paths:
               type: array
             type: array
         "400":
-          description: '{"code": 2} - Пустой параметр lecturer'
+          description: '{"code": 1} - Пустой параметр lecturer'
           schema:
-            $ref: '#/definitions/handlers.ErrorResponse'
+            additionalProperties:
+              type: integer
+            type: object
         "404":
           description: '{"code": 1} - Не найдены ФИО преподавателей'
           schema:
