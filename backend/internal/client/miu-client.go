@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/env"
 	"miu-guide/internal/models"
 	"net/http"
@@ -41,29 +42,25 @@ type MIUApiErrorResponse struct {
 }
 
 func parseErrorMessage(errorMessage MIUApiErrorResponse) error {
-	switch(errorMessage.Errorcode){
-	case InvalidTokenCode:
-		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidToken, errorMessage.Message)
-	case InvalidLoginCode:
-		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInvalidLogin, errorMessage.Message)
-	default:
-		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrExternalFailure, errorMessage.Message)
+	if errorMessage.Errorcode == InvalidTokenCode || errorMessage.Errorcode == InvalidLoginCode {
+		return apperror.Wrap(apperror.ErrInvalidCredentials, apperror.SourceMIU, errorMessage.Message)
 	}
+	return apperror.Wrap(apperror.ErrExternalFailure, apperror.SourceMIU, errorMessage.Message)
 }
 
-func (m *MIUClient) doAccountRequest(data url.Values, target any) error {
-	apiReq, _ := http.NewRequest(http.MethodPost, m.MIUApiLoginUrl, strings.NewReader(data.Encode()))
+func (m *MIUClient) doAccountRequest(baseUrl string, data url.Values, target any) error {
+	apiReq, _ := http.NewRequest(http.MethodPost, baseUrl, strings.NewReader(data.Encode()))
 	apiReq.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	apiResp, err := m.httpClient.Do(apiReq)
 
 	if err != nil {
-		return fmt.Errorf("(MIU-Main-API) %w: %v", ErrUnavailableAPI, err)
+		return apperror.Wrap(apperror.ErrUnavailableAPI, apperror.SourceMIU, err.Error())
 	}
 	defer apiResp.Body.Close()
 
 	respBody, err := io.ReadAll(apiResp.Body)
     if err != nil {
-        return fmt.Errorf("(MIU-Main-API) failed to read body %w: %v", ErrInternal, err)
+		return apperror.Wrap(apperror.ErrInternal, apperror.SourceMIU, err.Error())
     }
 
 	var errorMessage MIUApiErrorResponse
@@ -72,7 +69,7 @@ func (m *MIUClient) doAccountRequest(data url.Values, target any) error {
     }
 
     if err := json.Unmarshal(respBody, target); err != nil {
-        return fmt.Errorf("(MIU-Main-API) %w: %v", ErrInternal, err)
+		return apperror.Wrap(apperror.ErrInternal, apperror.SourceMIU, err.Error())
     }
     return nil
 }
@@ -84,7 +81,7 @@ func (m *MIUClient) GetToken(authReq models.AuthRequest) (string, error) {
 	data.Set("service", "moodle_mobile_app")
 
 	var token struct{Token string}
-	if err := m.doAccountRequest(data, &token); err != nil {
+	if err := m.doAccountRequest(m.MIUApiLoginUrl, data, &token); err != nil {
 		return "", err
 	}
 
@@ -98,7 +95,7 @@ func (m *MIUClient) GetUserId(token string) (int, error) {
 	data.Set("moodlewsrestformat", "json")
 
 	var id struct{ UserId int }
-	if err := m.doAccountRequest(data, &id); err != nil {
+	if err := m.doAccountRequest(m.MIUApiAccountUrl, data, &id); err != nil {
 		return 0, err
 	}
 	return id.UserId, nil
@@ -119,12 +116,16 @@ func (m *MIUClient) GetUserInfo(token string, userId int) (*UserInfoResponse, er
 	data.Set("values[0]", strconv.Itoa(userId))
 
 	var userInfo []UserInfoResponse
-	if err := m.doAccountRequest(data, &userInfo); err != nil {
+	if err := m.doAccountRequest(m.MIUApiAccountUrl, data, &userInfo); err != nil {
 		return nil, err
 	}
 
 	if len(userInfo) == 0 {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any info about user %d", userId))
+		return nil, apperror.Wrap(
+			apperror.ErrNotFound, 
+			apperror.SourceMIU, 
+			fmt.Sprintf("couldn't find any info about user %d", userId),
+		)
 	}
 
 	return &userInfo[0], nil
@@ -138,12 +139,16 @@ func (m *MIUClient) GetSubjectsList(token string, userId int) ([]models.Subjects
 	data.Set("userid", strconv.Itoa(userId))
 
 	var subjectsList []models.Subjects
-	if err := m.doAccountRequest(data, &subjectsList); err != nil {
+	if err := m.doAccountRequest(m.MIUApiAccountUrl, data, &subjectsList); err != nil {
 		return nil, err
 	}
 
 	if len(subjectsList) == 0 {
-		return nil, fmt.Errorf("(MIU-Main-API) %w: %v", ErrNotFound, fmt.Sprintf("couldn't find any user's %d subjects", userId))
+		return nil, apperror.Wrap(
+			apperror.ErrNotFound, 
+			apperror.SourceMIU, 
+			fmt.Sprintf("couldn't find any user's %d subjects", userId),
+		)
 	}
 
 	return subjectsList, nil

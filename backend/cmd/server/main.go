@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 	_ "miu-guide/docs"
+	"miu-guide/internal/apperror"
 	"miu-guide/internal/client"
 	"miu-guide/internal/connection"
 	"miu-guide/internal/env"
@@ -58,7 +60,14 @@ func init() {
 func main() {
 	rdb, err := connection.GetRedisConnection()
     if err != nil {
-        slog.Error("error initializing Redis", "error", err.Error())
+		var appErr *apperror.AppError
+		errors.As(err, &appErr)
+
+		slog.Error(
+			"error initializing Redis",
+        	slog.String("source", string(appErr.Source)),
+        	slog.String("error", err.Error()),
+    	)
     }
     defer rdb.Close()
 
