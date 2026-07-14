@@ -125,9 +125,8 @@ export class MapPage {
           this.currentMode.set('ГК');
         }
       }
-
-      setTimeout(() => {
-        const svgEl = this.el.nativeElement.querySelector('.map-container svg');
+setTimeout(() => {
+        const svgEl = this.el.nativeElement.querySelector('.map-container svg') as SVGSVGElement;
         if (!svgEl) return;
 
         svgEl.querySelectorAll('.place-active').forEach((el: Element) => {
@@ -135,15 +134,50 @@ export class MapPage {
         });
 
         if (highlightId) {
-          const target = svgEl.querySelector(`#${highlightId}_place`);
+          const target = svgEl.querySelector(`#${highlightId}_place`) as SVGGraphicsElement;
+          
           if (target) {
             target.classList.add('place-active');
             console.log(`Подсветка онбординга применена к: ${highlightId}_place`);
+
+            try {
+              const bbox = target.getBBox();
+              const viewBox = svgEl.viewBox.baseVal;
+              
+              let originX = 50;
+              let originY = 50;
+
+              if (viewBox && viewBox.width > 0 && viewBox.height > 0) {
+                const centerX = bbox.x + bbox.width / 2;
+                const centerY = bbox.y + bbox.height / 2;
+
+                originX = ((centerX - viewBox.x) / viewBox.width) * 100;
+                originY = ((centerY - viewBox.y) / viewBox.height) * 100;
+              }
+
+              const scale = 2; 
+
+              const translateX = -(originX - 50) * scale;
+              const translateY = -(originY - 50) * scale;
+
+              svgEl.style.transition = 'transform 0.8s ease-in-out'; 
+              svgEl.style.transformOrigin = '50% 50%'; 
+              
+              svgEl.style.transform = `translate(${translateX}%, ${translateY}%) scale(${scale})`;
+              
+            } catch (e) {
+              console.warn('Ошибка при попытке зазумить SVG:', e);
+            }
+
           } else {
             console.error(`Элемент с ID ${highlightId}_place не найден в SVG!`);
           }
+        } else {
+          svgEl.style.transition = 'transform 0.8s ease-in-out';
+          svgEl.style.transformOrigin = '50% 50%';
+          svgEl.style.transform = 'translate(0%, 0%) scale(1)';
         }
-      });
+      }, 150);
     });
   }
 

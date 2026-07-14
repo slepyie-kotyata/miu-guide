@@ -240,7 +240,6 @@
     "text": "Но помни: обедать разрешается только в столовой или за столиками у буфета.",
     "buttons": [],
     "canSkip": true,
-    "highlight": "diningHall",
     "mapFloor": 1
   },
   {
